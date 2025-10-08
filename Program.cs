@@ -17,6 +17,7 @@ var port = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
 var database = Environment.GetEnvironmentVariable("DB_NAME") ?? "HotelDB";
 var user = Environment.GetEnvironmentVariable("DB_USER") ?? "root";
 var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+Console.WriteLine($"Conectando a MySQL en {server}:{port} como {user}");
 
 var connectionString = $"Server={server};Port={port};Database={database};User={user};Password={password};";
 
@@ -65,15 +66,13 @@ var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configurar pipeline HTTP
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Management API v1");
-        c.RoutePrefix = string.Empty;
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Management API v1");
+    c.RoutePrefix = string.Empty; // http://localhost:5000
+});
 
 app.UseCors("AllowAll");
 app.UseAuthorization();
