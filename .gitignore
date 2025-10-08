@@ -45,6 +45,3 @@ lcov-report/
 
 # Ignore generated files
 wwwroot/
-
-# Ignore other common files
-*.md
