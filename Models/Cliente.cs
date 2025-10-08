@@ -1,22 +1,28 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HotelApi.Models
+namespace HotelManagement.Models
 {
-    [Table("Cliente")]
     public class Cliente
     {
         [Key]
-        public Guid ID { get; set; } = Guid.NewGuid();
+        [Column(TypeName = "BINARY(16)")]
+        public byte[] ID { get; set; } = null!;
 
-        [Required, StringLength(20)]
+        [Required]
+        [MaxLength(20)]
         public string Razon_Social { get; set; } = string.Empty;
 
-        [Required, StringLength(20)]
+        [Required]
+        [MaxLength(20)]
         public string NIT { get; set; } = string.Empty;
 
-        [Required, EmailAddress, StringLength(30)]
+        [Required]
+        [MaxLength(30)]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
+
+        // Relaciones
+        public virtual ICollection<Reserva>? Reservas { get; set; }
     }
 }

@@ -1,0 +1,50 @@
+# .gitignore for C# and Angular projects
+
+# Ignore build outputs and temporary files
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.vs/
+.vscode/
+*.user
+*.suo
+*.ncrunch*
+*.coverage
+*.DS_Store
+
+# Ignore NuGet packages
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+
+# Ignore Angular build outputs
+dist/
+tmp/
+out-tsc/
+.angular/
+node_modules/
+
+# Ignore environment and configuration files
+*.env
+*.env.*
+appsettings.json
+appsettings.*.json
+
+# Ignore IDE-specific files
+.idea/
+*.iml
+
+# Ignore test coverage reports
+coverage/
+lcov-report/
+
+# Ignore generated files
+wwwroot/
+
+# Ignore other common files
+*.md
