@@ -51,3 +51,4 @@ lcov-report/
 
 # Ignore generated files
 wwwroot/
+.env
