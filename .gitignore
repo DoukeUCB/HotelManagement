@@ -3,6 +3,12 @@
 # Ignore build outputs and temporary files
 bin/
 obj/
+obj/project.assets.json
+obj/Debug/
+obj/HotelManagement.csproj.nuget.dgspec.json
+obj/HotelManagement.csproj.nuget.g.props
+obj/HotelManagement.csproj.nuget.g.targets
+obj/project.nuget.cache
 *.exe
 *.dll
 *.pdb
@@ -10,7 +16,7 @@ obj/
 *.log
 *.vs/
 .vscode/
-*.user
+*.user  
 *.suo
 *.ncrunch*
 *.coverage
