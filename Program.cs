@@ -29,7 +29,10 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
 builder.Services.AddScoped<IDetalleReservaRepository, DetalleReservaRepository>();
 builder.Services.AddScoped<IDetalleReservaService, DetalleReservaService>();
 builder.Services.AddScoped<IDetalleReservaValidator, DetalleReservaValidator>();
-
+//Cliente
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>(); 
+builder.Services.AddScoped<IClienteValidator, ClienteValidator>(); 
 // Configurar controladores
 builder.Services.AddControllers();
 
@@ -66,14 +69,12 @@ var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configurar pipeline HTTP
-
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Management API v1");
-    c.RoutePrefix = string.Empty; // http://localhost:5000
+    c.RoutePrefix = string.Empty;
 });
-
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
