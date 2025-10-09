@@ -1,0 +1,29 @@
+<h1>Reservas</h1>
+
+<div *ngIf="loading">Cargando...</div>
+
+<div class="table" *ngIf="!loading && reservas.length">
+  <div class="thead">
+    <div>Cliente</div>
+    <div>Entrada</div>
+    <div>Salida</div>
+    <div>Estado</div>
+    <div class="right">Total (Bs.)</div>
+    <div class="actions">Acciones</div>
+  </div>
+
+  <div class="row" *ngFor="let r of reservas">
+    <div>{{ r.cliente }}</div>
+    <div>{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</div>
+    <div>{{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
+    <div>{{ r.estado }}</div>
+    <div class="right">{{ r.montoTotal | number:'1.2-2' }}</div>
+    <div class="actions">
+      <button (click)="verReserva(r.id)" class="btn btn-primary">Ver reserva</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading && !reservas.length" class="empty">
+  No hay reservas.
+</div>

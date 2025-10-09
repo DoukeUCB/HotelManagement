@@ -1,0 +1,111 @@
+.table {
+  display: grid;
+  grid-auto-rows: auto;
+  gap: 8px;
+
+  .thead,
+  .row {
+    display: grid;
+    // 5 columnas de datos + 1 columna de acciones
+    grid-template-columns: 1.2fr 1fr 1fr 0.9fr 1fr 140px;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .thead {
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .row {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.15s ease, transform 0.05s ease;
+
+    &:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .right {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actions-col {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+
+.empty {
+  margin-top: 12px;
+  padding: 16px 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* Botón básico (si no usas framework de estilos) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.04s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &.btn-primary {
+    background: #2563eb; // azul
+    color: #fff;
+
+    &:hover {
+      background: #1e54c7;
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.22);
+    }
+
+    &:focus {
+      outline: 3px solid rgba(37, 99, 235, 0.28);
+      outline-offset: 2px;
+    }
+  }
+}
+
+/* Responsivo */
+@media (max-width: 920px) {
+  .table {
+    .thead,
+    .row {
+      grid-template-columns: 1.2fr 1fr 1fr 0.9fr 0.9fr 110px;
+    }
+  }
+}
+
+@media (max-width: 680px) {
+  .table {
+    .thead,
+    .row {
+      grid-template-columns: 1.2fr 1fr 0.9fr 110px; // Cliente, Entrada, Total, Acciones
+    }
+
+    // Oculta columnas menos críticas en móvil
+    .thead > :nth-child(3), // Salida
+    .thead > :nth-child(4), // Estado
+    .row  > :nth-child(3),
+    .row  > :nth-child(4) {
+      display: none;
+    }
+  }
+}

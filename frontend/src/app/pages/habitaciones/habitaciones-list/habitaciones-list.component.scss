@@ -1,0 +1,20 @@
+h1 { margin: 12px 0 16px; }
+
+.table { display: grid; gap: 6px; }
+.thead, .row {
+  display: grid;
+  grid-template-columns: .8fr .6fr 1.2fr .8fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+}
+.thead { font-weight: 700; background: #f8fafc; }
+.right { text-align: right; }
+.empty { color: #64748b; font-style: italic; margin-top: 10px; }
+
+@media (max-width: 860px) {
+  .thead, .row { grid-template-columns: .9fr .6fr 1fr .8fr 1fr; }
+  .thead :last-child, .row :last-child { display: none; } /* oculta Estado en móvil si quieres */
+}

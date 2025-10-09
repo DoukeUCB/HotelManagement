@@ -1,0 +1,18 @@
+h1 { margin: 12px 0 16px; }
+.table { display: grid; gap: 6px; }
+.thead, .row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+}
+.thead { font-weight: 700; background: #f8fafc; }
+.empty { color: #64748b; font-style: italic; margin-top: 10px; }
+
+@media (max-width: 860px) {
+  .thead, .row { grid-template-columns: 1.6fr 1fr; }
+  .thead :last-child, .row :last-child { display: none; } /* oculta fecha en móvil */
+}

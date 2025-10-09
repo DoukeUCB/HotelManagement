@@ -1,0 +1,21 @@
+<h1>Habitaciones</h1>
+
+<div *ngIf="loading">Cargando...</div>
+
+<div class="table" *ngIf="!loading && habitaciones.length">
+  <div class="thead">
+    <div>Número</div><div>Piso</div><div>Tipo</div><div>Capacidad</div><div class="right">Tarifa Base (Bs.)</div><div>Estado</div>
+  </div>
+  <div class="row" *ngFor="let h of habitaciones">
+    <div>{{ h.numero }}</div>
+    <div>{{ h.piso }}</div>
+    <div>{{ h.tipoNombre }}</div>
+    <div>{{ h.capacidad }}</div>
+    <div class="right">{{ h.tarifaBase | number:'1.2-2' }}</div>
+    <div>{{ h.estado }}</div>
+  </div>
+</div>
+
+<div *ngIf="!loading && !habitaciones.length" class="empty">
+  No hay habitaciones.
+</div>

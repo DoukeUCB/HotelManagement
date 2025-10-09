@@ -1,0 +1,21 @@
+<h1>Huéspedes</h1>
+
+<div *ngIf="loading">Cargando...</div>
+
+<div class="table" *ngIf="!loading && huespedes.length">
+  <div class="thead">
+    <div>Nombre</div>
+    <div>Documento</div>
+    <div>Fecha Nac.</div>
+  </div>
+
+  <div class="row" *ngFor="let h of huespedes">
+    <div>{{ nombreCompleto(h) }}</div>
+    <div>{{ h.documento }}</div>
+    <div>{{ h.fechaNacimiento | date:'dd/MM/yyyy' }}</div>
+  </div>
+</div>
+
+<div *ngIf="!loading && !huespedes.length" class="empty">
+  No hay huéspedes.
+</div>
