@@ -1,0 +1,179 @@
+/* Archivo: huespedes.component.scss */
+
+// Variables de diseño (para consistencia)
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$border-color: #e9ecef;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+
+:host {
+  display: block;
+  // La fuente se hereda del body global (styles.scss)
+}
+
+// Estilo del botón "Volver"
+.link-back {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: $primary-color;
+  font-weight: 600;
+  padding: 8px 0; 
+  transition: color 0.2s;
+  margin-right: 20px; /* Espacio entre la flecha y el título */
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    fill: $primary-color;
+    transition: transform 0.2s;
+  }
+
+  &:hover {
+    color: darken($primary-color, 10%);
+    svg {
+      fill: darken($primary-color, 10%);
+      transform: translateX(-3px);
+    }
+  }
+}
+
+// Cabecera de la página con el título y el botón de retroceso
+.page-header {
+  display: flex;
+  align-items: center;
+  
+  padding: 10px 0 20px 0;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: 25px;
+
+  h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: #343a40;
+    
+    /* Ajuste clave para centrar el título */
+    flex-grow: 1; 
+    text-align: center;
+  }
+}
+
+// Estados de la Tabla (Cargando y Vacío)
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  border-radius: 8px;
+  background-color: $card-background;
+  border: 1px solid $border-color;
+  color: $secondary-color;
+  font-size: 1.1rem;
+}
+
+// Estilos de la Tabla Principal (data-table)
+.data-table {
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; 
+
+  // Definición de las columnas de la tabla (3 columnas: Nombre, Documento, Fecha Nac.)
+  $grid-cols: 2fr 1.5fr 1fr; 
+
+  .table-header,
+  .table-row {
+    display: grid;
+    grid-template-columns: $grid-cols;
+    padding: 15px 20px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .table-header {
+    background-color: #f1f3f5;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .table-row {
+    border-bottom: 1px solid $border-color;
+    font-size: 0.95rem;
+
+    &:nth-child(even) {
+      background-color: $background-color;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+/* =======================================================
+ * RESPONSIVIDAD (Móviles)
+ * ======================================================= */
+@media (max-width: 768px) {
+    
+  .page-header {
+    flex-wrap: wrap; /* Permite que los elementos salten de línea */
+    
+    .link-back {
+      order: 0; 
+      margin-right: 0;
+      width: 100%; /* Ocupa todo el ancho superior */
+      padding-bottom: 0;
+    }
+
+    h1 {
+      order: 1; 
+      margin-top: 10px;
+      text-align: left; /* En móvil, la alineación a la izquierda es mejor */
+    }
+  }
+    
+  .data-table {
+    box-shadow: none; 
+    border-radius: 0;
+    
+    .table-header {
+      display: none; /* Ocultar la cabecera en móviles */
+    }
+
+    .table-row {
+      display: block; /* Cada fila se convierte en un bloque/tarjeta */
+      border: 1px solid $border-color;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background-color: $card-background;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      
+      &:nth-child(even) {
+        background-color: $card-background;
+      }
+
+      & > div {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dotted lighten($secondary-color, 30%);
+
+        &:before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: $secondary-color;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}

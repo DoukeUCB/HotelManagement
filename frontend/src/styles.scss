@@ -1,0 +1,22 @@
+// src/styles.scss
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif; 
+  margin: 0; 
+  background-color: #f8f9fa;
+}
+
+/* * CLASE GLOBAL PARA LIMITAR Y CENTRAR EL CONTENIDO EN PANTALLAS GRANDES
+ */
+.main-container {
+    max-width: 1200px; /* Define el ancho máximo del contenido */
+    margin: 0 auto;    /* Centra el contenedor horizontalmente */
+    padding: 20px;     /* Añade un padding interior (el "pequeño margen" que quieres) */
+
+    /* Regla para pantallas muy pequeñas (móviles) */
+    @media (max-width: 768px) {
+        padding: 10px; /* Reduce el margen en móviles para aprovechar el espacio */
+    }
+}
