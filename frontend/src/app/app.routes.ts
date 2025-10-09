@@ -34,6 +34,12 @@ export const routes: Routes = [
         .then(m => m.HuespedesListComponent)
   },
   {
+    path: 'nueva-reserva',
+    loadComponent: () =>
+      import('./pages/nueva-reserva/nueva-reserva.component')
+        .then(m => m.NuevaReservaComponent)
+  },
+  {
     path: 'inicio',
     loadComponent: () =>
       import('./pages/home/home.component')
