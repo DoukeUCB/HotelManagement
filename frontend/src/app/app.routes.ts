@@ -33,6 +33,12 @@ export const routes: Routes = [
       import('./pages/huespedes/huespedes-list/huespedes-list.component')
         .then(m => m.HuespedesListComponent)
   },
+  {
+    path: 'inicio',
+    loadComponent: () =>
+      import('./pages/home/home.component')
+        .then(m => m.HomeComponent)
+  },
 
   { path: '**', redirectTo: '' }
 ];

@@ -8,7 +8,7 @@ import { ReservaDetail } from '../../../shared/models/reserva-detail.model';
 @Component({
   selector: 'app-reserva-detail',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, DatePipe, DecimalPipe, CurrencyPipe],
+  imports: [NgIf, NgFor, RouterLink, DatePipe, DecimalPipe],
   templateUrl: './reserva-detail.component.html',
   styleUrls: ['./reserva-detail.component.scss']
 })

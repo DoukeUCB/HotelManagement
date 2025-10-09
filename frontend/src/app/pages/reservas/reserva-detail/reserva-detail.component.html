@@ -1,69 +1,88 @@
-<a routerLink="/reservas" class="link-back">← Volver</a>
-<h1>Detalle de reserva</h1>
+<div class="main-container">
 
-<!-- Estado de carga -->
-<div *ngIf="loading()">Cargando...</div>
+  <header class="reservation-header">
+    <a routerLink="/reservas" class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    
+    <h1>Detalle de reserva</h1>
+  </header>
 
-<!-- Error -->
-<div *ngIf="!loading() && error()" class="error">{{ error() }}</div>
+  <div *ngIf="loading()" class="loading-state">Cargando...</div>
 
-<!-- Contenido cuando ya no está cargando -->
-<section *ngIf="!loading()">
+  <div *ngIf="!loading() && error()" class="error-state">{{ error() }}</div>
 
-  <!-- Cabecera basada en el primer detalle -->
-  <ng-container *ngIf="header() as h; else sinHeader">
-    <div class="card">
-      <div class="row">
-        <div>
-          <h3>Reserva: {{ h.reservaId }}</h3>
-          <div class="muted">
-            Huésped: <strong>{{ h.nombreHuesped }}</strong> ·
-            Cant. huéspedes: {{ h.cantidadHuespedes }}
+  <section *ngIf="!loading()" class="reservation-details-content">
+     
+    <ng-container *ngIf="header() as h; else sinHeader">
+      
+      <div class="card reservation-summary">
+        <div class="summary-top-row">
+          <div>
+            <h3 class="reservation-id">Reserva: #{{ h.reservaId }}</h3>
+            <div class="guest-info">
+              Huésped: <strong>{{ h.nombreHuesped }}</strong> | Cant. huéspedes:
+              {{ h.cantidadHuespedes }}
+            </div>
+          </div>
+          <div class="status-badge">Hab. {{ h.numeroHabitacion }}</div>
+        </div>
+
+        <div class="reservation-dates-total">
+          <div class="date-item">
+            <label>Entrada</label>
+            <div class="date-value">
+              {{ h.fechaEntrada | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
+          <div class="date-item">
+            <label>Salida</label>
+            <div class="date-value">
+              {{ h.fechaSalida | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
+          <div class="total-item">
+            <label>Total de la Reserva</label>
+            <div class="total-value">
+              {{ total() | number:'1.2-2' }}
+            </div>
           </div>
         </div>
-        <div class="status">Hab. {{ h.numeroHabitacion }}</div>
       </div>
 
-      <div class="grid">
-        <div>
-          <label>Entrada</label>
-          <div>{{ h.fechaEntrada | date:'dd/MM/yyyy' }}</div>
+      <h2 class="section-title">Ítems de la Reserva</h2>
+      
+      <div class="data-table" *ngIf="detalles().length; else noItems">
+        <div class="table-header">
+          <div>Hab.</div>
+          <div>Huésped</div>
+          <div>Entrada</div>
+          <div>Salida</div>
+          <div class="align-right">Precio Total</div>
         </div>
-        <div>
-          <label>Salida</label>
-          <div>{{ h.fechaSalida | date:'dd/MM/yyyy' }}</div>
-        </div>
-        <div class="right">
-          <label>Total</label>
-          <div class="total">{{ total() | number:'1.2-2' }}</div>
-        </div>
-      </div>
-    </div>
 
-    <h2>Ítems</h2>
-    <div class="table" *ngIf="detalles().length; else noItems">
-      <div class="thead">
-        <div>Hab.</div>
-        <div>Huésped</div>
-        <div>Entrada</div>
-        <div>Salida</div>
-        <div class="right">Precio Total</div>
+        <div class="table-row" *ngFor="let d of detalles()">
+          <div>{{ d.numeroHabitacion }}</div>
+          <div>{{ d.nombreHuesped }}</div>
+          <div>{{ d.fechaEntrada | date:'dd/MM/yyyy' }}</div>
+          <div>{{ d.fechaSalida | date:'dd/MM/yyyy' }}</div>
+          <div class="align-right">{{ d.precioTotal | number:'1.2-2' }}</div>
+        </div>
       </div>
+      
+      <ng-template #noItems>
+        <div class="empty-state">No hay detalles para esta reserva.</div>
+      </ng-template>
+      
+    </ng-container>
 
-      <div class="row" *ngFor="let d of detalles()">
-        <div>{{ d.numeroHabitacion }}</div>
-        <div>{{ d.nombreHuesped }}</div>
-        <div>{{ d.fechaEntrada | date:'dd/MM/yyyy' }}</div>
-        <div>{{ d.fechaSalida  | date:'dd/MM/yyyy' }}</div>
-        <div class="right">{{ d.precioTotal | number:'1.2-2' }}</div>
+    <ng-template #sinHeader>
+      <div class="empty-state">
+        No se encontró información para esta reserva.
       </div>
-    </div>
-    <ng-template #noItems>
-      <div class="empty">No hay detalles para esta reserva.</div>
     </ng-template>
-  </ng-container>
-
-  <ng-template #sinHeader>
-    <div class="empty">No se encontró información para esta reserva.</div>
-  </ng-template>
-</section>
+  </section>
+</div>

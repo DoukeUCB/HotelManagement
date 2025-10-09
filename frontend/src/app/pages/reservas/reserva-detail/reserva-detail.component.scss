@@ -1,77 +1,281 @@
-.link-back {
-  display: inline-block;
-  margin-bottom: 10px;
-  text-decoration: none;
+// Definición de variables de color para fácil mantenimiento
+$primary-color: #007bff; // Azul vibrante para elementos principales
+$secondary-color: #6c757d; // Gris para texto secundario
+$border-color: #e9ecef; // Gris claro para bordes
+$background-color: #f8f9fa; // Fondo claro para la página
+$card-background: #ffffff; // Fondo blanco para las tarjetas
+$success-color: #28a745; // Color para estados positivos
+
+// Estilos globales de la página y tipografía
+:host {
+  display: block; // Necesario para componentes Angular
+  padding: 20px;
+  background-color: $background-color;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Open Sans',
+    'Helvetica Neue',
+    sans-serif;
 }
 
-.error { color: #b91c1c; }
+// Contenedor principal del título y navegación
+.reservation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 15px;
 
+  h1 {
+    font-size: 1.8rem;
+    color: #343a40;
+    margin: 0;
+    flex-grow: 1; // Permite que el título ocupe el espacio central
+    text-align: center; // Centra el título entre el botón y el logo
+  }
+}
+
+// Estilo del botón "Volver"
+.link-back {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: $primary-color;
+  font-weight: 600;
+  padding: 8px 0; // Padding para área de clic
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    fill: $primary-color;
+    transition: transform 0.2s;
+  }
+
+  &:hover {
+    color: darken($primary-color, 10%);
+    svg {
+      fill: darken($primary-color, 10%);
+      transform: translateX(-3px);
+    }
+  }
+}
+
+// Placeholder del logo (Ajusta esto a tu implementación real del logo)
+.logo-placeholder {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #495057;
+  // Puedes usar una imagen aquí: background-image: url('path/to/logo.png');
+}
+
+// Manejo de estados (Cargando y Error)
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.loading-state {
+  color: $secondary-color;
+  background-color: lighten($primary-color, 40%);
+}
+
+.error-state {
+  color: #dc3545;
+  background-color: lighten(#dc3545, 40%);
+  font-weight: bold;
+}
+
+.empty-state {
+  color: $secondary-color;
+  background-color: $card-background;
+  border: 1px solid $border-color;
+}
+
+// Estilos de la tarjeta de resumen (Card)
 .card {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,.06);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 18px;
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  margin-bottom: 30px;
+}
 
-  .row {
+.reservation-summary {
+  .summary-top-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 15px;
+  }
 
-    .status {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #f3f4f6;
+  .reservation-id {
+    font-size: 1.5rem;
+    margin: 0 0 5px 0;
+    color: #343a40;
+  }
+
+  .guest-info {
+    color: $secondary-color;
+    font-size: 0.9rem;
+    strong {
+      color: #000;
       font-weight: 600;
-      font-size: .9rem;
     }
   }
 
-  .muted { opacity: .8; }
-
-  .grid {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(4, 1fr);
-
-    label { font-size: .85rem; opacity: .7; display: block; }
-    .right { text-align: right; }
-    .total { font-weight: 700; font-size: 1.1rem; }
+  .status-badge {
+    background-color: $success-color;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.85rem;
   }
 }
 
-.table {
+// Diseño de la sección de fechas y total con CSS Grid
+.reservation-dates-total {
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr); // 3 columnas de igual ancho
+  gap: 20px;
+  align-items: center;
 
-  .thead, .row {
-    display: grid;
-    grid-template-columns: 1.2fr .6fr .8fr .8fr;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    border-radius: 10px;
+  .date-item,
+  .total-item {
+    padding: 10px;
   }
 
-  .thead {
-    font-weight: 600;
-    background: rgba(0,0,0,.05);
+  label {
+    display: block;
+    font-size: 0.8rem;
+    color: $secondary-color;
+    margin-bottom: 4px;
+    text-transform: uppercase;
   }
 
-  .row {
-    background: #fff;
-    border: 1px solid rgba(0,0,0,.06);
+  .date-value {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #343a40;
   }
 
-  .right { text-align: right; }
+  .total-item {
+    text-align: right;
+    border-left: 1px solid $border-color; // Separador visual
+    padding-left: 20px;
+
+    .total-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: $primary-color;
+    }
+  }
 }
 
-.empty {
-  margin: 8px 0 16px;
-  padding: 12px;
-  border: 1px dashed rgba(0,0,0,.25);
-  border-radius: 10px;
-  text-align: center;
+// Título de la sección de ítems
+.section-title {
+  font-size: 1.4rem;
+  color: #343a40;
+  margin: 30px 0 15px 0;
+}
+
+// Estilos de la tabla (Ítems)
+.data-table {
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden; // Para que los bordes redondeados se apliquen bien
+
+  // Estilo de filas basado en CSS Grid
+  $grid-cols: 1fr 2fr 1.2fr 1.2fr 1fr; // Definición de anchos de columna
+
+  .table-header,
+  .table-row {
+    display: grid;
+    grid-template-columns: $grid-cols;
+    padding: 12px 20px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .table-header {
+    background-color: #f1f3f5;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .table-row {
+    border-bottom: 1px solid $border-color;
+    font-size: 0.95rem;
+
+    &:nth-child(even) {
+      background-color: $background-color;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// Utilidades de alineación
+.align-right {
+  text-align: right;
+  font-weight: 600;
+}
+
+// Media Query para hacer la vista un poco más responsiva
+@media (max-width: 768px) {
+  .reservation-header {
+    flex-wrap: wrap;
+    h1 {
+      order: 1;
+      width: 100%;
+      text-align: left;
+      margin-top: 10px;
+    }
+    .link-back {
+      order: 0;
+    }
+    .logo-placeholder {
+      order: 2;
+    }
+  }
+
+  .reservation-dates-total {
+    grid-template-columns: 1fr 1fr; // 2 columnas en móviles
+    .total-item {
+      grid-column: 1 / -1; // Total ocupa todo el ancho
+      text-align: left;
+      border-left: none;
+      border-top: 1px solid $border-color;
+      padding-left: 10px;
+      margin-top: 10px;
+    }
+  }
+
+  .data-table {
+    .table-header,
+    .table-row {
+      grid-template-columns: 0.8fr 1fr 1fr 1fr 1fr; // Ajuste de columnas para móviles
+      font-size: 0.85rem;
+      padding: 10px;
+    }
+  }
 }

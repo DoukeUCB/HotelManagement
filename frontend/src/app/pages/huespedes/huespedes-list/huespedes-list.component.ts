@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MockDataService } from '../../../core/services/mock-data.service';
 import { HuespedLite, nombreCompleto } from '../../../shared/models/huesped-lite.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-huespedes-list',
@@ -15,7 +16,9 @@ export class HuespedesListComponent implements OnInit {
   loading = true;
   nombreCompleto = nombreCompleto;
 
-  constructor(private mock: MockDataService) {}
+  constructor(private mock: MockDataService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.mock.getHuespedes().subscribe({
@@ -28,5 +31,8 @@ export class HuespedesListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+  goBack(): void {
+    this.router.navigate(['/inicio']); 
   }
 }

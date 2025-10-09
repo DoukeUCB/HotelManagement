@@ -1,29 +1,73 @@
-<h1>Reservas</h1>
+<div class="main-container">
 
-<div *ngIf="loading">Cargando...</div>
+  <header class="page-header with-back-link">
+    <a (click)="goBack()" class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    
+    <h1>Reservas</h1>
+    
+    <div class="header-action-right">
+      <button routerLink="/nueva-reserva" class="btn btn-primary new-reservation-btn">
+        + Nueva Reserva
+      </button>
+    </div>
+  </header>
 
-<div class="table" *ngIf="!loading && reservas.length">
-  <div class="thead">
-    <div>Cliente</div>
-    <div>Entrada</div>
-    <div>Salida</div>
-    <div>Estado</div>
-    <div class="right">Total (Bs.)</div>
-    <div class="actions">Acciones</div>
-  </div>
+  <div class="table-controls">
+    <label class="filter-label">Filtrar por Estado:</label>
+    <div class="filter-buttons-group">
+      
+      <button class="btn btn-filter" 
+              [ngClass]="{'active': estadoSeleccionado === ''}"
+              (click)="estadoSeleccionado = ''; filtrarReservas()">
+        TODOS
+      </button>
 
-  <div class="row" *ngFor="let r of reservas">
-    <div>{{ r.cliente }}</div>
-    <div>{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</div>
-    <div>{{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
-    <div>{{ r.estado }}</div>
-    <div class="right">{{ r.montoTotal | number:'1.2-2' }}</div>
-    <div class="actions">
-      <button (click)="verReserva(r.id)" class="btn btn-primary">Ver reserva</button>
+      <button *ngFor="let estado of estadosDisponibles"
+              class="btn btn-filter"
+              [ngClass]="{'active': estadoSeleccionado === estado}"
+              (click)="estadoSeleccionado = estado; filtrarReservas()">
+        {{ estado | uppercase }}
+      </button>
+      
     </div>
   </div>
-</div>
+  
+  <div *ngIf="loading" class="loading-state">Cargando...</div>
 
-<div *ngIf="!loading && !reservas.length" class="empty">
-  No hay reservas.
+  <div class="data-table card" *ngIf="!loading && reservas.length">
+    
+    <div class="table-header">
+      <div>Cliente</div>
+      <div>Entrada</div>
+      <div>Salida</div>
+      <div>Estado</div>
+      <div class="align-right">Total (Bs.)</div>
+      <div class="actions">Acciones</div>
+    </div>
+
+    <div class="table-row" *ngFor="let r of reservas">
+      <div data-label="Cliente">{{ r.cliente }}</div>
+      <div data-label="Entrada">{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</div>
+      <div data-label="Salida">{{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
+      <div data-label="Estado" class="status-cell">
+        <span [class]="'status-' + r.estado"> 
+          {{ r.estado }}
+        </span>
+      </div>
+      <div data-label="Total" class="align-right total-cell">{{ r.montoTotal | number:'1.2-2' }}</div>
+      
+      <div data-label="Acciones" class="actions">
+        <button (click)="verReserva(r.id)" class="btn btn-secondary">Ver</button>
+      </div>
+    </div>
+    
+  </div>
+  <div *ngIf="!loading && !reservas.length" class="empty-state">
+    No hay reservas para mostrar.
+  </div>
 </div>
