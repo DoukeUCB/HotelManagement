@@ -34,6 +34,24 @@ export const routes: Routes = [
         .then(m => m.HuespedesListComponent)
   },
   {
+    path: 'clientes',
+    loadComponent: () =>
+      import('./pages/clientes/clientes-list/clientes-list.component')
+        .then(m => m.ClientesListComponent)
+  },
+  {
+    path: 'nuevo-cliente',
+    loadComponent: () =>
+      import('./pages/nuevo-cliente/nuevo-cliente.component')
+        .then(m => m.NuevoClienteComponent)
+  },
+  {
+    path: 'editar-cliente',
+    loadComponent: () =>
+      import('./pages/editar-cliente/editar-cliente.component')
+        .then(m => m.EditarClienteComponent)
+  },
+  {
     path: 'nuevo-huesped',
     loadComponent: () =>
       import('./pages/nuevo-huesped/nuevo-huesped.component')
