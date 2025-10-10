@@ -1,0 +1,41 @@
+<div class="main-container">
+  <header class="page-header">
+    <a (click)="goBack()" class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    <h1>Clientes</h1>
+    <span class="header-spacer"></span>
+  </header>
+
+  <div class="actions-bar">
+    <button routerLink="/nuevo-cliente" class="btn btn-primary">+ Nuevo cliente</button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">Cargando...</div>
+
+  <div class="data-table card" *ngIf="!loading && clientes.length">
+    <div class="table-header">
+      <div>Razón Social</div>
+      <div>NIT</div>
+      <div>Email</div>
+      <div class="actions">Acciones</div>
+    </div>
+
+    <div class="table-row" *ngFor="let c of clientes">
+      <div data-label="Razón Social">{{ c.razonSocial }}</div>
+      <div data-label="NIT">{{ c.nit }}</div>
+      <div data-label="Email">{{ c.email }}</div>
+      <div data-label="Acciones" class="actions">
+        <button (click)="editarCliente(c.id)" class="btn btn-outline">Editar</button>
+        <button (click)="eliminarCliente(c.id)" class="btn btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !clientes.length" class="empty-state">
+    No hay clientes registrados.
+  </div>
+</div>
