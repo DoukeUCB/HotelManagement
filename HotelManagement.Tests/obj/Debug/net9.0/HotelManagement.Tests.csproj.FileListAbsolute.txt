@@ -212,3 +212,6 @@ E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\bin\Debug\net9.0\Microso
 E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
 E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\bin\Debug\net9.0\FluentAssertions.dll
 E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\bin\Debug\net9.0\FluentValidation.dll
+E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\obj\Debug\net9.0\HotelManagement.Tests.sourcelink.json
+E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\bin\Debug\net9.0\FluentValidation.AspNetCore.dll
+E:\2025-2\calidad\actual\proyecto\HotelManagement.Tests\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll
