@@ -1,0 +1,33 @@
+<div class="main-container">
+
+  <header class="page-header with-back-link">
+    <a (click)="goBack()"  class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    <h1>Huéspedes</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">Cargando...</div>
+
+  <div class="data-table card" *ngIf="!loading && huespedes.length">
+    
+    <div class="table-header">
+      <div>Nombre</div>
+      <div>Documento</div>
+      <div>Fecha Nac.</div>
+    </div>
+
+    <div class="table-row" *ngFor="let h of huespedes">
+      <div data-label="Nombre">{{ nombreCompleto(h) }}</div>
+      <div data-label="Documento">{{ h.documento }}</div>
+      <div data-label="Fecha Nac.">{{ h.fechaNacimiento | date:'dd/MM/yyyy' }}</div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !huespedes.length" class="empty-state">
+    No hay huéspedes.
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<nav class="topbar" [class.scrolled]="scrolled">
+  <div class="brand">
+    <img src="assets/hotellogo.png" alt="Hotel" class="logo" onerror="this.style.display='none'"/>
+    <a routerLink="/" class="title">Hotel Aurea</a>
+  </div>
+
+  <button class="hamburger" (click)="menuOpen = !menuOpen" aria-label="Abrir menú">
+    <span></span><span></span><span></span>
+  </button>
+
+  <ul class="nav" [class.open]="menuOpen">
+    <li><a routerLink="/reservas">Reservas</a></li>
+    <li><a routerLink="/habitaciones">Habitaciones</a></li>
+    <li><a routerLink="/huespedes">Huéspedes</a></li>
+    <li><a routerLink="/reportes">Reportes</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+  <router-outlet></router-outlet>
+</main>
