@@ -4,6 +4,7 @@ namespace HotelManagement.DTOs
     {
         public string? ID { get; set; }
         public string Cliente_ID { get; set; } = string.Empty;
+        public string? Cliente_Nombre { get; set; } // Agregado para el frontend
         public DateTime Fecha_Reserva { get; set; }
         public DateTime Fecha_Entrada { get; set; }
         public DateTime Fecha_Salida { get; set; }
