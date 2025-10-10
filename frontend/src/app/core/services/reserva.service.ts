@@ -6,8 +6,7 @@ import { mapApiReservaDetail } from '../../core/adapters/reservas.adapter';
 
 // ⚠️ Cambia por tu base real de Swagger
 const API_BASE = 'http://localhost:5000';
-// Ruta que mostraste en Swagger:
-const DETALLE_BY_RESERVA = '/api/DetalleReserva';
+const DETALLE_BY_RESERVA = '/api/DetalleReserva/reserva';
 
 @Injectable({ providedIn: 'root' })
 export class ReservasService {
@@ -27,3 +26,4 @@ export class ReservasService {
       );
   }
 }
+

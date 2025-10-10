@@ -1,0 +1,107 @@
+<div class="editar-reserva">
+  <header class="encabezado">
+    <a routerLink="/reservas" class="volver">‹ Volver</a>
+    <h1>Editar reserva</h1>
+    <span class="placeholder"></span>
+  </header>
+
+  <section *ngIf="catalogosCargando(); else contenido" class="estado">
+    Cargando catálogos...
+  </section>
+
+  <ng-template #contenido>
+    <section *ngIf="error() && !catalogosCargando(); else formulario" class="estado estado-error">
+      {{ error() }}
+    </section>
+
+    <ng-template #formulario>
+      <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
+        <p class="info-texto">
+          Solo puedes editar: <strong>Cliente, Habitación, Huésped y Estado</strong>.
+        </p>
+
+        <section class="form-grid">
+          <label class="campo">
+            <span>Cliente *</span>
+            <select formControlName="clienteId">
+              <option value="" disabled>Selecciona un cliente</option>
+              <option *ngFor="let c of clientes()" [value]="c.id">
+                {{ c.label }} — {{ c.email }}
+              </option>
+            </select>
+            <small *ngIf="form.controls.clienteId.invalid && form.controls.clienteId.touched">
+              Campo obligatorio.
+            </small>
+          </label>
+
+          <label class="campo">
+            <span>Habitación *</span>
+            <select formControlName="habitacionId">
+              <option value="" disabled>Selecciona una habitación</option>
+              <option *ngFor="let h of habitaciones()" [value]="h.id">
+                Hab. {{ h.numero }} — {{ h.estado }}
+              </option>
+            </select>
+            <small *ngIf="form.controls.habitacionId.invalid && form.controls.habitacionId.touched">
+              Campo obligatorio.
+            </small>
+          </label>
+
+          <label class="campo">
+            <span>Huésped principal *</span>
+            <select formControlName="huespedId">
+              <option value="" disabled>Selecciona un huésped</option>
+              <option *ngFor="let h of huespedes()" [value]="h.id">
+                {{ h.nombre }}
+              </option>
+            </select>
+            <small *ngIf="form.controls.huespedId.invalid && form.controls.huespedId.touched">
+              Campo obligatorio.
+            </small>
+          </label>
+
+          <label class="campo">
+            <span>Estado de la reserva *</span>
+            <select formControlName="estadoReserva">
+              <option value="" disabled>Selecciona un estado</option>
+              <option *ngFor="let estado of estadosReserva" [value]="estado">
+                {{ estado }}
+              </option>
+            </select>
+            <small *ngIf="form.controls.estadoReserva.invalid && form.controls.estadoReserva.touched">
+              Campo obligatorio.
+            </small>
+          </label>
+
+          <label class="campo">
+            <span>Fecha de entrada *</span>
+            <input type="date" formControlName="fechaEntrada" />
+            <small *ngIf="form.controls.fechaEntrada.invalid && form.controls.fechaEntrada.touched">
+              Campo obligatorio.
+            </small>
+          </label>
+
+          <label class="campo">
+            <span>Fecha de salida *</span>
+            <input type="date" formControlName="fechaSalida" />
+            <small *ngIf="form.controls.fechaSalida.invalid && form.controls.fechaSalida.touched">
+              Campo obligatorio.
+            </small>
+          </label>
+        </section>
+
+        <div class="acciones">
+          <button type="button" class="btn btn-terciario" (click)="cancelar()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primario" [disabled]="submitting()">
+            {{ submitting() ? 'Guardando…' : 'Guardar cambios' }}
+          </button>
+        </div>
+
+        <p *ngIf="mensaje()" class="estado ok">{{ mensaje() }}</p>
+        <p *ngIf="error() && !catalogosCargando()" class="estado error">{{ error() }}</p>
+      </form>
+    </ng-template>
+  </ng-template>
+</div>

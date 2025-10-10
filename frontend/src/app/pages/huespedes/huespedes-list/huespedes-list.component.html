@@ -1,14 +1,19 @@
 <div class="main-container">
 
   <header class="page-header with-back-link">
-    <a (click)="goBack()"  class="link-back">
+    <a (click)="goBack()" class="link-back">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
         <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
       </svg>
       Volver
     </a>
     <h1>Huéspedes</h1>
+    <span class="header-spacer"></span>
   </header>
+
+  <div class="actions-bar">
+    <button routerLink="/nuevo-huesped" class="btn btn-primary">+ Nuevo huésped</button>
+  </div>
 
   <div *ngIf="loading" class="loading-state">Cargando...</div>
 

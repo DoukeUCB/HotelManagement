@@ -1,52 +1,85 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { NgIf, NgFor, DatePipe, DecimalPipe, CurrencyPipe } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, finalize, of, tap } from 'rxjs';
-import { ReservasService } from '../../../core/services/reserva.service'; // <-- ojo al nombre/ubicación
+import { NuevaReservaService } from '../../../core/services/nueva-reserva.service';
 import { ReservaDetail } from '../../../shared/models/reserva-detail.model';
+
+interface ReservaHeader {
+  reservaId: string;
+  nombreHuesped: string;
+  numeroHabitacion: string;
+  cantidadHuespedes: number;
+  fechaEntrada: string;
+  fechaSalida: string;
+}
 
 @Component({
   selector: 'app-reserva-detail',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, DatePipe, DecimalPipe],
+  imports: [CommonModule, DatePipe, DecimalPipe, RouterLink],
   templateUrl: './reserva-detail.component.html',
   styleUrls: ['./reserva-detail.component.scss']
 })
-export default class ReservaDetailComponent {
+export default class ReservaDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private api = inject(ReservasService);
+  private api = inject(NuevaReservaService);
 
   loading = signal(true);
   error = signal<string | null>(null);
-  detalles = signal<ReservaDetail[]>([]); // lista de detalles
+  detalles = signal<ReservaDetail[]>([]);
+  reservaData = signal<{ fechaEntrada: string; fechaSalida: string } | null>(null);
 
-  // Primer ítem para cabecera
-  header = computed(() => this.detalles()[0] ?? null);
-  // Total sumando los precios de cada item (por si la API devuelve varios)
-  total = computed(() => this.detalles().reduce((acc, d) => acc + (d.precioTotal ?? 0), 0));
+  header = computed<ReservaHeader | null>(() => {
+    const lista = this.detalles();
+    const reserva = this.reservaData();
+    if (!lista.length || !reserva) return null;
 
-  constructor() {
-    const reservaId = this.route.snapshot.paramMap.get('id') ?? '';
-    if (!reservaId) {
+    const primero = lista[0];
+    return {
+      reservaId: primero.reservaId,
+      nombreHuesped: primero.nombreHuesped,
+      numeroHabitacion: primero.numeroHabitacion,
+      cantidadHuespedes: lista.reduce((sum, d) => sum + d.cantidadHuespedes, 0),
+      fechaEntrada: reserva.fechaEntrada,
+      fechaSalida: reserva.fechaSalida
+    };
+  });
+
+  total = computed(() => this.detalles().reduce((sum, d) => sum + d.precioTotal, 0));
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
       this.error.set('ID de reserva no proporcionado');
       this.loading.set(false);
       return;
     }
 
-    this.api.getDetallesByReservaId(reservaId)
-      .pipe(
-        tap(() => console.log('[Detalle] llamando API con id:', reservaId)),
-        catchError(err => {
-          console.error('[Detalle] error API:', err);
-          this.error.set('No se pudo cargar el detalle de la reserva.');
-          this.detalles.set([]);
-          return of([] as ReservaDetail[]);
-        }),
-        finalize(() => this.loading.set(false))
-      )
-      .subscribe(list => {
-        console.log('[Detalle] respuesta normalizada:', list);
-        this.detalles.set(list);
-      });
+    this.api.getReservaById(id).subscribe({
+      next: (reserva) => {
+        this.reservaData.set({
+          fechaEntrada: reserva.fecha_Entrada,
+          fechaSalida: reserva.fecha_Salida
+        });
+        this.cargarDetalles(id);
+      },
+      error: () => {
+        this.error.set('No se pudo cargar la reserva');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private cargarDetalles(id: string): void {
+    this.api.getDetallesByReservaId(id).subscribe({
+      next: (lista) => {
+        this.detalles.set(lista);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudieron cargar los detalles de la reserva');
+        this.loading.set(false);
+      }
+    });
   }
 }
