@@ -1,4 +1,5 @@
 using HotelManagement.Aplicacion.Exceptions;
+using MySqlConnector;
 using System.Net;
 using System.Text.Json;
 
@@ -73,6 +74,16 @@ namespace HotelManagement.Presentacion.Middleware
                         message = conflictException.Message
                     });
                     _logger.LogWarning(conflictException, "Conflicto");
+                    break;
+
+                case MySqlException mySqlException when mySqlException.Number == 1452:
+                    code = HttpStatusCode.BadRequest;
+                    result = JsonSerializer.Serialize(new
+                    {
+                        error = "Referencia inválida",
+                        message = "Uno o más IDs de referencia no existen en la base de datos. Verifique que los datos relacionados existan antes de continuar."
+                    });
+                    _logger.LogWarning(mySqlException, "Violación de clave foránea");
                     break;
 
                 default:

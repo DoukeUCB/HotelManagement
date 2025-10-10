@@ -15,12 +15,16 @@ namespace HotelManagement.Datos.Repositories
 
         public async Task<IEnumerable<Reserva>> GetAllAsync()
         {
-            return await _context.Reservas.ToListAsync();
+            return await _context.Reservas
+                .Include(r => r.Cliente)
+                .ToListAsync();
         }
 
         public async Task<Reserva?> GetByIdAsync(byte[] id)
         {
-            return await _context.Reservas.FindAsync(id);
+            return await _context.Reservas
+                .Include(r => r.Cliente)
+                .FirstOrDefaultAsync(r => r.ID.SequenceEqual(id));
         }
 
         public async Task AddAsync(Reserva reserva)

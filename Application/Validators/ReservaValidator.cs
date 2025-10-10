@@ -8,7 +8,8 @@ namespace HotelManagement.Validators
         public ReservaCreateValidator()
         {
             RuleFor(x => x.Cliente_ID)
-                .NotEmpty().WithMessage("El Cliente_ID es obligatorio.");
+                .NotEmpty().WithMessage("El Cliente_ID es obligatorio.")
+                .Must(BeAValidGuid).WithMessage("El Cliente_ID debe ser un GUID válido.");
 
             RuleFor(x => x.Fecha_Entrada)
                 .NotEmpty().WithMessage("La Fecha de Entrada es obligatoria.")
@@ -25,6 +26,11 @@ namespace HotelManagement.Validators
             RuleFor(x => x.Estado_Reserva)
                 .Must(e => new[] { "Pendiente", "Confirmada", "Cancelada", "Completada", "No-Show" }.Contains(e))
                 .WithMessage("El estado de la reserva no es válido.");
+        }
+
+        private bool BeAValidGuid(string guidString)
+        {
+            return Guid.TryParse(guidString, out _);
         }
     }
 

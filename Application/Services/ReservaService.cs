@@ -1,16 +1,20 @@
 using HotelManagement.DTOs;
 using HotelManagement.Models;
 using HotelManagement.Datos.Repositories;
+using HotelManagement.Repositories;
+using HotelManagement.Aplicacion.Exceptions;
 
 namespace HotelManagement.Application.Services
 {
     public class ReservaService : IReservaService
     {
         private readonly IReservaRepository _repository;
+        private readonly IClienteRepository _clienteRepository;
 
-        public ReservaService(IReservaRepository repository)
+        public ReservaService(IReservaRepository repository, IClienteRepository clienteRepository)
         {
             _repository = repository;
+            _clienteRepository = clienteRepository;
         }
 
         public async Task<IEnumerable<ReservaDTO>> GetAllAsync()
@@ -21,6 +25,7 @@ namespace HotelManagement.Application.Services
             {
                 ID = new Guid(r.ID).ToString(),
                 Cliente_ID = new Guid(r.Cliente_ID).ToString(),
+                Cliente_Nombre = r.Cliente?.Razon_Social ?? "Cliente no disponible",
                 Fecha_Reserva = r.Fecha_Reserva,
                 Fecha_Entrada = r.Fecha_Entrada,
                 Fecha_Salida = r.Fecha_Salida,
@@ -31,7 +36,7 @@ namespace HotelManagement.Application.Services
 
         public async Task<ReservaDTO?> GetByIdAsync(Guid id)
         {
-            var binaryId = GuidToMySqlBinary(id);
+            var binaryId = id.ToByteArray();
             var reserva = await _repository.GetByIdAsync(binaryId);
             if (reserva == null) return null;
 
@@ -39,6 +44,7 @@ namespace HotelManagement.Application.Services
             {
                 ID = new Guid(reserva.ID).ToString(),
                 Cliente_ID = new Guid(reserva.Cliente_ID).ToString(),
+                Cliente_Nombre = reserva.Cliente?.Razon_Social ?? "Cliente no disponible",
                 Fecha_Reserva = reserva.Fecha_Reserva,
                 Fecha_Entrada = reserva.Fecha_Entrada,
                 Fecha_Salida = reserva.Fecha_Salida,
@@ -49,10 +55,19 @@ namespace HotelManagement.Application.Services
 
         public async Task AddAsync(ReservaCreateDTO dto)
         {
+            // Validar que el cliente existe
+            var clienteId = Guid.Parse(dto.Cliente_ID).ToByteArray();
+            var cliente = await _clienteRepository.GetByIdAsync(clienteId);
+            
+            if (cliente == null)
+            {
+                throw new NotFoundException($"No se encontró un cliente con ID: {dto.Cliente_ID}");
+            }
+
             var reserva = new Reserva
             {
-                ID = GuidToMySqlBinary(Guid.NewGuid()),
-                Cliente_ID = GuidToMySqlBinary(Guid.Parse(dto.Cliente_ID)),
+                ID = Guid.NewGuid().ToByteArray(),
+                Cliente_ID = clienteId,
                 Fecha_Reserva = DateTime.Now,
                 Fecha_Entrada = dto.Fecha_Entrada,
                 Fecha_Salida = dto.Fecha_Salida,
@@ -66,7 +81,7 @@ namespace HotelManagement.Application.Services
 
         public async Task<bool> UpdateAsync(Guid id, ReservaUpdateDTO dto)
         {
-            var binaryId = GuidToMySqlBinary(id);
+            var binaryId = id.ToByteArray();
             var reserva = await _repository.GetByIdAsync(binaryId);
             if (reserva == null) return false;
 
@@ -82,26 +97,13 @@ namespace HotelManagement.Application.Services
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var binaryId = GuidToMySqlBinary(id);
+            var binaryId = id.ToByteArray();
             var reserva = await _repository.GetByIdAsync(binaryId);
             if (reserva == null) return false;
 
             await _repository.DeleteAsync(binaryId);
             await _repository.SaveChangesAsync();
             return true;
-        }
-
-        private static byte[] GuidToMySqlBinary(Guid guid)
-        {
-            var bytes = guid.ToByteArray();
-            return new byte[]
-            {
-                bytes[3], bytes[2], bytes[1], bytes[0],
-                bytes[5], bytes[4],
-                bytes[7], bytes[6],
-                bytes[8], bytes[9],
-                bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]
-            };
         }
     }
 }
