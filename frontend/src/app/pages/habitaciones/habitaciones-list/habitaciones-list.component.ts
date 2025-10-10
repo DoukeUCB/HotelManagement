@@ -1,31 +1,45 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { MockDataService } from '../../../core/services/mock-data.service';
-import { HabitacionLite } from '../../../shared/models/habitacion-lite.model';
 import { Router } from '@angular/router';
+import { HabitacionService } from '../../../core/services/habitacion.service';
+import { HabitacionLite } from '../../../shared/models/habitacion-lite.model';
 
 @Component({
   selector: 'app-habitaciones-list',
-  standalone: true,
-  imports: [CommonModule, DecimalPipe],
   templateUrl: './habitaciones-list.component.html',
-  styleUrls: ['./habitaciones-list.component.scss']
+  styleUrls: ['./habitaciones-list.component.scss'],
+  standalone: true,
+  imports: [CommonModule, DecimalPipe]
 })
 export class HabitacionesListComponent implements OnInit {
-  habitaciones: HabitacionLite[] = [];
   loading = true;
+  habitaciones: HabitacionLite[] = [];
 
-  constructor(private mock: MockDataService,
+  constructor(
+    private habitacionService: HabitacionService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.mock.getHabitaciones().subscribe({
-      next: h => { this.habitaciones = h; this.loading = false; },
-      error: () => { this.habitaciones = []; this.loading = false; }
-    });
+    this.cargarHabitaciones();
   }
+
+  cargarHabitaciones(): void {
+    this.loading = true;
+    this.habitacionService.getHabitaciones()
+      .subscribe({
+        next: (data) => {
+          this.habitaciones = data;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error cargando habitaciones:', error);
+          this.loading = false;
+        }
+      });
+  }
+
   goBack(): void {
-    this.router.navigate(['/inicio']); 
+    this.router.navigate(['/']);
   }
 }
