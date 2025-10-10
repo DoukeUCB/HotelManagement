@@ -32,9 +32,12 @@
       <div data-label="Tarifa Base" class="align-right total-cell">{{ h.tarifaBase | number:'1.2-2' }}</div>
       
       <div data-label="Estado" class="actions status-cell">
-        <span [class]="'status-' + h.estado">
-          {{ h.estado }}
-        </span>
+        <select [ngModel]="h.estado" 
+                (ngModelChange)="cambiarEstado(h.id, $event)"
+                [class]="'status-select status-' + h.estado">
+          <option *ngFor="let estado of estadosDisponibles" 
+                  [value]="estado">{{ estado }}</option>
+        </select>
       </div>
     </div>
   </div>

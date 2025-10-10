@@ -2,21 +2,31 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { HabitacionService } from '../../../core/services/habitacion.service';
-import { HabitacionLite } from '../../../shared/models/habitacion-lite.model';
+import { HabitacionLite, EstadoHabitacion } from '../../../shared/models/habitacion-lite.model';
+import { FormsModule } from '@angular/forms';
+import { MockDataService } from '../../../core/services/mock-data.service';
 
 @Component({
   selector: 'app-habitaciones-list',
   templateUrl: './habitaciones-list.component.html',
   styleUrls: ['./habitaciones-list.component.scss'],
   standalone: true,
-  imports: [CommonModule, DecimalPipe]
+  imports: [CommonModule, DecimalPipe, FormsModule]
 })
 export class HabitacionesListComponent implements OnInit {
   loading = true;
   habitaciones: HabitacionLite[] = [];
 
+  estadosDisponibles: EstadoHabitacion[] = [
+    'Libre',
+    'Reservada',
+    'Ocupada',
+    'Mantenimiento',
+    'Fuera de Servicio'
+  ];
+
   constructor(
-    private habitacionService: HabitacionService,
+    private mockService: MockDataService,
     private router: Router
   ) {}
 
@@ -26,7 +36,7 @@ export class HabitacionesListComponent implements OnInit {
 
   cargarHabitaciones(): void {
     this.loading = true;
-    this.habitacionService.getHabitaciones()
+    this.mockService.getHabitaciones()
       .subscribe({
         next: (data) => {
           this.habitaciones = data;
@@ -41,5 +51,12 @@ export class HabitacionesListComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/']);
+  }
+
+  cambiarEstado(id: string, nuevoEstado: EstadoHabitacion): void {
+    const habitacion = this.habitaciones.find(h => h.id === id);
+    if (habitacion) {
+      habitacion.estado = nuevoEstado;
+    }
   }
 }

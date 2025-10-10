@@ -23,4 +23,8 @@ export class HabitacionService {
       })))
     );
   }
+
+  updateEstado(id: string, estado: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/Habitacion/${id}/estado`, { estado_Habitacion: estado });
+  }
 }
