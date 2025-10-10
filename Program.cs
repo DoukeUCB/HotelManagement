@@ -4,7 +4,15 @@ using HotelManagement.Repositories;
 using HotelManagement.Services;
 using HotelManagement.Aplicacion.Validators;
 using HotelManagement.Presentacion.Middleware;
+using HotelManagement.Application.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using HotelManagement.Datos.Repositories;
+
+
+
 using DotNetEnv;
+
 
 // Cargar variables de entorno desde .env
 Env.Load();
@@ -29,6 +37,17 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
 builder.Services.AddScoped<IDetalleReservaRepository, DetalleReservaRepository>();
 builder.Services.AddScoped<IDetalleReservaService, DetalleReservaService>();
 builder.Services.AddScoped<IDetalleReservaValidator, DetalleReservaValidator>();
+
+
+
+builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
+builder.Services.AddScoped<IReservaService, ReservaService>();
+builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+
+
 //Cliente
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IClienteService, ClienteService>(); 
