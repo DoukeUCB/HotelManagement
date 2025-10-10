@@ -16,7 +16,11 @@
 
     <ng-template #formulario>
       <form [formGroup]="form" (ngSubmit)="crearReserva()" class="card form-reserva">
-        <h2>Datos generales</h2>
+        <h2 class="section-lead">
+          <span class="bullet">1</span>
+          Datos generales
+          <small>Elige quién realiza la reserva y la habitación asignada</small>
+        </h2>
 
         <div class="grid">
           <label class="field">
@@ -68,7 +72,11 @@
           </label>
         </div>
 
-        <h2>Fechas</h2>
+        <h2 class="section-lead">
+          <span class="bullet">2</span>
+          Fechas
+          <small>Define estancia y número de huéspedes</small>
+        </h2>
         <div class="grid">
           <label class="field">
             <span>Fecha de entrada</span>
@@ -97,7 +105,11 @@
           </label>
         </div>
 
-        <h2>Montos</h2>
+        <h2 class="section-lead">
+          <span class="bullet">3</span>
+          Montos
+          <small>Introduce los importes acordados</small>
+        </h2>
         <div class="grid">
           <label class="field">
             <span>Monto total de la reserva (Bs.)</span>
@@ -121,7 +133,8 @@
             Cancelar
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-            {{ submitting() ? 'Guardando…' : 'Guardar reserva' }}
+            <span class="spinner" *ngIf="submitting(); else label"></span>
+            <ng-template #label>{{ submitting() ? 'Guardando…' : 'Guardar reserva' }}</ng-template>
           </button>
         </div>
 

@@ -34,4 +34,14 @@ namespace HotelManagement.DTOs
         [Range(0, double.MaxValue)]
         public decimal Monto_Total { get; set; }
     }
+
+    public class ReservaUpdateDTO
+    {
+        public string? Cliente_ID { get; set; }
+        public DateTime? Fecha_Entrada { get; set; }
+        public DateTime? Fecha_Salida { get; set; }
+        public string? Estado_Reserva { get; set; }
+        [Range(0, double.MaxValue)]
+        public decimal? Monto_Total { get; set; }
+    }
 }

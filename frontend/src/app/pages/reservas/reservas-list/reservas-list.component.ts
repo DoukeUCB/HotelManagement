@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReservaLite } from '../../../shared/models/reserva-lite.model';
 import { NuevaReservaService } from '../../../core/services/nueva-reserva.service';
@@ -8,7 +8,7 @@ import { NuevaReservaService } from '../../../core/services/nueva-reserva.servic
 @Component({
   selector: 'app-reservas-list',
   standalone: true,
-  imports: [CommonModule, DatePipe, DecimalPipe, FormsModule],
+  imports: [CommonModule, DatePipe, DecimalPipe, FormsModule, RouterLink],
   templateUrl: './reservas-list.component.html',
   styleUrls: ['./reservas-list.component.scss']
 })
@@ -65,6 +65,18 @@ export class ReservasListComponent implements OnInit {
         r => r.estado === this.estadoSeleccionado
       );
     }
+  }
+
+  editarReserva(id: string): void {
+    this.router.navigate(['/editar-reserva'], { queryParams: { id } });
+  }
+
+  eliminarReserva(id: string): void {
+    if (!confirm('¿Eliminar esta reserva?')) return;
+    this.api.deleteReserva(id).subscribe({
+      next: () => this.cargarReservas(),
+      error: () => alert('No se pudo eliminar la reserva. Intenta nuevamente.')
+    });
   }
 
   verReserva(id: string): void {

@@ -67,8 +67,8 @@
         <div class="table-row" *ngFor="let d of detalles()">
           <div>{{ d.numeroHabitacion }}</div>
           <div>{{ d.nombreHuesped }}</div>
-          <div>{{ d.fechaEntrada | date:'dd/MM/yyyy' }}</div>
-          <div>{{ d.fechaSalida | date:'dd/MM/yyyy' }}</div>
+          <div>{{ header()?.fechaEntrada | date:'dd/MM/yyyy' }}</div>
+          <div>{{ header()?.fechaSalida | date:'dd/MM/yyyy' }}</div>
           <div class="align-right">{{ d.precioTotal | number:'1.2-2' }}</div>
         </div>
       </div>

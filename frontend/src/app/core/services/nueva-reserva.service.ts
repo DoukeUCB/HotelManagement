@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ReservaLite } from '../../shared/models/reserva-lite.model';
+import { ReservaDetail } from '../../shared/models/reserva-detail.model';
+import { mapApiReservaDetail } from '../adapters/reservas.adapter';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -37,6 +39,30 @@ export interface CreateDetallePayload {
   huesped_ID: string;
   precio_Total: number;
   cantidad_Huespedes: number;
+}
+
+export interface UpdateReservaPayload {
+  cliente_ID?: string;
+  fecha_Entrada?: string;
+  fecha_Salida?: string;
+  estado_Reserva?: string;
+  monto_Total?: number;
+}
+
+export interface UpdateDetallePayload {
+  habitacion_ID?: string;
+  huesped_ID?: string;
+  precio_Total?: number;
+  cantidad_Huespedes?: number;
+}
+
+export interface ReservaData {
+  id: string;
+  cliente_ID: string;
+  fecha_Entrada: string;
+  fecha_Salida: string;
+  estado_Reserva: string;
+  monto_Total: number;
 }
 
 export interface ApiReservaListItem {
@@ -118,5 +144,37 @@ export class NuevaReservaService {
 
   createDetalleReserva(payload: CreateDetallePayload): Observable<any> {
     return this.http.post(`${API_BASE}/DetalleReserva`, payload);
+  }
+
+  updateReserva(id: string, payload: UpdateReservaPayload): Observable<any> {
+    return this.http.put(`${API_BASE}/Reserva/${id}`, payload);
+  }
+
+  deleteReserva(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_BASE}/Reserva/${id}`);
+  }
+
+  getReservaById(id: string): Observable<ReservaData> {
+    return this.http.get<any>(`${API_BASE}/Reserva/${id}`).pipe(
+      map(item => ({
+        id: item.id ?? item.ID,
+        cliente_ID: item.cliente_ID ?? item.Cliente_ID,
+        fecha_Entrada: item.fecha_Entrada ?? item.Fecha_Entrada,
+        fecha_Salida: item.fecha_Salida ?? item.Fecha_Salida,
+        estado_Reserva: item.estado_Reserva ?? item.Estado_Reserva,
+        monto_Total: item.monto_Total ?? item.Monto_Total
+      }))
+    );
+  }
+
+  getDetallesByReservaId(reservaId: string): Observable<ReservaDetail[]> {
+    return this.http.get<any>(`${API_BASE}/DetalleReserva/reserva/${reservaId}`).pipe(
+      map(res => Array.isArray(res) ? res : [res]),
+      map(list => list.map(mapApiReservaDetail))
+    );
+  }
+
+  updateDetalleReserva(id: string, payload: UpdateDetallePayload): Observable<any> {
+    return this.http.put(`${API_BASE}/DetalleReserva/${id}`, payload);
   }
 }

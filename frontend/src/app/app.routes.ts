@@ -34,10 +34,22 @@ export const routes: Routes = [
         .then(m => m.HuespedesListComponent)
   },
   {
+    path: 'nuevo-huesped',
+    loadComponent: () =>
+      import('./pages/nuevo-huesped/nuevo-huesped.component')
+        .then(m => m.NuevoHuespedComponent)
+  },
+  {
     path: 'nueva-reserva',
     loadComponent: () =>
       import('./pages/nueva-reserva/nueva-reserva.component')
         .then(m => m.NuevaReservaComponent)
+  },
+  {
+    path: 'editar-reserva',
+    loadComponent: () =>
+      import('./pages/editar-reserva/editar-reserva.component')
+        .then(m => m.EditarReservaComponent)
   },
   {
     path: 'inicio',

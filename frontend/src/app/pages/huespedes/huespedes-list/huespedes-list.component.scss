@@ -43,6 +43,7 @@ $card-background: #ffffff;
 // Cabecera de la página con el título y el botón de retroceso
 .page-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   
   padding: 10px 0 20px 0;
@@ -58,6 +59,22 @@ $card-background: #ffffff;
     flex-grow: 1; 
     text-align: center;
   }
+
+  .header-action-right {
+    min-width: 170px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .header-spacer {
+    min-width: 150px;
+  }
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 18px 0;
 }
 
 // Estados de la Tabla (Cargando y Vacío)
@@ -109,6 +126,28 @@ $card-background: #ffffff;
 
     &:last-child {
       border-bottom: none;
+    }
+  }
+}
+
+// Estilos para botones
+.btn {
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  transition: background-color 0.2s;
+
+  &-primary {
+    background-color: $primary-color;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: darken($primary-color, 8%);
     }
   }
 }
