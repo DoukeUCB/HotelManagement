@@ -1,0 +1,92 @@
+[
+  {
+    "id": "11111111-1111-1111-1111-111111111111",
+    "numero": "101",
+    "piso": 1,
+    "tipoNombre": "Simple",
+    "capacidad": 1,
+    "tarifaBase": 180.00,
+    "estado": "Libre"
+  },
+  {
+    "id": "22222222-2222-2222-2222-222222222222",
+    "numero": "102",
+    "piso": 1,
+    "tipoNombre": "Doble",
+    "capacidad": 2,
+    "tarifaBase": 260.00,
+    "estado": "Ocupada"
+  },
+  {
+    "id": "33333333-3333-3333-3333-333333333333",
+    "numero": "103",
+    "piso": 1,
+    "tipoNombre": "Matrimonial",
+    "capacidad": 2,
+    "tarifaBase": 300.00,
+    "estado": "Reservada"
+  },
+  {
+    "id": "44444444-4444-4444-4444-444444444444",
+    "numero": "201",
+    "piso": 2,
+    "tipoNombre": "Suite",
+    "capacidad": 3,
+    "tarifaBase": 420.00,
+    "estado": "Libre"
+  },
+  {
+    "id": "55555555-5555-5555-5555-555555555555",
+    "numero": "202",
+    "piso": 2,
+    "tipoNombre": "Doble",
+    "capacidad": 2,
+    "tarifaBase": 260.00,
+    "estado": "Mantenimiento"
+  },
+  {
+    "id": "66666666-6666-6666-6666-666666666666",
+    "numero": "203",
+    "piso": 2,
+    "tipoNombre": "Simple",
+    "capacidad": 1,
+    "tarifaBase": 180.00,
+    "estado": "Libre"
+  },
+  {
+    "id": "77777777-7777-7777-7777-777777777777",
+    "numero": "301",
+    "piso": 3,
+    "tipoNombre": "Doble",
+    "capacidad": 2,
+    "tarifaBase": 270.00,
+    "estado": "Reservada"
+  },
+  {
+    "id": "88888888-8888-8888-8888-888888888888",
+    "numero": "302",
+    "piso": 3,
+    "tipoNombre": "Suite",
+    "capacidad": 4,
+    "tarifaBase": 520.00,
+    "estado": "Ocupada"
+  },
+  {
+    "id": "99999999-9999-9999-9999-999999999999",
+    "numero": "303",
+    "piso": 3,
+    "tipoNombre": "Matrimonial",
+    "capacidad": 2,
+    "tarifaBase": 310.00,
+    "estado": "Libre"
+  },
+  {
+    "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "numero": "304",
+    "piso": 3,
+    "tipoNombre": "Simple",
+    "capacidad": 1,
+    "tarifaBase": 185.00,
+    "estado": "Fuera de Servicio"
+  }
+]
