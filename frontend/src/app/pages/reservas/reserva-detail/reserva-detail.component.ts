@@ -3,6 +3,7 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NuevaReservaService } from '../../../core/services/nueva-reserva.service';
 import { ReservaDetail } from '../../../shared/models/reserva-detail.model';
+import { forkJoin } from 'rxjs';
 
 interface ReservaHeader {
   reservaId: string;
@@ -27,25 +28,24 @@ export default class ReservaDetailComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
   detalles = signal<ReservaDetail[]>([]);
-  reservaData = signal<{ fechaEntrada: string; fechaSalida: string } | null>(null);
+  montoTotal = signal<number>(0);
 
   header = computed<ReservaHeader | null>(() => {
     const lista = this.detalles();
-    const reserva = this.reservaData();
-    if (!lista.length || !reserva) return null;
+    if (!lista.length) return null;
 
     const primero = lista[0];
     return {
       reservaId: primero.reservaId,
       nombreHuesped: primero.nombreHuesped,
       numeroHabitacion: primero.numeroHabitacion,
-      cantidadHuespedes: lista.reduce((sum, d) => sum + d.cantidadHuespedes, 0),
-      fechaEntrada: reserva.fechaEntrada,
-      fechaSalida: reserva.fechaSalida
+      cantidadHuespedes: lista.length,
+      fechaEntrada: primero.fechaEntrada,
+      fechaSalida: primero.fechaSalida
     };
   });
 
-  total = computed(() => this.detalles().reduce((sum, d) => sum + d.precioTotal, 0));
+  total = computed(() => this.montoTotal());
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -55,29 +55,23 @@ export default class ReservaDetailComponent implements OnInit {
       return;
     }
 
-    this.api.getReservaById(id).subscribe({
-      next: (reserva) => {
-        this.reservaData.set({
-          fechaEntrada: reserva.fecha_Entrada,
-          fechaSalida: reserva.fecha_Salida
-        });
-        this.cargarDetalles(id);
-      },
-      error: () => {
-        this.error.set('No se pudo cargar la reserva');
-        this.loading.set(false);
-      }
-    });
-  }
+    console.log('🔍 Cargando reserva con ID:', id);
 
-  private cargarDetalles(id: string): void {
-    this.api.getDetallesByReservaId(id).subscribe({
-      next: (lista) => {
-        this.detalles.set(lista);
+    forkJoin({
+      reserva: this.api.getReservaById(id),
+      detalles: this.api.getDetallesByReservaId(id)
+    }).subscribe({
+      next: ({ reserva, detalles }) => {
+        console.log('✅ Reserva cargada:', reserva);
+        console.log('✅ Detalles cargados:', detalles);
+        
+        this.montoTotal.set(reserva.monto_Total);
+        this.detalles.set(detalles);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('No se pudieron cargar los detalles de la reserva');
+      error: (err) => {
+        console.error('❌ Error cargando reserva:', err);
+        this.error.set('No se pudo cargar la información de la reserva');
         this.loading.set(false);
       }
     });

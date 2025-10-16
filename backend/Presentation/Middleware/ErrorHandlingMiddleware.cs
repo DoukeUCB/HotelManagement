@@ -1,5 +1,4 @@
 using HotelManagement.Aplicacion.Exceptions;
-using MySqlConnector;
 using System.Net;
 using System.Text.Json;
 
@@ -24,81 +23,54 @@ namespace HotelManagement.Presentacion.Middleware
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error no controlado: {Message}", ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var code = HttpStatusCode.InternalServerError;
             var result = string.Empty;
 
             switch (exception)
             {
-                case NotFoundException notFoundException:
-                    code = HttpStatusCode.NotFound;
-                    result = JsonSerializer.Serialize(new
-                    {
-                        error = "Recurso no encontrado",
-                        message = notFoundException.Message
-                    });
-                    _logger.LogWarning(notFoundException, "Recurso no encontrado");
-                    break;
-
-                case BadRequestException badRequestException:
-                    code = HttpStatusCode.BadRequest;
-                    result = JsonSerializer.Serialize(new
-                    {
-                        error = "Solicitud incorrecta",
-                        message = badRequestException.Message
-                    });
-                    _logger.LogWarning(badRequestException, "Solicitud incorrecta");
-                    break;
-
                 case ValidationException validationException:
                     code = HttpStatusCode.BadRequest;
                     result = JsonSerializer.Serialize(new
                     {
-                        error = "Errores de validación",
-                        message = validationException.Message,
+                        message = "Errores de validación",
                         errors = validationException.Errors
                     });
-                    _logger.LogWarning(validationException, "Errores de validación");
                     break;
 
-                case ConflictException conflictException:
-                    code = HttpStatusCode.Conflict;
-                    result = JsonSerializer.Serialize(new
-                    {
-                        error = "Conflicto",
-                        message = conflictException.Message
-                    });
-                    _logger.LogWarning(conflictException, "Conflicto");
+                case NotFoundException _:
+                    code = HttpStatusCode.NotFound;
+                    result = JsonSerializer.Serialize(new { message = exception.Message });
                     break;
 
-                case MySqlException mySqlException when mySqlException.Number == 1452:
+                case BadRequestException _:
                     code = HttpStatusCode.BadRequest;
-                    result = JsonSerializer.Serialize(new
-                    {
-                        error = "Referencia inválida",
-                        message = "Uno o más IDs de referencia no existen en la base de datos. Verifique que los datos relacionados existan antes de continuar."
-                    });
-                    _logger.LogWarning(mySqlException, "Violación de clave foránea");
+                    result = JsonSerializer.Serialize(new { message = exception.Message });
+                    break;
+
+                case ConflictException _:
+                    code = HttpStatusCode.Conflict;
+                    result = JsonSerializer.Serialize(new { message = exception.Message });
                     break;
 
                 default:
-                    code = HttpStatusCode.InternalServerError;
                     result = JsonSerializer.Serialize(new
                     {
-                        error = "Error interno del servidor",
-                        message = "Ocurrió un error inesperado. Por favor, contacte al administrador."
+                        message = "Error interno del servidor",
+                        details = exception.Message
                     });
-                    _logger.LogError(exception, "Error interno del servidor");
                     break;
             }
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
+
             return context.Response.WriteAsync(result);
         }
     }

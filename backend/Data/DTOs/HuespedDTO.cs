@@ -12,6 +12,11 @@ namespace HotelManagement.DTOs
         public string? Telefono { get; set; }
         public DateTime? Fecha_Nacimiento { get; set; }
         public bool Activo { get; set; }
+        
+        // Campo calculado para el frontend
+        public string? Nombre_Completo => 
+            $"{Nombre} {Apellido}" + 
+            (string.IsNullOrWhiteSpace(Segundo_Apellido) ? "" : $" {Segundo_Apellido}");
     }
 
     public class HuespedCreateDTO

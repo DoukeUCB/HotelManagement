@@ -52,9 +52,9 @@ $success-color: #28a745; // Color para estados positivos
   padding: 8px 0; // Padding para área de clic
 
   svg {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
+    width: 16px;  // Reducido de 20px a 16px
+    height: 16px; // Reducido de 20px a 16px
+    margin-right: 6px;
     fill: $primary-color;
     transition: transform 0.2s;
   }

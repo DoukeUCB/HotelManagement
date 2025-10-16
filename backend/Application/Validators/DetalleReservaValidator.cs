@@ -31,8 +31,8 @@ namespace HotelManagement.Aplicacion.Validators
             if (!IsValidUuid(dto.Huesped_ID))
                 errors.Add("Huesped_ID debe ser un UUID válido");
 
-            if (dto.Fecha_Entrada < DateTime.Today)
-                errors.Add("Fecha_Entrada no puede ser anterior a hoy");
+            if (dto.Fecha_Entrada < DateTime.Today.AddDays(-1)) // Permitir reservas de hoy
+                errors.Add("Fecha_Entrada no puede ser muy anterior a hoy");
             
             if (dto.Fecha_Salida <= dto.Fecha_Entrada)
                 errors.Add("Fecha_Salida debe ser posterior a Fecha_Entrada");

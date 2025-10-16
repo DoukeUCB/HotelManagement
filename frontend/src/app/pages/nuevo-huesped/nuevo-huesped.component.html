@@ -8,11 +8,29 @@
   <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
     <section class="form-grid">
       <label class="campo">
-        <span>Nombre completo *</span>
-        <input type="text" formControlName="nombreCompleto" />
-        <small *ngIf="form.controls.nombreCompleto.invalid && form.controls.nombreCompleto.touched">
+        <span>Primer nombre *</span>
+        <input type="text" formControlName="primerNombre" />
+        <small *ngIf="form.controls.primerNombre.invalid && form.controls.primerNombre.touched">
           Campo obligatorio.
         </small>
+      </label>
+
+      <label class="campo">
+        <span>Segundo nombre</span>
+        <input type="text" formControlName="segundoNombre" />
+      </label>
+
+      <label class="campo">
+        <span>Primer apellido *</span>
+        <input type="text" formControlName="primerApellido" />
+        <small *ngIf="form.controls.primerApellido.invalid && form.controls.primerApellido.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Segundo apellido</span>
+        <input type="text" formControlName="segundoApellido" />
       </label>
 
       <label class="campo">
@@ -26,14 +44,6 @@
       <label class="campo">
         <span>Teléfono</span>
         <input type="tel" formControlName="telefono" />
-      </label>
-
-      <label class="campo">
-        <span>Email</span>
-        <input type="email" formControlName="email" />
-        <small *ngIf="form.controls.email.invalid && form.controls.email.touched">
-          Formato inválido.
-        </small>
       </label>
 
       <label class="campo">

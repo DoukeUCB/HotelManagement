@@ -35,6 +35,7 @@ namespace HotelManagement.Models
         [ForeignKey("Usuario_Creacion_ID")]
         public virtual Usuario? UsuarioCreacion { get; set; }
 
-        public virtual ICollection<DetalleReserva>? DetalleReservas { get; set; }
+        // Cambiado: colección NO anulable e inicializada para evitar advertencias de nulabilidad en Include/ThenInclude
+        public virtual ICollection<DetalleReserva> DetalleReservas { get; set; } = new List<DetalleReserva>();
     }
 }

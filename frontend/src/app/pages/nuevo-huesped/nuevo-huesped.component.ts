@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { NuevoHuespedService } from '../../core/services/nuevo-huesped.service';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HuespedService } from '../../core/services/huesped.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-nuevo-huesped',
@@ -11,60 +12,79 @@ import { NuevoHuespedService } from '../../core/services/nuevo-huesped.service';
   templateUrl: './nuevo-huesped.component.html',
   styleUrls: ['./nuevo-huesped.component.scss']
 })
-export class NuevoHuespedComponent {
+export class NuevoHuespedComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private api = inject(NuevoHuespedService);
+  private service = inject(HuespedService);
 
   submitting = signal(false);
   mensaje = signal<string | null>(null);
   error = signal<string | null>(null);
 
   form = this.fb.nonNullable.group({
-    nombreCompleto: ['', [Validators.required, Validators.maxLength(100)]],
-    documento: ['', [Validators.required, Validators.maxLength(20)]],
-    telefono: ['', Validators.maxLength(20)],
-    email: ['', [Validators.email, Validators.maxLength(100)]],
+    primerNombre: ['', [Validators.required, Validators.minLength(2)]],
+    segundoNombre: [''],
+    primerApellido: ['', [Validators.required, Validators.minLength(2)]],
+    segundoApellido: [''],
+    documento: ['', [Validators.required, Validators.minLength(4)]],
+    telefono: [''],
     fechaNacimiento: ['']
   });
 
-  guardar(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.submitting.set(true);
-    this.mensaje.set(null);
-    this.error.set(null);
-
-    const value = this.form.getRawValue();
-    const payload = {
-      nombre_Completo: value.nombreCompleto,
-      documento_Identidad: value.documento,
-      telefono: value.telefono || null,
-      email: value.email || null,
-      fecha_Nacimiento: value.fechaNacimiento ? new Date(value.fechaNacimiento).toISOString() : null
-    };
-
-    console.log('Enviando payload:', payload);
-
-    this.api.createHuesped(payload).subscribe({
-      next: (res) => {
-        console.log('Respuesta del servidor:', res);
-        this.mensaje.set('Huésped registrado correctamente.');
-        this.form.reset();
-        this.submitting.set(false);
-      },
-      error: (err) => {
-        console.error('Error del servidor:', err);
-        this.error.set('No se pudo registrar el huésped. Intenta nuevamente.');
-        this.submitting.set(false);
-      }
-    });
+  ngOnInit(): void {
+    // ...si se necesita inicializar algo...
   }
 
   cancelar(): void {
     this.router.navigate(['/huespedes']);
+  }
+
+  guardar(): void {
+    this.mensaje.set(null);
+    this.error.set(null);
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.error.set('Por favor completa los campos obligatorios correctamente.');
+      return;
+    }
+
+    this.submitting.set(true);
+
+    // Extraer valores con non-null assertion para evitar undefined
+    const primerNombre: string = this.form.get('primerNombre')!.value.trim();
+    const segundoNombre: string = (this.form.get('segundoNombre')!.value || '').trim();
+    const primerApellido: string = this.form.get('primerApellido')!.value.trim();
+    const segundoApellido: string | null = (this.form.get('segundoApellido')!.value || '').trim() || null;
+    const documento: string = this.form.get('documento')!.value;
+    const telefono: string | null = this.form.get('telefono')!.value || null;
+    const fechaNacimiento: string | null = this.form.get('fechaNacimiento')!.value || null;
+
+    // Construir Nombre completo para el backend: incluir segundoNombre si existe
+    const Nombre = segundoNombre ? `${primerNombre} ${segundoNombre}` : primerNombre;
+    const Apellido = primerApellido;
+    const Segundo_Apellido = segundoApellido;
+
+    const payload = {
+      Nombre,
+      Apellido,
+      Segundo_Apellido,
+      Documento_Identidad: documento,
+      Telefono: telefono,
+      Fecha_Nacimiento: fechaNacimiento
+    };
+
+    this.service.createHuesped(payload).pipe(
+      finalize(() => this.submitting.set(false))
+    ).subscribe({
+      next: () => {
+        this.mensaje.set('✅ Huésped creado correctamente.');
+        setTimeout(() => this.router.navigate(['/huespedes']), 900);
+      },
+      error: (err: any) => {
+        const msg = err?.error?.message ?? err?.message ?? 'Error al crear huésped';
+        this.error.set(`❌ ${msg}`);
+      }
+    });
   }
 }

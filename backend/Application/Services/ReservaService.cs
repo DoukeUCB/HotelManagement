@@ -3,6 +3,8 @@ using HotelManagement.Models;
 using HotelManagement.Datos.Repositories;
 using HotelManagement.Repositories;
 using HotelManagement.Aplicacion.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using HotelManagement.Datos.Config;
 
 namespace HotelManagement.Application.Services
 {
@@ -10,26 +12,49 @@ namespace HotelManagement.Application.Services
     {
         private readonly IReservaRepository _repository;
         private readonly IClienteRepository _clienteRepository;
+        private readonly HotelDbContext _context;
 
-        public ReservaService(IReservaRepository repository, IClienteRepository clienteRepository)
+        public ReservaService(
+            IReservaRepository repository, 
+            IClienteRepository clienteRepository,
+            HotelDbContext context)
         {
             _repository = repository;
             _clienteRepository = clienteRepository;
+            _context = context;
         }
 
         public async Task<IEnumerable<ReservaDTO>> GetAllAsync()
         {
             var reservas = await _repository.GetAllAsync();
 
-            return reservas.Select(r => new ReservaDTO
+            var reservasDto = new List<ReservaDTO>();
+
+            foreach (var r in reservas)
             {
-                ID = new Guid(r.ID).ToString(),
-                Cliente_ID = new Guid(r.Cliente_ID).ToString(),
-                Cliente_Nombre = r.Cliente?.Razon_Social ?? "Cliente no disponible",
-                Fecha_Creacion = r.Fecha_Creacion,
-                Estado_Reserva = r.Estado_Reserva,
-                Monto_Total = r.Monto_Total
-            });
+                var reservaId = new Guid(r.ID);
+                var reservaIdBytes = r.ID;
+
+                // Obtener fechas desde DetalleReserva
+                var primerDetalle = await _context.DetalleReservas
+                    .Where(d => d.Reserva_ID.SequenceEqual(reservaIdBytes))
+                    .OrderBy(d => d.Fecha_Entrada)
+                    .FirstOrDefaultAsync();
+
+                reservasDto.Add(new ReservaDTO
+                {
+                    ID = reservaId.ToString(),
+                    Cliente_ID = new Guid(r.Cliente_ID).ToString(),
+                    Cliente_Nombre = r.Cliente?.Razon_Social ?? "Cliente no disponible",
+                    Fecha_Creacion = r.Fecha_Creacion,
+                    Estado_Reserva = r.Estado_Reserva,
+                    Monto_Total = r.Monto_Total,
+                    Fecha_Entrada = primerDetalle?.Fecha_Entrada,
+                    Fecha_Salida = primerDetalle?.Fecha_Salida
+                });
+            }
+
+            return reservasDto;
         }
 
         public async Task<ReservaDTO?> GetByIdAsync(Guid id)
