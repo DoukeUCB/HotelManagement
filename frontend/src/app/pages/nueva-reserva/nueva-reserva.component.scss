@@ -592,4 +592,134 @@
     }
   }
 }
+:root {
+  --select-border: #d0d5dd;
+  --select-focus:  #6366f1;   /* morado de foco */
+  --select-bg:     #ffffff;
+  --select-text:   #111827;
+  --select-hover:  #f3f4f6;   /* gris hover */
+  --select-active: #9ca3af;   /* gris activo */
+  --select-shadow: 0 6px 14px rgba(0,0,0,.10);
+  --radius:        10px;
+}
 
+/* ancla el dropdown al input */
+.autocomplete-container,
+.field { position: relative; }
+
+/* input con look de select */
+.cliente-search {
+  width: 100%;
+  padding: .6rem .8rem;
+  border: 1px solid var(--select-border);
+  border-radius: var(--radius);
+  background: var(--select-bg);
+  color: var(--select-text);
+  line-height: 1.25;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+.cliente-search:focus {
+  border-color: var(--select-focus);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.25);
+}
+
+/* panel como el dropdown del select */
+.suggestions {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--select-bg);
+  border: 1px solid var(--select-border);
+  border-radius: 8px;
+  box-shadow: var(--select-shadow);
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* opción con mismo padding/hover del select */
+.select-like__option {
+  display: grid;
+  grid-template-columns: 1fr auto; /* texto | NIT */
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .8rem;
+  font-size: .95rem;
+  color: var(--select-text);
+  cursor: pointer;
+}
+.select-like__option:hover {
+  background: var(--select-hover);
+}
+.select-like__option.is-active {
+  background: var(--select-active);
+  color: #fff;
+}
+
+.option__primary { font-weight: 500; }
+.option__secondary { font-size: .85rem; opacity: .85; }
+
+/* scrollbar sutil */
+.suggestions::-webkit-scrollbar { width: 8px; }
+.suggestions::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 8px; }
+.suggestions::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+/* === Panel de sugerencias (dropdown de huésped o cliente) === */
+.suggestions {
+  position: absolute;
+  z-index: 999; /* más alto para que se superponga al contenido */
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+
+  /* --- apariencia de menú desplegable --- */
+  background-color: #ffffff; /* <--- el fondo sólido blanco */
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* cada opción dentro del menú */
+.suggestions li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  color: #111827;
+  cursor: pointer;
+  background-color: #fff;
+  transition: background-color 0.15s ease;
+}
+
+/* hover gris claro como el select */
+.suggestions li:hover {
+  background-color: #f3f4f6;
+}
+
+/* si usas la clase is-active para navegación con teclado */
+.suggestions li.is-active {
+  background-color: #9ca3af;
+  color: #fff;
+}
+
+/* scroll más discreto */
+.suggestions::-webkit-scrollbar {
+  width: 8px;
+}
+.suggestions::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+.suggestions::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}

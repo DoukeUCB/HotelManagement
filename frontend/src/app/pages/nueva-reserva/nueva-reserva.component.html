@@ -65,22 +65,45 @@
         </h2>
 
         <div class="grid">
+          <!-- Campo combinado buscador/autocompletar -->
+          <!-- Campo combinado buscador/autocompletar -->
           <label class="field">
             <span>Seleccionar Cliente *</span>
-            <select formControlName="clienteId">
-              <option value="" disabled>-- Selecciona un cliente --</option>
-              <option *ngFor="let c of clientes()" [value]="c.id">
-                {{ c.label }}
-              </option>
-            </select>
-            <small class="field-hint">Elige el cliente que realizará la reserva</small>
+
+            <div class="autocomplete-container">
+              <input
+                #buscadorCliente
+                type="search"
+                class="cliente-search"
+                placeholder="Buscar por Razón Social o NIT"
+                [value]="searchTerm()"
+                (input)="searchTerm.set(buscadorCliente.value)"
+                (focus)="showSuggestions = true"
+                (blur)="onBlur()"
+              />
+
+              <!-- Panel con look de select -->
+              <ul class="suggestions" *ngIf="showSuggestions && filteredClientes().length > 0">
+                <li
+                  *ngFor="let c of filteredClientes()"
+                  class="select-like__option"
+                  (mousedown)="seleccionarCliente(c)"
+                >
+                  <span class="option__primary">{{ c.label }}</span>
+                  <span class="option__secondary" *ngIf="c.nit">NIT {{ c.nit }}</span>
+                </li>
+              </ul>
+            </div>
+
             <small *ngIf="form.controls.clienteId.invalid && form.controls.clienteId.touched" class="error-message">
               Debes seleccionar un cliente
             </small>
           </label>
 
+
+
           <label class="field">
-            <span>Estado de la Reserva</span>
+            <span>Estado de la Reserva </span>
             <select formControlName="estadoReserva">
               <option *ngFor="let estado of estadosReserva" [value]="estado">
                 {{ estado }}
@@ -144,12 +167,16 @@
                 <span>Habitación *</span>
                 <select formControlName="habitacionId">
                   <option value="" disabled>Selecciona habitación</option>
-                  <option *ngFor="let h of habitaciones()" [value]="h.id">
-                    Hab. {{ h.numero }} — {{ h.estado }}
-                  </option>
+                  <ng-container *ngIf="habitacionesLibres().length; else noLibres">
+                    <option *ngFor="let h of habitacionesLibres()" [value]="h.id">
+                      Hab. {{ h.numero }} — {{ h.estado }}
+                    </option>
+                  </ng-container>
+                  <ng-template #noLibres>
+                    <option value="" disabled>No hay habitaciones libres</option>
+                  </ng-template>
                 </select>
               </label>
-
               <label class="field">
                 <span>Fecha de entrada *</span>
                 <input type="date" formControlName="fechaEntrada" />
@@ -170,14 +197,33 @@
             <div class="huespedes-section">
               <label class="field">
                 <span>Agregar huésped(es) *</span>
-                <select #huespedSelect (change)="agregarHuesped(i, huespedSelect.value); huespedSelect.value = ''">
-                  <option value="">-- Selecciona un huésped --</option>
-                  <option *ngFor="let h of huespedes()" [value]="h.id">
-                    {{ h.nombre }}
-                  </option>
-                </select>
+
+                <div class="autocomplete-container">
+                  <input
+                    #huespedInput
+                    type="search"
+                    class="cliente-search"  
+                    placeholder="Buscar huésped por nombre"
+                    [value]="huespedSearchTerm[i] || ''"
+                    (focus)="openHuesped(i)"
+                    (input)="onHuespedInput(i, huespedInput.value)"
+                    (blur)="onHuespedBlur(i)"
+                  />
+
+                  <ul class="suggestions" *ngIf="showHuespedSug[i] && filteredHuespedes(i).length">
+                    <li
+                      *ngFor="let h of filteredHuespedes(i)"
+                      class="select-like__option"
+                      (mousedown)="seleccionarHuesped(i, h, huespedInput)"
+                    >
+                      <span class="option__primary">{{ h.nombre }}</span>
+                    </li>
+                  </ul>
+                </div>
+
                 <small class="field-hint">Puedes agregar múltiples huéspedes</small>
               </label>
+
 
               <div class="chip-container" *ngIf="habitacion.get('huespedIds')?.value?.length">
                 <div *ngFor="let huespedId of habitacion.get('huespedIds')?.value" class="chip">
@@ -226,7 +272,7 @@
       <div class="paso-contenido" *ngIf="pasoActual() === 3">
         <h2 class="paso-header">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path>
+            <path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9V3H15V1H17V3ZM20 11H4V19H20V11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path>
           </svg>
           Confirmación y Monto Total
         </h2>

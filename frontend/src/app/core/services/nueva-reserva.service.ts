@@ -11,6 +11,7 @@ export interface ClienteOption {
   id: string;
   label: string;
   email: string;
+  nit: number;
 }
 
 export interface HabitacionOption {
@@ -98,7 +99,8 @@ export class NuevaReservaService {
         items.map(item => ({
           id: item.id ?? item.ID,
           label: item.razon_Social ?? item.razonSocial ?? item.Razon_Social ?? 'Cliente sin nombre',
-          email: item.email ?? item.Email ?? ''
+          email: item.email ?? item.Email ?? '',
+          nit: item.nit ?? item.NIT ?? ''
         }))
       )
     );
