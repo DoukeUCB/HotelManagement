@@ -102,7 +102,8 @@ namespace HotelManagement.Services
                 ID = ByteArrayToGuid(cliente.ID),
                 Razon_Social = cliente.Razon_Social,
                 NIT = cliente.NIT,
-                Email = cliente.Email
+                Email = cliente.Email,
+                Activo = cliente.Activo
             };
         }
 
