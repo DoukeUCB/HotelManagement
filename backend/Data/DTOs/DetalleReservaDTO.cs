@@ -39,4 +39,31 @@ namespace HotelManagement.DTOs
         public DateTime? Fecha_Entrada { get; set; }
         public DateTime? Fecha_Salida { get; set; }
     }
+
+    // DTO para crear múltiples detalles a la vez
+    public class DetalleReservaMultipleCreateDTO
+    {
+        [Required]
+        public string Reserva_ID { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(1, ErrorMessage = "Debe agregar al menos una habitación")]
+        public List<DetalleHabitacionDTO> Habitaciones { get; set; } = new();
+    }
+
+    public class DetalleHabitacionDTO
+    {
+        [Required]
+        public string Habitacion_ID { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime Fecha_Entrada { get; set; }
+
+        [Required]
+        public DateTime Fecha_Salida { get; set; }
+
+        [Required]
+        [MinLength(1, ErrorMessage = "Debe asignar al menos un huésped")]
+        public List<string> Huesped_IDs { get; set; } = new();
+    }
 }

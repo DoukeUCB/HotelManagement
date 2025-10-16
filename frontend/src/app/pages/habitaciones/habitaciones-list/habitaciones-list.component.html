@@ -32,12 +32,10 @@
       <div data-label="Tarifa Base" class="align-right total-cell">{{ h.tarifaBase | number:'1.2-2' }}</div>
       
       <div data-label="Estado" class="actions status-cell">
-        <select [ngModel]="h.estado" 
-                (ngModelChange)="cambiarEstado(h.id, $event)"
-                [class]="'status-select status-' + h.estado">
-          <option *ngFor="let estado of estadosDisponibles" 
-                  [value]="estado">{{ estado }}</option>
-        </select>
+        <!-- Mostrar estado como badge (NO editable) -->
+        <span class="status-badge" [ngClass]="'status-' + (h.estado || 'Libre')">
+          {{ h.estado || 'Libre' }}
+        </span>
       </div>
     </div>
   </div>

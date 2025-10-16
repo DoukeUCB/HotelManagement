@@ -17,6 +17,10 @@ export interface HabitacionOption {
   id: string;
   numero: string;
   estado: string;
+  piso?: number;
+  tipoNombre?: string;
+  capacidad?: number;
+  tarifaBase?: number;
 }
 
 export interface HuespedOption {
@@ -26,9 +30,6 @@ export interface HuespedOption {
 
 export interface CreateReservaPayload {
   cliente_ID: string;
-  fecha_Reserva: string;
-  fecha_Entrada: string;
-  fecha_Salida: string;
   estado_Reserva: string;
   monto_Total: number;
 }
@@ -39,6 +40,16 @@ export interface CreateDetallePayload {
   huesped_ID: string;
   precio_Total: number;
   cantidad_Huespedes: number;
+}
+
+export interface CreateDetallesMultiplesPayload {
+  reserva_ID: string;
+  habitaciones: {
+    habitacion_ID: string;
+    fecha_Entrada: string;
+    fecha_Salida: string;
+    huesped_IDs: string[];
+  }[];
 }
 
 export interface UpdateReservaPayload {
@@ -70,9 +81,9 @@ export interface ApiReservaListItem {
   ID?: string;
   cliente_ID: string;
   cliente_Nombre?: string;
-  fecha_Reserva?: string;
-  fecha_Entrada: string;
-  fecha_Salida: string;
+  fecha_Creacion?: string;
+  fecha_Entrada?: string; // Viene de DetalleReserva
+  fecha_Salida?: string;  // Viene de DetalleReserva
   estado_Reserva: string;
   monto_Total: number;
 }
@@ -99,7 +110,11 @@ export class NuevaReservaService {
         items.map(item => ({
           id: item.id ?? item.ID,
           numero: item.numero_Habitacion ?? item.numeroHabitacion ?? item.Numero_Habitacion ?? 'N/D',
-          estado: item.estado_Habitacion ?? item.estado ?? item.Estado_Habitacion ?? 'Sin estado'
+          estado: item.estado_Habitacion ?? item.estado ?? item.Estado_Habitacion ?? 'Sin estado',
+          piso: item.piso ?? item.Piso ?? 0,
+          tipoNombre: item.tipo_Habitacion?.nombre ?? item.tipoNombre ?? item.Tipo_Habitacion?.Nombre ?? '',
+          capacidad: item.tipo_Habitacion?.capacidad_Maxima ?? item.capacidad ?? item.Capacidad_Maxima ?? 0,
+          tarifaBase: item.tipo_Habitacion?.precio_Base ?? item.tarifaBase ?? item.Precio_Base ?? 0
         }))
       )
     );
@@ -109,14 +124,21 @@ export class NuevaReservaService {
     return this.http.get<any[]>(`${API_BASE}/Huesped`).pipe(
       map(items =>
         items.map(item => {
-          const nombreCompuesto =
-            [item.primerNombre, item.segundoNombre, item.primerApellido, item.segundoApellido]
-              .filter(Boolean)
-              .join(' ') || 'Huésped sin nombre';
+          // Usar Nombre_Completo del backend si existe
+          const nombreCompleto = item.nombre_Completo ?? item.Nombre_Completo;
+          
+          // Si no existe, construirlo manualmente
+          const nombreManual = [
+            item.nombre ?? item.Nombre,
+            item.apellido ?? item.Apellido,
+            item.segundo_Apellido ?? item.Segundo_Apellido
+          ]
+            .filter(Boolean)
+            .join(' ') || 'Huésped sin nombre';
 
           return {
             id: item.id ?? item.ID,
-            nombre: item.nombre_Completo ?? item.nombreCompleto ?? nombreCompuesto
+            nombre: nombreCompleto || nombreManual
           };
         })
       )
@@ -129,8 +151,8 @@ export class NuevaReservaService {
         items.map(item => ({
           id: item.id ?? item.ID ?? '',
           cliente: item.cliente_Nombre ?? 'Cliente no disponible',
-          fechaEntrada: item.fecha_Entrada,
-          fechaSalida: item.fecha_Salida,
+          fechaEntrada: item.fecha_Entrada ?? item.fecha_Creacion ?? '', // Fallback a fecha_Creacion
+          fechaSalida: item.fecha_Salida ?? item.fecha_Creacion ?? '',
           estado: item.estado_Reserva,
           montoTotal: item.monto_Total
         }))
@@ -146,11 +168,21 @@ export class NuevaReservaService {
     return this.http.post(`${API_BASE}/DetalleReserva`, payload);
   }
 
+  createDetallesMultiples(reservaId: string, habitaciones: any[]): Observable<any> {
+    const payload = {
+      reserva_ID: reservaId,
+      habitaciones: habitaciones
+    };
+    return this.http.post(`${API_BASE}/DetalleReserva/multiple`, payload);
+  }
+
   updateReserva(id: string, payload: UpdateReservaPayload): Observable<any> {
     return this.http.put(`${API_BASE}/Reserva/${id}`, payload);
   }
 
   deleteReserva(id: string): Observable<void> {
+    console.log('🗑️ Intentando eliminar reserva con ID:', id);
+    console.log('🔗 URL:', `${API_BASE}/Reserva/${id}`);
     return this.http.delete<void>(`${API_BASE}/Reserva/${id}`);
   }
 

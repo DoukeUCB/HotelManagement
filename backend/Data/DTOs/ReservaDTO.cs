@@ -10,6 +10,10 @@ namespace HotelManagement.DTOs
         public decimal Monto_Total { get; set; }
         public DateTime Fecha_Creacion { get; set; }
         public string? Cliente_Nombre { get; set; }
+        
+        // Campos calculados desde DetalleReserva (no están en Reserva)
+        public DateTime? Fecha_Entrada { get; set; }
+        public DateTime? Fecha_Salida { get; set; }
     }
 
     public class ReservaCreateDTO

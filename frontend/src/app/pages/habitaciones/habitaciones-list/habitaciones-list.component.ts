@@ -1,62 +1,63 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
-import { Router } from '@angular/router';
-import { HabitacionService } from '../../../core/services/habitacion.service';
-import { HabitacionLite, EstadoHabitacion } from '../../../shared/models/habitacion-lite.model';
-import { FormsModule } from '@angular/forms';
-import { MockDataService } from '../../../core/services/mock-data.service';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { NuevaReservaService } from '../../../core/services/nueva-reserva.service';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-habitaciones-list',
-  templateUrl: './habitaciones-list.component.html',
-  styleUrls: ['./habitaciones-list.component.scss'],
   standalone: true,
-  imports: [CommonModule, DecimalPipe, FormsModule]
+  imports: [CommonModule, RouterLink],
+  templateUrl: './habitaciones-list.component.html',
+  styleUrls: ['./habitaciones-list.component.scss']
 })
-export class HabitacionesListComponent implements OnInit {
+export class HabitacionesListComponent implements OnInit, OnDestroy {
+  private api = inject(NuevaReservaService);
+  private router = inject(Router);
+
+  habitaciones: any[] = [];
   loading = true;
-  habitaciones: HabitacionLite[] = [];
 
-  estadosDisponibles: EstadoHabitacion[] = [
-    'Libre',
-    'Reservada',
-    'Ocupada',
-    'Mantenimiento',
-    'Fuera de Servicio'
-  ];
-
-  constructor(
-    private mockService: MockDataService,
-    private router: Router
-  ) {}
+  private pollSub: Subscription | null = null;
 
   ngOnInit(): void {
     this.cargarHabitaciones();
+
+    // Polling cada 15s para reflejar cambios en BD (puedes ajustar intervalo)
+    this.pollSub = timer(15000, 15000).subscribe(() => {
+      this.cargarHabitaciones();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.pollSub?.unsubscribe();
+  }
+
+  goBack(): void {
+    this.router.navigate(['/inicio']);
   }
 
   cargarHabitaciones(): void {
     this.loading = true;
-    this.mockService.getHabitaciones()
-      .subscribe({
-        next: (data) => {
-          this.habitaciones = data;
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error cargando habitaciones:', error);
-          this.loading = false;
-        }
-      });
-  }
-
-  goBack(): void {
-    this.router.navigate(['/']);
-  }
-
-  cambiarEstado(id: string, nuevoEstado: EstadoHabitacion): void {
-    const habitacion = this.habitaciones.find(h => h.id === id);
-    if (habitacion) {
-      habitacion.estado = nuevoEstado;
-    }
+    this.api.getHabitaciones().subscribe({
+      next: (list) => {
+        // El servicio ya mapea todo correctamente, solo asignamos
+        this.habitaciones = list.map(h => ({
+          id: h.id,
+          numero: h.numero,
+          piso: h.piso ?? 0,
+          tipoNombre: h.tipoNombre ?? 'Sin tipo',
+          capacidad: h.capacidad ?? 0,
+          tarifaBase: h.tarifaBase ?? 0,
+          estado: h.estado ?? 'Libre'
+        }));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando habitaciones:', err);
+        this.habitaciones = [];
+        this.loading = false;
+      }
+    });
   }
 }

@@ -14,15 +14,32 @@ export class HuespedService {
       map(items =>
         items.map(item => ({
           id: item.id ?? item.ID,
-          primerNombre: '', // No disponible en la API actual
+          primerNombre: item.nombre ?? item.Nombre ?? '',
           segundoNombre: '',
-          primerApellido: '',
-          segundoApellido: '',
-          documento: item.documento_Identidad ?? item.Documento_Identidad,
-          fechaNacimiento: item.fecha_Nacimiento ?? item.Fecha_Nacimiento,
-          nombreCompleto: item.nombre_Completo ?? item.Nombre_Completo
+          primerApellido: item.apellido ?? item.Apellido ?? '',
+          segundoApellido: item.segundo_Apellido ?? item.Segundo_Apellido ?? '',
+          documento: item.documento_Identidad ?? item.Documento_Identidad ?? '',
+          fechaNacimiento: item.fecha_Nacimiento ?? item.Fecha_Nacimiento ?? '',
+          nombreCompleto: item.nombre_Completo ?? item.Nombre_Completo ?? ''
         }))
       )
     );
+  }
+
+  // Agregar: crea un nuevo huésped en el backend
+  createHuesped(payload: {
+    Nombre: string;
+    Apellido: string;
+    Segundo_Apellido?: string | null;
+    Documento_Identidad: string;
+    Telefono?: string | null;
+    Fecha_Nacimiento?: string | null;
+  }): Observable<any> {
+    return this.http.post(`${API_BASE}/Huesped`, payload);
+  }
+
+  // Nuevo: elimina un huésped por ID
+  deleteHuesped(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_BASE}/Huesped/${id}`);
   }
 }

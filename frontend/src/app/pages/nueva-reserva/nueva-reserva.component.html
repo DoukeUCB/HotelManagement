@@ -1,146 +1,315 @@
 <div class="main-container">
   <header class="page-header">
-    <a routerLink="/reservas" class="link-back">‹ Volver</a>
-    <h1>Nueva reserva</h1>
+    <a routerLink="/reservas" class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    <h1>Nueva Reserva</h1>
     <span class="header-placeholder"></span>
   </header>
 
+  <!-- Indicador de pasos -->
+  <div class="pasos-indicador">
+    <div class="paso-item" [class.activo]="pasoActual() === 1" [class.completado]="pasoActual() > 1">
+      <div class="paso-numero">
+        <svg *ngIf="pasoActual() > 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z" />
+        </svg>
+        <span *ngIf="pasoActual() <= 1">1</span>
+      </div>
+      <span class="paso-titulo">Cliente</span>
+    </div>
+
+    <div class="paso-linea" [class.completado]="pasoActual() > 1"></div>
+
+    <div class="paso-item" [class.activo]="pasoActual() === 2" [class.completado]="pasoActual() > 2">
+      <div class="paso-numero">
+        <svg *ngIf="pasoActual() > 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z" />
+        </svg>
+        <span *ngIf="pasoActual() <= 2">2</span>
+      </div>
+      <span class="paso-titulo">Habitaciones</span>
+    </div>
+
+    <div class="paso-linea" [class.completado]="pasoActual() > 2"></div>
+
+    <div class="paso-item" [class.activo]="pasoActual() === 3" [class.completado]="pasoActual() > 3">
+      <div class="paso-numero">
+        <svg *ngIf="pasoActual() > 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z" />
+        </svg>
+        <span *ngIf="pasoActual() <= 3">3</span>
+      </div>
+      <span class="paso-titulo">Confirmación</span>
+    </div>
+  </div>
+
   <section *ngIf="catalogosCargando(); else contenido" class="estado">
-    Cargando catálogos...
+    <div class="spinner-large"></div>
+    <p>Cargando información...</p>
   </section>
 
   <ng-template #contenido>
-    <section *ngIf="error(); else formulario" class="estado estado-error">
-      {{ error() }}
-    </section>
-
-    <ng-template #formulario>
-      <form [formGroup]="form" (ngSubmit)="crearReserva()" class="card form-reserva">
-        <h2 class="section-lead">
-          <span class="bullet">1</span>
-          Datos generales
-          <small>Elige quién realiza la reserva y la habitación asignada</small>
+    <form [formGroup]="form" (ngSubmit)="crearReserva()" class="card form-reserva">
+      
+      <!-- PASO 1: Datos del Cliente -->
+      <div class="paso-contenido" *ngIf="pasoActual() === 1">
+        <h2 class="paso-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12ZM12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z"/>
+          </svg>
+          Información del Cliente
         </h2>
 
         <div class="grid">
           <label class="field">
-            <span>Cliente</span>
+            <span>Seleccionar Cliente *</span>
             <select formControlName="clienteId">
-              <option value="" disabled>Selecciona un cliente</option>
+              <option value="" disabled>-- Selecciona un cliente --</option>
               <option *ngFor="let c of clientes()" [value]="c.id">
-                {{ c.label }} — {{ c.email }}
+                {{ c.label }}
               </option>
             </select>
-            <small *ngIf="form.controls.clienteId.invalid && form.controls.clienteId.touched">
-              Campo obligatorio.
+            <small class="field-hint">Elige el cliente que realizará la reserva</small>
+            <small *ngIf="form.controls.clienteId.invalid && form.controls.clienteId.touched" class="error-message">
+              Debes seleccionar un cliente
             </small>
           </label>
 
           <label class="field">
-            <span>Habitación</span>
-            <select formControlName="habitacionId">
-              <option value="" disabled>Selecciona una habitación</option>
-              <option *ngFor="let h of habitaciones()" [value]="h.id">
-                Hab. {{ h.numero }} — {{ h.estado }}
-              </option>
-            </select>
-            <small *ngIf="form.controls.habitacionId.invalid && form.controls.habitacionId.touched">
-              Campo obligatorio.
-            </small>
-          </label>
-
-          <label class="field">
-            <span>Huésped</span>
-            <select formControlName="huespedId">
-              <option value="" disabled>Selecciona al huésped principal</option>
-              <option *ngFor="let h of huespedes()" [value]="h.id">
-                {{ h.nombre }}
-              </option>
-            </select>
-            <small *ngIf="form.controls.huespedId.invalid && form.controls.huespedId.touched">
-              Campo obligatorio.
-            </small>
-          </label>
-
-          <label class="field">
-            <span>Estado</span>
+            <span>Estado de la Reserva</span>
             <select formControlName="estadoReserva">
               <option *ngFor="let estado of estadosReserva" [value]="estado">
                 {{ estado }}
               </option>
             </select>
+            <small class="field-hint">Por defecto: Pendiente</small>
           </label>
         </div>
 
-        <h2 class="section-lead">
-          <span class="bullet">2</span>
-          Fechas
-          <small>Define estancia y número de huéspedes</small>
-        </h2>
-        <div class="grid">
-          <label class="field">
-            <span>Fecha de entrada</span>
-            <input type="date" formControlName="fechaEntrada" />
-            <small *ngIf="form.controls.fechaEntrada.invalid && form.controls.fechaEntrada.touched">
-              Campo obligatorio.
-            </small>
-          </label>
-
-          <label class="field">
-            <span>Fecha de salida</span>
-            <input type="date" formControlName="fechaSalida" />
-            <small *ngIf="form.controls.fechaSalida.invalid && form.controls.fechaSalida.touched">
-              Campo obligatorio.
-            </small>
-          </label>
-
-          <label class="field">
-            <span>Cant. huéspedes</span>
-            <input type="number" min="1" formControlName="cantidadHuespedes" />
-            <small
-              *ngIf="form.controls.cantidadHuespedes.invalid && form.controls.cantidadHuespedes.touched"
-            >
-              Debe ser al menos 1.
-            </small>
-          </label>
-        </div>
-
-        <h2 class="section-lead">
-          <span class="bullet">3</span>
-          Montos
-          <small>Introduce los importes acordados</small>
-        </h2>
-        <div class="grid">
-          <label class="field">
-            <span>Monto total de la reserva (Bs.)</span>
-            <input type="number" min="0" step="0.01" formControlName="montoTotal" />
-            <small *ngIf="form.controls.montoTotal.invalid && form.controls.montoTotal.touched">
-              Ingresa un monto válido.
-            </small>
-          </label>
-
-          <label class="field">
-            <span>Precio del detalle (Bs.)</span>
-            <input type="number" min="0" step="0.01" formControlName="precioDetalle" />
-            <small *ngIf="form.controls.precioDetalle.invalid && form.controls.precioDetalle.touched">
-              Ingresa un monto válido.
-            </small>
-          </label>
-        </div>
-
-        <div class="acciones">
-          <button type="button" class="btn btn-tertiary" (click)="volverAlListado()">
+        <div class="paso-navegacion">
+          <button type="button" class="btn btn-secondary" (click)="volverAlListado()">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-            <span class="spinner" *ngIf="submitting(); else label"></span>
-            <ng-template #label>{{ submitting() ? 'Guardando…' : 'Guardar reserva' }}</ng-template>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            [disabled]="!isPaso1Valid()" 
+            (click)="siguientePaso()">
+            Continuar
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13.1714 12.0007L8.22168 7.05093L9.63589 5.63672L15.9999 12.0007L9.63589 18.3646L8.22168 16.9504L13.1714 12.0007Z" />
+            </svg>
           </button>
         </div>
+      </div>
 
-        <p *ngIf="mensaje()" class="estado estado-ok">{{ mensaje() }}</p>
-        <p *ngIf="error()" class="estado estado-error">{{ error() }}</p>
-      </form>
-    </ng-template>
+      <!-- PASO 2: Habitaciones y Huéspedes -->
+      <div class="paso-contenido" *ngIf="pasoActual() === 2">
+        <h2 class="paso-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 20H23V22H1V20H3V3C3 2.44772 3.44772 2 4 2H20C20.5523 2 21 2.44772 21 3V20ZM19 20V4H5V20H19ZM8 11H11V13H8V11ZM8 7H11V9H8V7ZM8 15H11V17H8V15ZM13 15H16V17H13V15ZM13 11H16V13H13V11ZM13 7H16V9H13V7Z"></path>
+          </svg>
+          Habitaciones y Huéspedes
+        </h2>
+
+        <div formArrayName="habitaciones">
+          <div *ngFor="let habitacion of habitacionesFormArray.controls; let i = index" 
+               [formGroupName]="i" 
+               class="habitacion-card">
+            
+            <div class="habitacion-header">
+              <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22 11V20H20V17H4V20H2V4H4V14H12V7H18C20.2091 7 22 8.79086 22 11ZM8 13C6.34315 13 5 11.6569 5 10C5 8.34315 6.34315 7 8 7C9.65685 7 11 8.34315 11 10C11 11.6569 9.65685 13 8 13Z"></path>
+                </svg>
+                Habitación {{ i + 1 }}
+              </h3>
+              <button type="button" 
+                      class="btn-delete-habitacion" 
+                      (click)="eliminarHabitacion(i)"
+                      *ngIf="habitacionesFormArray.length > 1"
+                      title="Eliminar habitación">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 4V6H15V4H9Z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="grid">
+              <label class="field">
+                <span>Habitación *</span>
+                <select formControlName="habitacionId">
+                  <option value="" disabled>Selecciona habitación</option>
+                  <option *ngFor="let h of habitaciones()" [value]="h.id">
+                    Hab. {{ h.numero }} — {{ h.estado }}
+                  </option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Fecha de entrada *</span>
+                <input type="date" formControlName="fechaEntrada" />
+              </label>
+
+              <label class="field">
+                <span>Fecha de salida *</span>
+                <input type="date" formControlName="fechaSalida" />
+                <small class="field-hint" *ngIf="habitacion.get('fechaEntrada')?.value && habitacion.get('fechaSalida')?.value">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9V3H15V1H17V3ZM4 9V19H20V9H4ZM6 11H8V13H6V11ZM11 11H13V13H11V11ZM16 11H18V13H16V11Z"></path>
+                  </svg>
+                  {{ calcularDias(habitacion.get('fechaEntrada')?.value, habitacion.get('fechaSalida')?.value) }} día(s) de estadía
+                </small>
+              </label>
+            </div>
+
+            <div class="huespedes-section">
+              <label class="field">
+                <span>Agregar huésped(es) *</span>
+                <select #huespedSelect (change)="agregarHuesped(i, huespedSelect.value); huespedSelect.value = ''">
+                  <option value="">-- Selecciona un huésped --</option>
+                  <option *ngFor="let h of huespedes()" [value]="h.id">
+                    {{ h.nombre }}
+                  </option>
+                </select>
+                <small class="field-hint">Puedes agregar múltiples huéspedes</small>
+              </label>
+
+              <div class="chip-container" *ngIf="habitacion.get('huespedIds')?.value?.length">
+                <div *ngFor="let huespedId of habitacion.get('huespedIds')?.value" class="chip">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 22H4V20C4 17.2386 6.23858 15 9 15H15C17.7614 15 20 17.2386 20 20V22ZM12 13C8.68629 13 6 10.3137 6 7C6 3.68629 8.68629 1 12 1C15.3137 1 18 3.68629 18 7C18 10.3137 15.3137 13 12 13Z"></path>
+                  </svg>
+                  <span>{{ obtenerNombreHuesped(huespedId) }}</span>
+                  <button type="button" class="chip-remove" (click)="eliminarHuesped(i, huespedId)">✕</button>
+                </div>
+              </div>
+
+              <div class="warning-box" *ngIf="!habitacion.get('huespedIds')?.value?.length">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11 15V17H13V15H11ZM11 7V13H13V7H11Z"></path>
+                </svg>
+                Agrega al menos un huésped a esta habitación
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-add-habitacion" (click)="agregarHabitacion()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path>
+          </svg>
+          Agregar otra habitación
+        </button>
+
+        <div class="paso-navegacion">
+          <button type="button" class="btn btn-secondary" (click)="pasoAnterior()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+            </svg>
+            Anterior
+          </button>
+          <button type="button" class="btn btn-primary" [disabled]="!isPaso2Valid()" (click)="siguientePaso()">
+            Continuar
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13.1714 12.0007L8.22168 7.05093L9.63589 5.63672L15.9999 12.0007L9.63589 18.3646L8.22168 16.9504L13.1714 12.0007Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 3: Confirmación y Monto -->
+      <div class="paso-contenido" *ngIf="pasoActual() === 3">
+        <h2 class="paso-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path>
+          </svg>
+          Confirmación y Monto Total
+        </h2>
+
+        <!-- Resumen visual -->
+        <div class="resumen-reserva">
+          <div class="resumen-item">
+            <div class="resumen-icon cliente-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12ZM12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="resumen-label">Cliente</span>
+              <strong>{{ clienteSeleccionado() }}</strong>
+            </div>
+          </div>
+
+          <div class="resumen-item">
+            <div class="resumen-icon habitacion-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 20H23V22H1V20H3V3C3 2.44772 3.44772 2 4 2H20C20.5523 2 21 2.44772 21 3V20ZM19 20V4H5V20H19Z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="resumen-label">Habitaciones</span>
+              <strong>{{ habitacionesFormArray.length }}</strong>
+            </div>
+          </div>
+
+          <div class="resumen-item">
+            <div class="resumen-icon dias-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9V3H15V1H17V3ZM4 9V19H20V9H4ZM6 11H8V13H6V11ZM11 11H13V13H11V11ZM16 11H18V13H16V11Z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="resumen-label">Total días de estadía</span>
+              <strong>{{ calcularTotalDias() }}</strong>
+            </div>
+          </div>
+
+          <div class="resumen-item">
+            <div class="resumen-icon estado-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11.0026 16L18.0737 8.92893L16.6595 7.51472L11.0026 13.1716L8.17421 10.3431L6.75999 11.7574L11.0026 16Z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="resumen-label">Estado</span>
+              <strong>{{ form.value.estadoReserva }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <label class="field monto-field">
+          <span>Monto Total (Bs.) *</span>
+          <input type="number" min="0" step="0.01" formControlName="montoTotal" placeholder="0.00" />
+          <small class="field-hint">Ingresa el monto total de la reserva</small>
+          <small *ngIf="form.get('montoTotal')?.invalid && form.get('montoTotal')?.touched" class="error-message">
+            Ingresa un monto válido mayor a 0
+          </small>
+        </label>
+
+        <div class="paso-navegacion">
+          <button type="button" class="btn btn-secondary" (click)="pasoAnterior()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+            </svg>
+            Anterior
+          </button>
+          <button type="submit" class="btn btn-success" [disabled]="submitting() || !isPaso3Valid()">
+            <span class="spinner" *ngIf="submitting()"></span>
+            <svg *ngIf="!submitting()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z" />
+            </svg>
+            {{ submitting() ? 'Guardando...' : 'Crear Reserva' }}
+          </button>
+        </div>
+      </div>
+
+      <p *ngIf="mensaje()" class="estado estado-ok">{{ mensaje() }}</p>
+      <p *ngIf="error()" class="estado estado-error">{{ error() }}</p>
+    </form>
   </ng-template>
 </div>

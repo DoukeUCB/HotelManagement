@@ -17,59 +17,145 @@
     </div>
   </header>
 
-  <div class="table-controls">
-    <label class="filter-label">Filtrar por Estado:</label>
-    <div class="filter-buttons-group">
-      
-      <button class="btn btn-filter" 
-              [ngClass]="{'active': estadoSeleccionado === ''}"
-              (click)="estadoSeleccionado = ''; filtrarReservas()">
-        TODOS
-      </button>
+  <!-- Barra de búsqueda y filtros -->
+  <div class="search-filter-bar">
+    <div class="search-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="search-icon">
+        <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
+      </svg>
+      <input 
+        type="text" 
+        placeholder="Buscar por cliente o estado..." 
+        [(ngModel)]="terminoBusqueda"
+        (input)="filtrarReservas()"
+        class="search-input">
+    </div>
 
-      <button *ngFor="let estado of estadosDisponibles"
-              class="btn btn-filter"
-              [ngClass]="{'active': estadoSeleccionado === estado}"
-              (click)="estadoSeleccionado = estado; filtrarReservas()">
-        {{ estado | uppercase }}
-      </button>
-      
+    <div class="filter-controls">
+      <label class="filter-label">Estado:</label>
+      <select [(ngModel)]="estadoSeleccionado" (change)="filtrarReservas()" class="filter-select">
+        <option value="">Todos</option>
+        <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+          {{ estado }}
+        </option>
+      </select>
+    </div>
+
+    <div class="results-count">
+      {{ reservas.length }} reserva<span *ngIf="reservas.length !== 1">s</span>
     </div>
   </div>
   
   <div *ngIf="loading" class="loading-state">Cargando...</div>
 
-  <div class="data-table card" *ngIf="!loading && reservas.length">
+  <div class="data-table card" *ngIf="!loading && reservasPaginadas.length">
     
     <div class="table-header">
       <div>Cliente</div>
       <div>Entrada</div>
       <div>Salida</div>
+      <div>Días</div>
       <div>Estado</div>
       <div class="align-right">Total (Bs.)</div>
       <div class="actions">Acciones</div>
     </div>
 
-    <div class="table-row" *ngFor="let r of reservas">
-      <div data-label="Cliente">{{ r.cliente }}</div>
-      <div data-label="Entrada">{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</div>
-      <div data-label="Salida">{{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
+    <div class="table-row" *ngFor="let r of reservasPaginadas">
+      <div data-label="Cliente" class="cliente-cell">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="user-icon">
+          <path d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12ZM12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z"/>
+        </svg>
+        {{ r.cliente }}
+      </div>
+      <div data-label="Entrada">
+        <span class="date-badge">{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div data-label="Salida">
+        <span class="date-badge">{{ r.fechaSalida | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div data-label="Días" class="dias-cell">
+        <span class="dias-badge" [title]="'Estadía de ' + calcularDias(r.fechaEntrada, r.fechaSalida) + ' días'">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path>
+          </svg>
+          {{ calcularDias(r.fechaEntrada, r.fechaSalida) }}
+        </span>
+      </div>
       <div data-label="Estado" class="status-cell">
-        <span [class]="'status-' + r.estado"> 
+        <span [class]="'status-badge status-' + r.estado"> 
           {{ r.estado }}
         </span>
       </div>
-      <div data-label="Total" class="align-right total-cell">{{ r.montoTotal | number:'1.2-2' }}</div>
+      <div data-label="Total" class="align-right total-cell">
+        <strong>{{ r.montoTotal | number:'1.2-2' }}</strong> Bs.
+      </div>
       
       <div data-label="Acciones" class="actions">
-        <button (click)="verReserva(r.id)" class="btn btn-secondary">Ver</button>
-        <button (click)="editarReserva(r.id)" class="btn btn-outline">Editar</button>
-        <button (click)="eliminarReserva(r.id)" class="btn btn-danger">Eliminar</button>
+        <button
+          (click)="verReserva(r.id)"
+          class="btn btn-icon"
+          title="Ver detalles"
+          style="display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:#fff;color:#4f46e5;min-width:36px;min-height:36px;margin-right:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;">
+            <path d="M12 3C17.3924 3 21.8784 6.87976 22.8189 12C21.8784 17.1202 17.3924 21 12 21C6.60756 21 2.12163 17.1202 1.18109 12C2.12163 6.87976 6.60756 3 12 3ZM12 19C16.2359 19 19.8603 16.052 20.7777 12C19.8603 7.94803 16.2359 5 12 5C7.7641 5 4.13975 7.94803 3.22228 12C4.13975 16.052 7.7641 19 12 19ZM12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12C16.5 14.4853 14.4853 16.5 12 16.5ZM12 14.5C13.3807 14.5 14.5 13.3807 14.5 12C14.5 10.6193 13.3807 9.5 12 9.5C10.6193 9.5 9.5 10.6193 9.5 12C9.5 13.3807 10.6193 14.5 12 14.5Z"></path>
+          </svg>
+        </button>
+
+        <button
+          (click)="editarReserva(r.id)"
+          class="btn btn-icon"
+          title="Editar"
+          style="display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:#fff;color:#475569;min-width:36px;min-height:36px;margin-right:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;">
+            <path d="M16.757 3L6 13.757V18H10.243L21 7.243V3H16.757ZM7.243 16H6V14.757L15.435 5.322L16.678 6.565L7.243 16ZM18 2L22 6L19.5 8.5L15.5 4.5L18 2Z"></path>
+          </svg>
+        </button>
+
+        <button
+          (click)="eliminarReserva(r.id)"
+          class="btn btn-icon btn-danger"
+          title="Eliminar"
+          style="display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;border:1px solid rgba(220,38,38,0.12);background:#fff;color:#dc2626;min-width:40px;min-height:36px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;">
+            <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
+          </svg>
+        </button>
       </div>
     </div>
-    
   </div>
-  <div *ngIf="!loading && !reservas.length" class="empty-state">
-    No hay reservas para mostrar.
+
+  <!-- Paginación -->
+  <div class="pagination" *ngIf="!loading && reservas.length > itemsPorPagina">
+    <button 
+      class="pagination-btn" 
+      [disabled]="paginaActual === 1"
+      (click)="cambiarPagina(paginaActual - 1)">
+      ‹ Anterior
+    </button>
+
+    <div class="pagination-numbers">
+      <button 
+        *ngFor="let pagina of paginasArray" 
+        class="pagination-number"
+        [class.active]="pagina === paginaActual"
+        (click)="cambiarPagina(pagina)">
+        {{ pagina }}
+      </button>
+    </div>
+
+    <button 
+      class="pagination-btn" 
+      [disabled]="paginaActual === totalPaginas"
+      (click)="cambiarPagina(paginaActual + 1)">
+      Siguiente ›
+    </button>
+  </div>
+
+  <div *ngIf="!loading && !reservasPaginadas.length" class="empty-state">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M6.94 2C7.51 2 8.04 2.32 8.3 2.82L10 6H19C19.5304 6 20.0391 6.21071 20.4142 6.58579C20.7893 6.96086 21 7.46957 21 8V18C21 18.5304 20.7893 19.0391 20.4142 19.4142C20.0391 19.7893 19.5304 20 19 20H5C4.46957 20 3.96086 19.7893 3.58579 19.4142C3.21071 19.0391 3 18.5304 3 18V4C3 3.46957 3.21071 2.96086 3.58579 2.58579C3.96086 2.21071 4.46957 2 5 2H6.94ZM5 8V18H19V8H5Z"></path>
+    </svg>
+    <p>No hay reservas para mostrar</p>
+    <button routerLink="/nueva-reserva" class="btn btn-primary">+ Crear primera reserva</button>
   </div>
 </div>

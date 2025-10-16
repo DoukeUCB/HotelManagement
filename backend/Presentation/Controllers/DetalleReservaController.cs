@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using HotelManagement.DTOs;
 using HotelManagement.Services;
+using HotelManagement.Models;
+using HotelManagement.Datos.Config;
 
 namespace HotelManagement.Controllers
 {
@@ -11,13 +13,16 @@ namespace HotelManagement.Controllers
     {
         private readonly IDetalleReservaService _service;
         private readonly ILogger<DetalleReservaController> _logger;
+        private readonly HotelDbContext _context;
 
         public DetalleReservaController(
             IDetalleReservaService service,
-            ILogger<DetalleReservaController> logger)
+            ILogger<DetalleReservaController> logger,
+            HotelDbContext context)
         {
             _service = service;
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
@@ -51,6 +56,15 @@ namespace HotelManagement.Controllers
             return Ok(detalles);
         }
 
+        [HttpGet("reserva/{reservaId}")]
+        [ProducesResponseType(typeof(List<DetalleReservaDTO>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<DetalleReservaDTO>>> GetByReservaId(string reservaId)
+        {
+            _logger.LogInformation("Obteniendo detalles de reserva: {ReservaId}", reservaId);
+            var detalles = await _service.GetByReservaIdAsync(reservaId);
+            return Ok(detalles);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(DetalleReservaDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,6 +73,39 @@ namespace HotelManagement.Controllers
             _logger.LogInformation("Creando nuevo detalle de reserva");
             var created = await _service.CreateAsync(dto);
             return Created($"/api/DetalleReserva/{created.ID}", created);
+        }
+
+        /// <summary>
+        /// Crea múltiples detalles de reserva (múltiples habitaciones con múltiples huéspedes)
+        /// </summary>
+        [HttpPost("multiple")]
+        [ProducesResponseType(typeof(List<DetalleReservaDTO>), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<DetalleReservaDTO>>> CreateMultiple([FromBody] DetalleReservaMultipleCreateDTO dto)
+        {
+            _logger.LogInformation("Creando múltiples detalles para reserva: {ReservaId}", dto.Reserva_ID);
+
+            var detallesCreados = new List<DetalleReservaDTO>();
+
+            foreach (var habitacion in dto.Habitaciones)
+            {
+                foreach (var huespedId in habitacion.Huesped_IDs)
+                {
+                    var detalleDto = new DetalleReservaCreateDTO
+                    {
+                        Reserva_ID = dto.Reserva_ID,
+                        Habitacion_ID = habitacion.Habitacion_ID,
+                        Huesped_ID = huespedId,
+                        Fecha_Entrada = habitacion.Fecha_Entrada,
+                        Fecha_Salida = habitacion.Fecha_Salida
+                    };
+
+                    var creado = await _service.CreateAsync(detalleDto);
+                    detallesCreados.Add(creado);
+                }
+            }
+
+            return Created($"/api/DetalleReserva/reserva/{dto.Reserva_ID}", detallesCreados);
         }
 
         [HttpPatch("{id}")]
