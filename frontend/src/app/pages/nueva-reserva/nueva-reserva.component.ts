@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -24,6 +24,7 @@ interface HabitacionForm {
   templateUrl: './nueva-reserva.component.html',
   styleUrls: ['./nueva-reserva.component.scss']
 })
+
 export class NuevaReservaComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -43,6 +44,26 @@ export class NuevaReservaComponent implements OnInit {
   totalPasos = 3;
 
   estadosReserva = ['Pendiente', 'Confirmada', 'Cancelada'];
+  
+habitacionesLibres = computed<HabitacionOption[]>(() => {
+    return (this.habitaciones() ?? []).filter(h => {
+      const estado = (h.estado ?? '').toString().toLowerCase();
+      return estado === 'libre';
+    });
+  });
+
+  /** Si una selección deja de estar libre (o desaparece), la limpiamos. */
+  private _syncSeleccionConDisponibilidad = effect(() => {
+    // dispara cuando cambie el catálogo filtrado
+    const libres = this.habitacionesLibres();
+    const idsLibres = new Set(libres.map(h => h.id));
+    for (const fg of this.habitacionesFormArray.controls) {
+      const sel = fg.get('habitacionId')?.value;
+      if (sel && !idsLibres.has(sel)) {
+        fg.get('habitacionId')?.reset('');
+      }
+    }
+  });
 
   form = this.fb.nonNullable.group({
     clienteId: ['', Validators.required],
@@ -300,4 +321,131 @@ export class NuevaReservaComponent implements OnInit {
     const montoCtrl = this.form.get('montoTotal');
     return !!montoCtrl && montoCtrl.valid;
   }
+  // Control de autocompletado
+showSuggestions = false;
+
+seleccionarCliente(c: any) {
+  this.form.controls.clienteId.setValue(c.id);
+  this.searchTerm.set(c.label);
+  this.showSuggestions = false;
+}
+
+// Esconde el menú con pequeño delay para permitir el click
+onBlur() {
+  setTimeout(() => this.showSuggestions = false, 200);
+}
+
+  // === BUSCADOR (cliente por Razón Social o NIT) ===
+searchTerm = signal<string>('');
+
+// Normaliza a dígitos para comparar NIT sin puntos/guiones/espacios
+private onlyDigits = (s: unknown) => (s ?? '').toString().replace(/\D+/g, '');
+
+/// Normaliza texto: minúsculas + sin tildes
+private norm = (v: unknown) =>
+  (v ?? '')
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, ''); // requiere TS target ES2021+ (Angular actual lo soporta)
+
+// Solo dígitos (para NIT)
+private digits = (v: unknown) => (v ?? '').toString().replace(/\D+/g, '');
+
+filteredClientes = computed<ClienteOption[]>(() => {
+  const termRaw = this.searchTerm().trim();
+  if (!termRaw) return this.clientes(); // sin término -> devuelve todo
+
+  const term = this.norm(termRaw);
+  const termDigits = this.digits(termRaw);
+
+  return this.clientes().filter((c: any) => {
+    // Candidatos de texto (agrega aquí cualquier alias que use tu backend)
+    const textParts = [
+      c.label,
+      c.nombre,
+      c.nombreCompleto,
+      c.razonSocial,
+      c.razon_social,
+      c.razon_Social,
+      c.nombreComercial,
+      c.comercialName,
+      c.email,
+    ];
+
+    // Candidatos numéricos (NIT, doc, etc.)
+    const numParts = [
+      c.nit,
+      c.NIT,
+      c.numeroDocumento,
+      c.documento,
+      c.ci,
+      c.ciNit,
+    ];
+
+    // Concatenamos y normalizamos
+    const textBlob = this.norm(textParts.filter(Boolean).join(' '));
+    const digitsBlob = this.digits(numParts.filter(Boolean).join(' '));
+
+    // Coincide por texto o por dígitos
+    const byText = textBlob.includes(term);
+    const byDigits = !!termDigits && digitsBlob.includes(termDigits);
+
+    // Además: por si el NIT está embebido en el label (ej: "Farmacia — NIT 123456")
+    const labelDigits = this.digits(c.label);
+    const byLabelDigits = !!termDigits && labelDigits.includes(termDigits);
+
+    return byText || byDigits || byLabelDigits;
+  });
+});
+// ====== BÚSQUEDA DE HUÉSPEDES (por habitación) ======
+huespedSearchTerm: string[] = [];   // término por índice de habitación
+showHuespedSug: boolean[] = [];     // visibilidad del panel por índice
+
+// Normalizador simple (si ya tienes uno, puedes reutilizarlo)
+private norm2 = (v: unknown) =>
+  (v ?? '').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+
+// Abrir/cerrar panel de sugerencias
+openHuesped(i: number) {
+  this.ensureHuespedStateIndex(i);
+  this.showHuespedSug[i] = true;
+}
+
+onHuespedBlur(i: number) {
+  // pequeño delay para permitir el mousedown de la opción
+  setTimeout(() => this.showHuespedSug[i] = false, 150);
+}
+
+onHuespedInput(i: number, value: string) {
+  this.ensureHuespedStateIndex(i);
+  this.huespedSearchTerm[i] = value;
+  // si no hay texto pero quieres mostrar todo al enfocar:
+  // this.showHuespedSug[i] = true;
+}
+
+seleccionarHuesped(i: number, h: HuespedOption, inputEl?: HTMLInputElement) {
+  // reutiliza tu lógica existente para agregar al FormArray
+  this.agregarHuesped(i, h.id);
+  // limpia el input y oculta sugerencias
+  this.huespedSearchTerm[i] = '';
+  if (inputEl) inputEl.value = '';
+  this.showHuespedSug[i] = false;
+}
+
+// Lista filtrada por nombre para la habitación i
+filteredHuespedes(i: number): HuespedOption[] {
+  const term = this.norm2(this.huespedSearchTerm[i] ?? '');
+  const all = this.huespedes();
+  if (!term) return all;
+
+  return all.filter(h => this.norm2(h.nombre).includes(term));
+}
+
+// Asegura índices en arrays auxiliares (al agregar/eliminar hab.)
+private ensureHuespedStateIndex(i: number) {
+  while (this.huespedSearchTerm.length <= i) this.huespedSearchTerm.push('');
+  while (this.showHuespedSug.length <= i) this.showHuespedSug.push(false);
+}
+
 }
