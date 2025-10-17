@@ -1,0 +1,61 @@
+<div class="nueva-habitacion">
+  <header class="encabezado">
+    <a routerLink="/habitaciones" class="volver">‹ Volver</a>
+    <h1>Nueva Habitación</h1>
+    <span class="placeholder"></span>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
+    <section class="form-grid">
+      <label class="campo">
+        <span>Número de Habitación *</span>
+        <input type="text" formControlName="numero" placeholder="Ej: 101" />
+        <small *ngIf="form.controls.numero.invalid && form.controls.numero.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Piso *</span>
+        <input type="number" formControlName="piso" min="1" />
+        <small *ngIf="form.controls.piso.invalid && form.controls.piso.touched">
+          Ingrese un piso válido.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Tipo de Habitación *</span>
+        <select formControlName="tipoHabitacionId">
+          <option value="" disabled>Seleccione un tipo</option>
+          <option *ngFor="let tipo of tiposHabitacion()" [value]="tipo.id">
+            {{ tipo.nombre }} - {{ tipo.capacidad_Maxima }} personas - Bs. {{ tipo.precio_Base }}
+          </option>
+        </select>
+        <small *ngIf="form.controls.tipoHabitacionId.invalid && form.controls.tipoHabitacionId.touched">
+          Seleccione un tipo de habitación.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Estado *</span>
+        <select formControlName="estado">
+          <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+            {{ estado }}
+          </option>
+        </select>
+      </label>
+    </section>
+
+    <div class="acciones">
+      <button type="button" class="btn btn-terciario" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primario" [disabled]="submitting()">
+        {{ submitting() ? 'Guardando…' : 'Guardar habitación' }}
+      </button>
+    </div>
+
+    <p *ngIf="mensaje()" class="estado ok">{{ mensaje() }}</p>
+    <p *ngIf="error()" class="estado error">{{ error() }}</p>
+  </form>
+</div>

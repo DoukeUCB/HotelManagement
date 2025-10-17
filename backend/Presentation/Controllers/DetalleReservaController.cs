@@ -3,6 +3,7 @@ using HotelManagement.DTOs;
 using HotelManagement.Services;
 using HotelManagement.Models;
 using HotelManagement.Datos.Config;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagement.Controllers
 {
@@ -70,9 +71,43 @@ namespace HotelManagement.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<DetalleReservaDTO>> Create([FromBody] DetalleReservaCreateDTO dto)
         {
-            _logger.LogInformation("Creando nuevo detalle de reserva");
-            var created = await _service.CreateAsync(dto);
-            return Created($"/api/DetalleReserva/{created.ID}", created);
+            _logger.LogInformation("Creando nuevo detalle de reserva para habitación: {HabitacionId}", dto.Habitacion_ID);
+            
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var created = await _service.CreateAsync(dto);
+                
+                // Actualizar estado de la habitación a "Reservada"
+                if (Guid.TryParse(dto.Habitacion_ID, out var habitacionGuid))
+                {
+                    var habitacionBytes = habitacionGuid.ToByteArray();
+                    var habitacion = await _context.Habitaciones
+                        .FirstOrDefaultAsync(h => h.ID != null && h.ID.SequenceEqual(habitacionBytes));
+                    
+                    if (habitacion != null)
+                    {
+                        _logger.LogInformation("Actualizando habitación {NumeroHabitacion} a estado Reservada", habitacion.Numero_Habitacion);
+                        habitacion.Estado_Habitacion = "Reservada";
+                        habitacion.Fecha_Actualizacion = DateTime.Now;
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No se encontró la habitación con ID: {HabitacionId}", dto.Habitacion_ID);
+                    }
+                }
+                
+                await transaction.CommitAsync();
+                _logger.LogInformation("Detalle de reserva creado exitosamente: {DetalleId}", created.ID);
+                return Created($"/api/DetalleReserva/{created.ID}", created);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear detalle de reserva");
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         /// <summary>
@@ -85,27 +120,61 @@ namespace HotelManagement.Controllers
         {
             _logger.LogInformation("Creando múltiples detalles para reserva: {ReservaId}", dto.Reserva_ID);
 
-            var detallesCreados = new List<DetalleReservaDTO>();
-
-            foreach (var habitacion in dto.Habitaciones)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                foreach (var huespedId in habitacion.Huesped_IDs)
+                var detallesCreados = new List<DetalleReservaDTO>();
+                var habitacionesIds = new HashSet<string>();
+
+                foreach (var habitacion in dto.Habitaciones)
                 {
-                    var detalleDto = new DetalleReservaCreateDTO
+                    habitacionesIds.Add(habitacion.Habitacion_ID);
+                    
+                    foreach (var huespedId in habitacion.Huesped_IDs)
                     {
-                        Reserva_ID = dto.Reserva_ID,
-                        Habitacion_ID = habitacion.Habitacion_ID,
-                        Huesped_ID = huespedId,
-                        Fecha_Entrada = habitacion.Fecha_Entrada,
-                        Fecha_Salida = habitacion.Fecha_Salida
-                    };
+                        var detalleDto = new DetalleReservaCreateDTO
+                        {
+                            Reserva_ID = dto.Reserva_ID,
+                            Habitacion_ID = habitacion.Habitacion_ID,
+                            Huesped_ID = huespedId,
+                            Fecha_Entrada = habitacion.Fecha_Entrada,
+                            Fecha_Salida = habitacion.Fecha_Salida
+                        };
 
-                    var creado = await _service.CreateAsync(detalleDto);
-                    detallesCreados.Add(creado);
+                        var creado = await _service.CreateAsync(detalleDto);
+                        detallesCreados.Add(creado);
+                    }
                 }
-            }
 
-            return Created($"/api/DetalleReserva/reserva/{dto.Reserva_ID}", detallesCreados);
+                // Actualizar estado de todas las habitaciones a "Reservada"
+                foreach (var habitacionId in habitacionesIds)
+                {
+                    if (Guid.TryParse(habitacionId, out var habitacionGuid))
+                    {
+                        var habitacionBytes = habitacionGuid.ToByteArray();
+                        var habitacion = await _context.Habitaciones
+                            .FirstOrDefaultAsync(h => h.ID != null && h.ID.SequenceEqual(habitacionBytes));
+                        
+                        if (habitacion != null)
+                        {
+                            _logger.LogInformation("Actualizando habitación {NumeroHabitacion} a estado Reservada", habitacion.Numero_Habitacion);
+                            habitacion.Estado_Habitacion = "Reservada";
+                            habitacion.Fecha_Actualizacion = DateTime.Now;
+                        }
+                    }
+                }
+                
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Created($"/api/DetalleReserva/reserva/{dto.Reserva_ID}", detallesCreados);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear múltiples detalles de reserva");
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         [HttpPatch("{id}")]
