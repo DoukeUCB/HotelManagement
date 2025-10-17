@@ -70,6 +70,12 @@ export const routes: Routes = [
         .then(m => m.EditarReservaComponent)
   },
   {
+    path: 'nueva-habitacion',
+    loadComponent: () =>
+      import('./pages/nueva-habitacion/nueva-habitacion.component')
+        .then(m => m.NuevaHabitacionComponent)
+  },
+  {
     path: 'inicio',
     loadComponent: () =>
       import('./pages/home/home.component')
