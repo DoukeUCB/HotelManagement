@@ -36,8 +36,8 @@ namespace HotelManagement.Tests.DetallerReserva.Service
             // Arrange
             var detalles = new List<DetalleReserva>
             {
-                new DetalleReserva { ID = Guid.NewGuid().ToByteArray(), Reserva_ID = Guid.NewGuid().ToByteArray(), Habitacion_ID = Guid.NewGuid().ToByteArray(), Huesped_ID = Guid.NewGuid().ToByteArray(), Precio_Total = 100, Cantidad_Huespedes = 2 },
-                new DetalleReserva { ID = Guid.NewGuid().ToByteArray(), Reserva_ID = Guid.NewGuid().ToByteArray(), Habitacion_ID = Guid.NewGuid().ToByteArray(), Huesped_ID = Guid.NewGuid().ToByteArray(), Precio_Total = 150, Cantidad_Huespedes = 1 }
+                new DetalleReserva { ID = Guid.NewGuid().ToByteArray(), Reserva_ID = Guid.NewGuid().ToByteArray(), Habitacion_ID = Guid.NewGuid().ToByteArray(), Huesped_ID = Guid.NewGuid().ToByteArray() },
+                new DetalleReserva { ID = Guid.NewGuid().ToByteArray(), Reserva_ID = Guid.NewGuid().ToByteArray(), Habitacion_ID = Guid.NewGuid().ToByteArray(), Huesped_ID = Guid.NewGuid().ToByteArray() }
             };
             _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(detalles);
 
@@ -82,8 +82,8 @@ namespace HotelManagement.Tests.DetallerReserva.Service
                 ID = detalleId.ToByteArray(),
                 Reserva_ID = reservaId.ToByteArray(),
                 Habitacion_ID = habitacionId.ToByteArray(),
-                Huesped_ID = huespedId.ToByteArray(),
-                Precio_Total = 200
+                Huesped_ID = huespedId.ToByteArray()
+    
             };
 
             _mockRepository.Setup(repo => repo.GetByIdAsync(detalleId.ToByteArray()))
@@ -95,7 +95,6 @@ namespace HotelManagement.Tests.DetallerReserva.Service
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(detalleId.ToString(), result.ID);
-            Assert.AreEqual(200, result.Precio_Total);
         }
 
         [TestMethod]
@@ -131,18 +130,14 @@ namespace HotelManagement.Tests.DetallerReserva.Service
             ID = Guid.NewGuid().ToByteArray(),
             Reserva_ID = reservaId.ToByteArray(),
             Habitacion_ID = habitacionId.ToByteArray(),
-            Huesped_ID = huespedId.ToByteArray(),
-            Precio_Total = 100,
-            Cantidad_Huespedes = 2
+            Huesped_ID = huespedId.ToByteArray()
         },
         new DetalleReserva
         {
             ID = Guid.NewGuid().ToByteArray(),
             Reserva_ID = reservaId.ToByteArray(),
             Habitacion_ID = habitacionId.ToByteArray(),
-            Huesped_ID = huespedId.ToByteArray(),
-            Precio_Total = 150,
-            Cantidad_Huespedes = 1
+            Huesped_ID = huespedId.ToByteArray()
         }
     };
 

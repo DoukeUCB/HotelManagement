@@ -4,5 +4,22 @@
         <name>HotelManagement</name>
     </assembly>
     <members>
+        <member name="M:HotelManagement.Controllers.DetalleReservaController.CreateMultiple(HotelManagement.DTOs.DetalleReservaMultipleCreateDTO)">
+            <summary>
+            Crea múltiples detalles de reserva (múltiples habitaciones con múltiples huéspedes)
+            </summary>
+        </member>
+        <member name="T:HotelManagement.Migrations.Initial">
+            <inheritdoc />
+        </member>
+        <member name="M:HotelManagement.Migrations.Initial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:HotelManagement.Migrations.Initial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:HotelManagement.Migrations.Initial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

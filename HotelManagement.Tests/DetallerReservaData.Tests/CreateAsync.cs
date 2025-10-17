@@ -36,9 +36,7 @@ public class DetalleReservaRepository_CreateAsync_Tests
             ID = Guid.NewGuid().ToByteArray(),
             Reserva_ID = Guid.NewGuid().ToByteArray(),
             Habitacion_ID = Guid.NewGuid().ToByteArray(),
-            Huesped_ID = Guid.NewGuid().ToByteArray(),
-            Precio_Total = 150.75m,
-            Cantidad_Huespedes = 150
+            Huesped_ID = Guid.NewGuid().ToByteArray()
         };
 
         // Act: Ejecutar el método que se está probando
@@ -48,7 +46,6 @@ public class DetalleReservaRepository_CreateAsync_Tests
         // 1. Verificar que el método retornó el objeto que se le pasó
         Assert.IsNotNull(resultado);
         Assert.AreEqual(nuevoDetalleReserva.ID, resultado.ID, "El ID del detalle de reserva retornado no es el esperado.");
-        Assert.AreEqual(150.75m, resultado.Precio_Total, "El precio del detalle de reserva no es el correcto.");
 
         // 2. Verificar que el objeto fue realmente guardado en la base de datos (en memoria)
         var detalleGuardado = await _context.DetalleReservas.FindAsync(nuevoDetalleReserva.ID);

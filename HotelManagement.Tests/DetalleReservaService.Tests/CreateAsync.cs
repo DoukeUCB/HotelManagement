@@ -40,9 +40,7 @@ namespace HotelManagement.Tests.DetallerReserva.Service
             {
                 Reserva_ID = Guid.NewGuid().ToString(),
                 Habitacion_ID = Guid.NewGuid().ToString(),
-                Huesped_ID = Guid.NewGuid().ToString(),
-                Precio_Total = 150.50m,
-                Cantidad_Huespedes = 2
+                Huesped_ID = Guid.NewGuid().ToString()
             };
 
             // 2. Objeto que simula lo que el repositorio devolverá.
@@ -51,9 +49,7 @@ namespace HotelManagement.Tests.DetallerReserva.Service
                 ID = Guid.NewGuid().ToByteArray(),
                 Reserva_ID = Guid.Parse(createDto.Reserva_ID).ToByteArray(),
                 Habitacion_ID = Guid.Parse(createDto.Habitacion_ID).ToByteArray(),
-                Huesped_ID = Guid.Parse(createDto.Huesped_ID).ToByteArray(),
-                Precio_Total = createDto.Precio_Total,
-                Cantidad_Huespedes = createDto.Cantidad_Huespedes
+                Huesped_ID = Guid.Parse(createDto.Huesped_ID).ToByteArray()
             };
 
             // 3. Configurar los mocks.
@@ -77,7 +73,6 @@ namespace HotelManagement.Tests.DetallerReserva.Service
 
             // 3. Verificar que los datos mapeados en el DTO son correctos.
             Assert.AreEqual(createDto.Reserva_ID, result.Reserva_ID);
-            Assert.AreEqual(createDto.Precio_Total, result.Precio_Total);
 
             // 4. Verificar que los métodos de los mocks fueron llamados como se esperaba.
             //    - Se llamó al validador una vez.
