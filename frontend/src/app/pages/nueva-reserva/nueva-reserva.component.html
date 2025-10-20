@@ -168,7 +168,7 @@
                 <select formControlName="habitacionId">
                   <option value="" disabled>Selecciona habitación</option>
                   <ng-container *ngIf="habitacionesLibres().length; else noLibres">
-                    <option *ngFor="let h of habitacionesLibres()" [value]="h.id">
+                    <option *ngFor="let h of getHabitacionesLibres(i)" [value]="h.id">
                       Hab. {{ h.numero }} — {{ h.estado }}
                     </option>
                   </ng-container>

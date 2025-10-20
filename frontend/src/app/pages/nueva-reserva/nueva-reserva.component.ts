@@ -51,6 +51,22 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
       return estado === 'libre';
     });
   });
+  getHabitacionesLibres(indexActual: number): HabitacionOption[] {
+  const todas = this.habitaciones() ?? [];
+
+  // Obtener IDs seleccionados en otros grupos
+  const seleccionadas = new Set(
+    this.habitacionesFormArray.controls
+      .map((fg, i) => i !== indexActual ? fg.get('habitacionId')?.value : null)
+      .filter(id => !!id)
+  );
+
+  return todas.filter(h => {
+    const estado = (h.estado ?? '').toString().toLowerCase();
+    return estado === 'libre' && !seleccionadas.has(h.id);
+  });
+}
+
 
   /** Si una selección deja de estar libre (o desaparece), la limpiamos. */
   private _syncSeleccionConDisponibilidad = effect(() => {
