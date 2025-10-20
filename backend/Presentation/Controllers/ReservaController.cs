@@ -125,6 +125,7 @@ namespace HotelManagement.Presentacion.Controllers
                 .FirstOrDefaultAsync(r => r.ID != null && r.ID.SequenceEqual(bytes));
             
             if (reserva == null)
+            
                 return NotFound();
 
             var primerDetalle = reserva.DetalleReservas?.OrderBy(d => d.Fecha_Entrada).FirstOrDefault();
