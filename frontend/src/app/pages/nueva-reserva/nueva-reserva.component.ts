@@ -60,6 +60,22 @@ export class NuevaReservaComponent implements OnInit {
       return estado === 'libre';
     });
   });
+  getHabitacionesLibres(indexActual: number): HabitacionOption[] {
+  const todas = this.habitaciones() ?? [];
+
+  // Obtener IDs seleccionados en otros grupos
+  const seleccionadas = new Set(
+    this.habitacionesFormArray.controls
+      .map((fg, i) => i !== indexActual ? fg.get('habitacionId')?.value : null)
+      .filter(id => !!id)
+  );
+
+  return todas.filter(h => {
+    const estado = (h.estado ?? '').toString().toLowerCase();
+    return estado === 'libre' && !seleccionadas.has(h.id);
+  });
+}
+
 
   private _syncSeleccionConDisponibilidad = effect(() => {
     const libres = this.habitacionesLibres();
