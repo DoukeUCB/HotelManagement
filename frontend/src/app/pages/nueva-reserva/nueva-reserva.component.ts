@@ -22,6 +22,8 @@ interface ClienteOption {
 interface HuespedOption {
   id: string;
   nombre: string;
+  apellido: string;
+  segundo_apellido?: string;
 }
 
 @Component({
@@ -142,7 +144,9 @@ export class NuevaReservaComponent implements OnInit {
 
           this.huespedes.set(huespedes.map((h: any) => ({
             id: h.id,
-            nombre: `${h.nombre} ${h.apellido_Paterno}`
+            nombre: h.nombre || '',
+            apellido: h.apellido || h.apellido_Paterno || '',
+            segundo_apellido: h.segundo_apellido || h.apellido_Materno || ''
           })));
         },
         error: (err) => {
@@ -313,7 +317,16 @@ export class NuevaReservaComponent implements OnInit {
   }
 
   obtenerNombreHuesped(id: string): string {
-    return this.huespedes().find(h => h.id === id)?.nombre || 'Desconocido';
+    const huesped = this.huespedes().find(h => h.id === id);
+    if (!huesped) return 'Huésped desconocido';
+    
+    const partes = [
+      huesped.nombre,
+      huesped.apellido,
+      huesped.segundo_apellido
+    ].filter(parte => parte && parte.trim() !== '');
+    
+    return partes.join(' ') || 'Sin nombre';
   }
 
   calcularDias(fechaEntrada: string, fechaSalida: string): number {
