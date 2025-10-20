@@ -1,0 +1,45 @@
+<div class="nuevo-cliente">
+  <header class="encabezado">
+    <a routerLink="/clientes" class="volver">‹ Volver</a>
+    <h1>Nuevo cliente</h1>
+    <span class="placeholder"></span>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
+    <section class="form-grid">
+      <label class="campo">
+        <span>Razón Social *</span>
+        <input type="text" formControlName="razonSocial" />
+        <small *ngIf="form.controls.razonSocial.invalid && form.controls.razonSocial.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>NIT *</span>
+        <input type="text" formControlName="nit" />
+        <small *ngIf="form.controls.nit.invalid && form.controls.nit.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Email *</span>
+        <input type="email" formControlName="email" />
+        <small *ngIf="form.controls.email.invalid && form.controls.email.touched">
+          Email inválido.
+        </small>
+      </label>
+    </section>
+
+    <div class="acciones">
+      <button type="button" class="btn btn-terciario" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn btn-primario" [disabled]="submitting()">
+        {{ submitting() ? 'Guardando…' : 'Guardar cliente' }}
+      </button>
+    </div>
+
+    <p *ngIf="mensaje()" class="estado ok">{{ mensaje() }}</p>
+    <p *ngIf="error()" class="estado error">{{ error() }}</p>
+  </form>
+</div>

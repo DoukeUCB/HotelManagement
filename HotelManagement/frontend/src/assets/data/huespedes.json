@@ -1,0 +1,29 @@
+[
+  {
+    "id": "11111111-aaaa-bbbb-cccc-111111111111",
+    "primerNombre": "Juan",
+    "segundoNombre": "Carlos",
+    "primerApellido": "Pérez",
+    "segundoApellido": "García",
+    "fechaNacimiento": "1992-04-15",
+    "documento": "CB-1234567"
+  },
+  {
+    "id": "22222222-aaaa-bbbb-cccc-222222222222",
+    "primerNombre": "María",
+    "segundoNombre": "",
+    "primerApellido": "Gutiérrez",
+    "segundoApellido": "Loza",
+    "fechaNacimiento": "1988-11-03",
+    "documento": "LP-7654321"
+  },
+  {
+    "id": "33333333-aaaa-bbbb-cccc-333333333333",
+    "primerNombre": "Diego",
+    "segundoNombre": "Andrés",
+    "primerApellido": "Rojas",
+    "segundoApellido": "",
+    "fechaNacimiento": "2001-01-28",
+    "documento": "SC-9988776"
+  }
+]

@@ -1,0 +1,67 @@
+<div class="nuevo-huesped">
+  <header class="encabezado">
+    <a routerLink="/huespedes" class="volver">‹ Volver</a>
+    <h1>Registrar nuevo huésped</h1>
+    <span class="placeholder"></span>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
+    <section class="form-grid">
+      <label class="campo">
+        <span>Primer nombre *</span>
+        <input type="text" formControlName="primerNombre" />
+        <small *ngIf="form.controls.primerNombre.invalid && form.controls.primerNombre.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Segundo nombre</span>
+        <input type="text" formControlName="segundoNombre" />
+      </label>
+
+      <label class="campo">
+        <span>Primer apellido *</span>
+        <input type="text" formControlName="primerApellido" />
+        <small *ngIf="form.controls.primerApellido.invalid && form.controls.primerApellido.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Segundo apellido</span>
+        <input type="text" formControlName="segundoApellido" />
+      </label>
+
+      <label class="campo">
+        <span>Documento *</span>
+        <input type="text" formControlName="documento" />
+        <small *ngIf="form.controls.documento.invalid && form.controls.documento.touched">
+          Campo obligatorio.
+        </small>
+      </label>
+
+      <label class="campo">
+        <span>Teléfono</span>
+        <input type="tel" formControlName="telefono" />
+      </label>
+
+      <label class="campo">
+        <span>Fecha de nacimiento</span>
+        <input type="date" formControlName="fechaNacimiento" />
+      </label>
+    </section>
+
+    <div class="acciones">
+      <button type="button" class="btn btn-terciario" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primario" [disabled]="submitting()">
+        {{ submitting() ? 'Guardando…' : 'Guardar huésped' }}
+      </button>
+    </div>
+
+    <p *ngIf="mensaje()" class="estado ok">{{ mensaje() }}</p>
+    <p *ngIf="error()" class="estado error">{{ error() }}</p>
+  </form>
+</div>

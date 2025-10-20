@@ -1,0 +1,51 @@
+<div class="main-container">
+
+  <header class="page-header with-back-link">
+    <a (click)="goBack()" class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    <h1>Huéspedes</h1>
+    <span class="header-spacer"></span>
+  </header>
+
+  <div class="actions-bar">
+    <button routerLink="/nuevo-huesped" class="btn btn-primary">+ Nuevo huésped</button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">Cargando...</div>
+
+  <div class="data-table card" *ngIf="!loading && huespedes.length">
+    
+    <div class="table-header">
+      <div>Nombre</div>
+      <div>Documento</div>
+      <div>Fecha Nac.</div>
+      <div>Acciones</div> <!-- nueva columna -->
+    </div>
+
+    <div class="table-row" *ngFor="let h of huespedes">
+      <div data-label="Nombre">{{ nombreCompleto(h) }}</div>
+      <div data-label="Documento">{{ h.documento }}</div>
+      <div data-label="Fecha Nac.">{{ h.fechaNacimiento | date:'dd/MM/yyyy' }}</div>
+      <div data-label="Acciones" class="actions">
+        <!-- Solo botón ELIMINAR para la página de Huéspedes -->
+        <button
+          (click)="eliminarHuesped(h.id)"
+          class="btn btn-icon btn-danger"
+          title="Eliminar huésped"
+          style="display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;border:1px solid rgba(220,38,38,0.12);background:#fff;color:#dc2626;min-width:40px;min-height:36px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;">
+            <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !huespedes.length" class="empty-state">
+    No hay huéspedes.
+  </div>
+</div>

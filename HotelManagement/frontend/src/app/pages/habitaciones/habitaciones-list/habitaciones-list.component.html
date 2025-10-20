@@ -1,0 +1,51 @@
+<div class="main-container">
+
+  <header class="page-header with-back-link">
+    <a (click)="goBack()" class="link-back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
+      </svg>
+      Volver
+    </a>
+    
+    <h1>Habitaciones</h1>
+    
+    <div class="header-action-right">
+      <button routerLink="/nueva-habitacion" class="btn btn-primary">
+        + Nueva Habitación
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">Cargando...</div>
+
+  <div class="data-table card" *ngIf="!loading && habitaciones.length">
+    <div class="table-header">
+      <div>Número</div>
+      <div>Piso</div>
+      <div>Tipo</div>
+      <div>Capacidad</div>
+      <div class="align-right">Tarifa Base (Bs.)</div>
+      <div class="actions">Estado</div>
+    </div>
+
+    <div class="table-row" *ngFor="let h of habitaciones">
+      <div data-label="Número" class="room-number">{{ h.numero }}</div>
+      <div data-label="Piso">{{ h.piso }}</div>
+      <div data-label="Tipo">{{ h.tipoNombre }}</div>
+      <div data-label="Capacidad">{{ h.capacidad }}</div>
+      <div data-label="Tarifa Base" class="align-right total-cell">{{ h.tarifaBase | number:'1.2-2' }}</div>
+      
+      <div data-label="Estado" class="actions status-cell">
+        <!-- Mostrar estado como badge (NO editable) -->
+        <span class="status-badge" [ngClass]="'status-' + (h.estado || 'Libre')">
+          {{ h.estado || 'Libre' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !habitaciones.length" class="empty-state">
+    No hay habitaciones registradas.
+  </div>
+</div>

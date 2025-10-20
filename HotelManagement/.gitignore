@@ -1,0 +1,175 @@
+# .gitignore for C# and Angular projects
+
+# Ignore build outputs and temporary files
+bin/
+obj/
+obj/project.assets.json
+obj/Debug/
+obj/HotelManagement.csproj.nuget.dgspec.json
+obj/HotelManagement.csproj.nuget.g.props
+obj/HotelManagement.csproj.nuget.g.targets
+obj/project.nuget.cache
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.vs/
+.vscode/
+*.user  
+*.suo
+*.ncrunch*
+*.coverage
+*.DS_Store
+
+# Ignore NuGet packages
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+
+# Ignore Angular build outputs
+dist/
+tmp/
+out-tsc/
+.angular/
+node_modules/
+
+# Ignore environment and configuration files
+*.env
+*.env.*
+appsettings.json
+appsettings.*.json
+
+# Ignore IDE-specific files
+.idea/
+*.iml
+
+# Ignore test coverage reports
+coverage/
+lcov-report/
+
+# Ignore generated files
+wwwroot/
+.env
+# ==============================
+# 🌐 FRONTEND - Angular
+# ==============================
+# Node dependencies
+frontend/node_modules/
+frontend/.angular/cache/
+frontend/package-lock.json
+
+# Build outputs
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/.parcel-cache/
+frontend/.sass-cache/
+frontend/.eslintcache
+frontend/.nx/
+frontend/coverage/
+
+# IDE
+frontend/.vscode/
+frontend/.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.production.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+
+# ==============================
+# ⚙️ BACKEND - .NET / C#
+# ==============================
+# Build results
+**/bin/
+**/obj/
+**/out/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+logs/
+log/
+
+# Environment and secrets
+.env
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# VS temporary
+.vs/
+.vscode/
+.idea/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuspec
+
+# Test results
+TestResult.xml
+TestResults/
+*.coverage
+*.coveragexml
+
+# Temporary files
+~$*
+*.tmp
+*.bak
+*.swp
+*.lock.json
+
+# Publish output
+publish/
+wwwroot/
+
+# Database / dumps
+*.mdf
+*.ldf
+*.db
+*.sqlite
+*.bak
+
+# ==============================
+# 🧰 SYSTEM / GLOBAL
+# ==============================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# VS Code settings (optional to ignore)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

@@ -1,0 +1,625 @@
+// Archivo: reservas-list.component.scss
+
+// Variables base
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$border-color: #e9ecef;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+
+// Colores de estado
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$info-color: #17a2b8; 
+
+// Estilo del contenedor principal
+:host {
+  display: block;
+}
+
+/* ---------------------------------------------------- */
+/* 1. CABECERA Y BOTÓN VOLVER                             */
+/* ---------------------------------------------------- */
+
+// Estilo del botón "Volver"
+.link-back {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: $primary-color;
+  font-weight: 600;
+  padding: 8px 0; 
+  transition: color 0.2s;
+  min-width: 150px; /* Base para el centrado */
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    fill: $primary-color;
+    transition: transform 0.2s;
+  }
+
+  &:hover {
+    color: darken($primary-color, 10%);
+    svg {
+      fill: darken($primary-color, 10%);
+      transform: translateX(-3px);
+    }
+  }
+}
+
+// Cabecera de la página con el título y el botón
+.page-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  padding: 10px 0 20px 0;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: 5px; /* Reducido para dar espacio al nuevo filtro */
+
+  h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: #343a40;
+    flex-grow: 1; 
+    text-align: center;
+  }
+
+  /* Contenedor del botón 'Nueva Reserva' */
+  .header-action-right {
+    min-width: 150px; /* Base para el centrado */
+    text-align: right;
+  }
+}
+
+/* ---------------------------------------------------- */
+/* 2. CONTROLES DE LA TABLA (Filtro de Botones)         */
+/* ---------------------------------------------------- */
+
+.table-controls {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 20px;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #495057;
+    margin-right: 15px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.filter-buttons-group {
+    display: flex;
+    gap: 10px; // Espacio entre los botones
+    flex-wrap: wrap; // Permite que los botones salten de línea en móvil
+}
+
+.btn-filter {
+    padding: 6px 15px;
+    border-radius: 20px; // Forma de píldora
+    background-color: #e9ecef;
+    color: $secondary-color;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid #ced4da;
+    transition: all 0.2s;
+    
+    &:hover:not(.active) {
+        background-color: #d1d8df;
+        border-color: #b8c0c8;
+    }
+    
+    &.active {
+        background-color: $primary-color;
+        color: white;
+        border-color: $primary-color;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+    }
+}
+
+/* ---------------------------------------------------- */
+/* 3. ESTILOS GENERALES Y BOTONES                       */
+/* ---------------------------------------------------- */
+
+// Estilos de botones genéricos
+.btn {
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background-color 0.2s;
+
+  &-primary {
+    background-color: $primary-color;
+    color: white;
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+  &-secondary {
+    background-color: $secondary-color;
+    color: white;
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+}
+
+// Estados de la Tabla (Cargando y Vacío)
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  border-radius: 8px;
+  background-color: $card-background;
+  border: 1px solid $border-color;
+  color: $secondary-color;
+  font-size: 1.1rem;
+}
+
+/* ---------------------------------------------------- */
+/* 4. ESTILOS DE LA TABLA Y ESTADOS                     */
+/* ---------------------------------------------------- */
+
+// Estilos de la Tabla Principal (data-table)
+.data-table {
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; 
+
+  // Definición de las columnas de la tabla (6 columnas)
+  $grid-cols: 1.5fr 1fr 1fr 1fr 1fr 1fr; 
+
+  .table-header,
+  .table-row {
+    display: grid;
+    grid-template-columns: $grid-cols;
+    padding: 15px 20px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .table-header {
+    background-color: #f1f3f5;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .table-row {
+    border-bottom: 1px solid $border-color;
+    font-size: 0.95rem;
+
+    &:nth-child(even) {
+      background-color: $background-color;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// Utilidades de alineación
+.align-right {
+  text-align: right;
+}
+.total-cell {
+    font-weight: 600;
+    color: #343a40;
+}
+
+
+// Estilos para los indicadores de Estado
+.status-cell span {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Clases específicas que coinciden con los valores de r.estado */
+.status-Confirmada {
+    background-color: lighten($success-color, 30%);
+    color: darken($success-color, 20%);
+}
+
+.status-Pendiente {
+    background-color: lighten($warning-color, 20%);
+    color: darken($warning-color, 30%);
+}
+
+.status-Cancelada {
+    background-color: lighten($danger-color, 35%);
+    color: darken($danger-color, 10%);
+}
+
+/* ---------------------------------------------------- */
+/* 5. RESPONSIVIDAD (Móviles)                           */
+/* ---------------------------------------------------- */
+@media (max-width: 768px) {
+  
+  .page-header {
+    flex-wrap: wrap; 
+    
+    .link-back {
+      order: 0; 
+      width: 50%; 
+      min-width: auto; 
+      padding-bottom: 0;
+    }
+    
+    .header-action-right {
+      order: 1; 
+      width: 50%;
+      min-width: auto;
+      text-align: right;
+    }
+
+    h1 {
+      order: 2; 
+      width: 100%;
+      margin-top: 10px;
+      text-align: left; 
+    }
+  }
+
+  /* Nuevo: Aseguramos que los botones de filtro sean apilables en móvil */
+  .table-controls {
+      flex-direction: column; /* Apila el label y los botones */
+      align-items: flex-start;
+      padding-top: 5px;
+
+      .filter-label {
+          margin-bottom: 10px;
+      }
+
+      .filter-buttons-group {
+          width: 100%;
+          gap: 8px; 
+          .btn-filter {
+              flex-grow: 1; 
+              width: auto;
+          }
+      }
+  }
+
+  .data-table {
+    box-shadow: none; 
+    border-radius: 0;
+    
+    .table-header {
+      display: none; 
+    }
+
+    .table-row {
+      display: block; 
+      border: 1px solid $border-color;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background-color: $card-background;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      
+      &:nth-child(even) {
+        background-color: $card-background;
+      }
+
+      & > div {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px dotted lighten($secondary-color, 30%);
+
+        &:before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: $secondary-color;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+        }
+
+        &:last-child {
+          border-bottom: none;
+          padding-top: 15px;
+        }
+      }
+
+      .align-right {
+          text-align: left; 
+      }
+
+      .actions {
+        .btn {
+            width: 100%;
+        }
+      }
+    }
+  }
+  
+  .search-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    min-width: 100%;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .pagination-numbers {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ---------------------------------------------------- */
+/* 6. NUEVOS ESTILOS PARA FILTRO Y BUSQUEDA             */
+/* ---------------------------------------------------- */
+
+.search-filter-bar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: #64748b;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+  }
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .filter-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .filter-select {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: white;
+
+    &:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+  }
+}
+
+.results-count {
+  font-size: 0.9rem;
+  color: #64748b;
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.cliente-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .user-icon {
+    width: 18px;
+    height: 18px;
+    fill: #4f46e5;
+  }
+}
+
+.date-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.dias-cell {
+  .dias-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: help;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.status-Pendiente {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.status-Confirmada {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.status-Cancelada {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
+.btn-icon {
+  padding: 8px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: #64748b;
+  }
+
+  &:hover {
+    background: #f1f5f9;
+
+    svg {
+      fill: #4f46e5;
+    }
+  }
+
+  &.btn-danger:hover {
+    background: #fee2e2;
+
+    svg {
+      fill: #dc2626;
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 16px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.pagination-number {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+
+  &.active {
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+
+  svg {
+    width: 80px;
+    height: 80px;
+    fill: #cbd5e1;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-bottom: 24px;
+  }
+}

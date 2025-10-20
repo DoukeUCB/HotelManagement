@@ -1,0 +1,26 @@
+[
+  {
+    "id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+    "cliente": "Juan Pérez",
+    "fechaEntrada": "2025-11-01T00:00:00",
+    "fechaSalida": "2025-11-05T00:00:00",
+    "estado": "Confirmada",
+    "montoTotal": 400.00
+  },
+  {
+    "id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+    "cliente": "María García",
+    "fechaEntrada": "2025-12-15T00:00:00",
+    "fechaSalida": "2025-12-20T00:00:00",
+    "estado": "Confirmada",
+    "montoTotal": 750.00
+  },
+  {
+    "id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+    "cliente": "Prueba Adicional",
+    "fechaEntrada": "2025-12-25T00:00:00",
+    "fechaSalida": "2025-12-28T00:00:00",
+    "estado": "Pendiente",
+    "montoTotal": 600.00
+  }
+]
