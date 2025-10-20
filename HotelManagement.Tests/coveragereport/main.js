@@ -217,29 +217,53 @@ var assemblies = [
       { "name": "HotelManagement.Aplicacion.Exceptions.ConflictException", "rp": "HotelManagement_ConflictException.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "HotelManagement.Aplicacion.Exceptions.NotFoundException", "rp": "HotelManagement_NotFoundException.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "HotelManagement.Aplicacion.Exceptions.ValidationException", "rp": "HotelManagement_ValidationException.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Aplicacion.Validators.ClienteValidator", "rp": "HotelManagement_ClienteValidator.html", "cl": 0, "ucl": 57, "cal": 57, "tl": 102, "cb": 0, "tb": 32, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Aplicacion.Validators.DetalleReservaValidator", "rp": "HotelManagement_DetalleReservaValidator.html", "cl": 0, "ucl": 87, "cal": 87, "tl": 137, "cb": 0, "tb": 52, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Controllers.DetalleReservaController", "rp": "HotelManagement_DetalleReservaController.html", "cl": 27, "ucl": 10, "cal": 37, "tl": 81, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Datos.Config.HotelDbContext", "rp": "HotelManagement_HotelDbContext.html", "cl": 66, "ucl": 0, "cal": 66, "tl": 90, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.DTOs.ClienteCreateDTO", "rp": "HotelManagement_ClienteCreateDTO.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.DTOs.ClienteDTO", "rp": "HotelManagement_ClienteDTO.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.DTOs.ClienteUpdateDTO", "rp": "HotelManagement_ClienteUpdateDTO.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.DTOs.DetalleReservaCreateDTO", "rp": "HotelManagement_DetalleReservaCreateDTO.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 35, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.DTOs.DetalleReservaDTO", "rp": "HotelManagement_DetalleReservaDTO.html", "cl": 10, "ucl": 0, "cal": 10, "tl": 35, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.DTOs.DetalleReservaUpdateDTO", "rp": "HotelManagement_DetalleReservaUpdateDTO.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 35, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Models.Cliente", "rp": "HotelManagement_Cliente.html", "cl": 4, "ucl": 1, "cal": 5, "tl": 28, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Models.DetalleReserva", "rp": "HotelManagement_DetalleReserva.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Models.Habitacion", "rp": "HotelManagement_Habitacion.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 33, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Models.Huesped", "rp": "HotelManagement_Huesped.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Models.Reserva", "rp": "HotelManagement_Reserva.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 39, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Models.TipoHabitacion", "rp": "HotelManagement_TipoHabitacion.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 28, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Presentacion.Controllers.ClienteController", "rp": "HotelManagement_ClienteController.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 77, "cb": 2, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Presentacion.Middleware.ErrorHandlingMiddleware", "rp": "HotelManagement_ErrorHandlingMiddleware.html", "cl": 0, "ucl": 63, "cal": 63, "tl": 94, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Repositories.ClienteRepository", "rp": "HotelManagement_ClienteRepository.html", "cl": 30, "ucl": 4, "cal": 34, "tl": 61, "cb": 2, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Aplicacion.Validators.ClienteValidator", "rp": "HotelManagement_ClienteValidator.html", "cl": 0, "ucl": 74, "cal": 74, "tl": 102, "cb": 0, "tb": 54, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Aplicacion.Validators.DetalleReservaValidator", "rp": "HotelManagement_DetalleReservaValidator.html", "cl": 0, "ucl": 110, "cal": 110, "tl": 137, "cb": 0, "tb": 90, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Application.Services.ReservaService", "rp": "HotelManagement_ReservaService.html", "cl": 83, "ucl": 10, "cal": 93, "tl": 137, "cb": 20, "tb": 30, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Controllers.DetalleReservaController", "rp": "HotelManagement_DetalleReservaController.html", "cl": 27, "ucl": 54, "cal": 81, "tl": 81, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Datos.Config.HotelDbContext", "rp": "HotelManagement_HotelDbContext.html", "cl": 89, "ucl": 0, "cal": 89, "tl": 90, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Datos.Repositories.ReservaRepository", "rp": "HotelManagement_ReservaRepository.html", "cl": 0, "ucl": 30, "cal": 30, "tl": 54, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.ClienteCreateDTO", "rp": "HotelManagement_ClienteCreateDTO.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.ClienteDTO", "rp": "HotelManagement_ClienteDTO.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.ClienteUpdateDTO", "rp": "HotelManagement_ClienteUpdateDTO.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.DetalleHabitacionDTO", "rp": "HotelManagement_DetalleHabitacionDTO.html", "cl": 0, "ucl": 4, "cal": 4, "tl": 69, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.DetalleReservaCreateDTO", "rp": "HotelManagement_DetalleReservaCreateDTO.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 35, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.DetalleReservaDTO", "rp": "HotelManagement_DetalleReservaDTO.html", "cl": 12, "ucl": 0, "cal": 12, "tl": 35, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.DetalleReservaMultipleCreateDTO", "rp": "HotelManagement_DetalleReservaMultipleCreateDTO.html", "cl": 0, "ucl": 2, "cal": 2, "tl": 69, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.DetalleReservaUpdateDTO", "rp": "HotelManagement_DetalleReservaUpdateDTO.html", "cl": 4, "ucl": 4, "cal": 8, "tl": 35, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.HabitacionCreateDTO", "rp": "HotelManagement_HabitacionCreateDTO.html", "cl": 0, "ucl": 4, "cal": 4, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.HabitacionDTO", "rp": "HotelManagement_HabitacionDTO.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.HabitacionUpdateDTO", "rp": "HotelManagement_HabitacionUpdateDTO.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.HuespedCreateDTO", "rp": "HotelManagement_HuespedCreateDTO.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 68, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.HuespedDTO", "rp": "HotelManagement_HuespedDTO.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 68, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.HuespedUpdateDTO", "rp": "HotelManagement_HuespedUpdateDTO.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 68, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.ReservaCreateDTO", "rp": "HotelManagement_ReservaCreateDTO.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 40, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.ReservaDTO", "rp": "HotelManagement_ReservaDTO.html", "cl": 8, "ucl": 0, "cal": 8, "tl": 40, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.ReservaUpdateDTO", "rp": "HotelManagement_ReservaUpdateDTO.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 40, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.TipoHabitacionCreateDTO", "rp": "HotelManagement_TipoHabitacionCreateDTO.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 42, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.TipoHabitacionDTO", "rp": "HotelManagement_TipoHabitacionDTO.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 42, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.DTOs.TipoHabitacionUpdateDTO", "rp": "HotelManagement_TipoHabitacionUpdateDTO.html", "cl": 0, "ucl": 4, "cal": 4, "tl": 42, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Migrations.HotelDbContextModelSnapshot", "rp": "HotelManagement_HotelDbContextModelSnapshot.html", "cl": 0, "ucl": 446, "cal": 446, "tl": 486, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Migrations.Initial", "rp": "HotelManagement_Initial.html", "cl": 0, "ucl": 770, "cal": 770, "tl": 861, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.Cliente", "rp": "HotelManagement_Cliente.html", "cl": 9, "ucl": 4, "cal": 13, "tl": 28, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.DetalleReserva", "rp": "HotelManagement_DetalleReserva.html", "cl": 13, "ucl": 1, "cal": 14, "tl": 41, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.Habitacion", "rp": "HotelManagement_Habitacion.html", "cl": 0, "ucl": 14, "cal": 14, "tl": 33, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.Huesped", "rp": "HotelManagement_Huesped.html", "cl": 0, "ucl": 16, "cal": 16, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.Reserva", "rp": "HotelManagement_Reserva.html", "cl": 8, "ucl": 8, "cal": 16, "tl": 39, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.TipoHabitacion", "rp": "HotelManagement_TipoHabitacion.html", "cl": 0, "ucl": 14, "cal": 14, "tl": 28, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Models.Usuario", "rp": "HotelManagement_Usuario.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 44, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Presentacion.Controllers.ClienteController", "rp": "HotelManagement_ClienteController.html", "cl": 45, "ucl": 7, "cal": 52, "tl": 77, "cb": 8, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Presentacion.Controllers.HabitacionController", "rp": "HotelManagement_HabitacionController.html", "cl": 0, "ucl": 178, "cal": 178, "tl": 260, "cb": 0, "tb": 72, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Presentacion.Controllers.HuespedController", "rp": "HotelManagement_HuespedController.html", "cl": 0, "ucl": 178, "cal": 178, "tl": 255, "cb": 0, "tb": 60, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Presentacion.Controllers.ReservaController", "rp": "HotelManagement_ReservaController.html", "cl": 0, "ucl": 143, "cal": 143, "tl": 210, "cb": 0, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Presentacion.Middleware.ErrorHandlingMiddleware", "rp": "HotelManagement_ErrorHandlingMiddleware.html", "cl": 0, "ucl": 68, "cal": 68, "tl": 105, "cb": 0, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Repositories.ClienteRepository", "rp": "HotelManagement_ClienteRepository.html", "cl": 33, "ucl": 7, "cal": 40, "tl": 61, "cb": 2, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "HotelManagement.Repositories.DetalleReservaRepository", "rp": "HotelManagement_DetalleReservaRepository.html", "cl": 16, "ucl": 28, "cal": 44, "tl": 70, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Services.ClienteService", "rp": "HotelManagement_ClienteService.html", "cl": 62, "ucl": 0, "cal": 62, "tl": 107, "cb": 12, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "HotelManagement.Services.DetalleReservaService", "rp": "HotelManagement_DetalleReservaService.html", "cl": 79, "ucl": 4, "cal": 83, "tl": 126, "cb": 20, "tb": 32, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "Program", "rp": "HotelManagement_Program.html", "cl": 0, "ucl": 53, "cal": 53, "tl": 82, "cb": 0, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Services.ClienteService", "rp": "HotelManagement_ClienteService.html", "cl": 85, "ucl": 0, "cal": 85, "tl": 107, "cb": 19, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Services.DetalleReservaService", "rp": "HotelManagement_DetalleReservaService.html", "cl": 90, "ucl": 5, "cal": 95, "tl": 126, "cb": 22, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Validators.ReservaCreateValidator", "rp": "HotelManagement_ReservaCreateValidator.html", "cl": 0, "ucl": 14, "cal": 14, "tl": 53, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "HotelManagement.Validators.ReservaUpdateValidator", "rp": "HotelManagement_ReservaUpdateValidator.html", "cl": 0, "ucl": 18, "cal": 18, "tl": 53, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "Program", "rp": "HotelManagement_Program.html", "cl": 0, "ucl": 79, "cal": 79, "tl": 101, "cb": 0, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -254,6 +278,12 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
+    "assembly": "HotelManagement", "class": "HotelManagement.Aplicacion.Validators.DetalleReservaValidator", "reportPath": "HotelManagement_DetalleReservaValidator.html", "methodName": "ValidateUpdateAsync()", "methodShortName": "ValidateUpdateAsync()", "fileIndex": 0, "line": 69,
+    "metrics": [
+      { "value": 702, "exceeded": true },
+      { "value": 26, "exceeded": true },
+    ]},
+  {
     "assembly": "HotelManagement", "class": "HotelManagement.Aplicacion.Validators.DetalleReservaValidator", "reportPath": "HotelManagement_DetalleReservaValidator.html", "methodName": "ValidateCreateAsync()", "methodShortName": "ValidateCreateAsync()", "fileIndex": 0, "line": 24,
     "metrics": [
       { "value": 600, "exceeded": true },
@@ -266,7 +296,43 @@ var riskHotspots = [
       { "value": 24, "exceeded": true },
     ]},
   {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HabitacionController", "reportPath": "HotelManagement_HabitacionController.html", "methodName": "PartialUpdate()", "methodShortName": "PartialUpdate()", "fileIndex": 0, "line": 182,
+    "metrics": [
+      { "value": 506, "exceeded": true },
+      { "value": 22, "exceeded": true },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HuespedController", "reportPath": "HotelManagement_HuespedController.html", "methodName": "PartialUpdate()", "methodShortName": "PartialUpdate()", "fileIndex": 0, "line": 180,
+    "metrics": [
+      { "value": 420, "exceeded": true },
+      { "value": 20, "exceeded": true },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HuespedController", "reportPath": "HotelManagement_HuespedController.html", "methodName": "Update()", "methodShortName": "Update()", "fileIndex": 0, "line": 131,
+    "metrics": [
+      { "value": 272, "exceeded": true },
+      { "value": 16, "exceeded": true },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.ReservaController", "reportPath": "HotelManagement_ReservaController.html", "methodName": "PartialUpdate()", "methodShortName": "PartialUpdate()", "fileIndex": 0, "line": 147,
+    "metrics": [
+      { "value": 272, "exceeded": true },
+      { "value": 16, "exceeded": true },
+    ]},
+  {
     "assembly": "HotelManagement", "class": "HotelManagement.Aplicacion.Validators.ClienteValidator", "reportPath": "HotelManagement_ClienteValidator.html", "methodName": "ValidateUpdateAsync()", "methodShortName": "ValidateUpdateAsync()", "fileIndex": 0, "line": 41,
+    "metrics": [
+      { "value": 210, "exceeded": true },
+      { "value": 14, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Aplicacion.Validators.ClienteValidator", "reportPath": "HotelManagement_ClienteValidator.html", "methodName": "ValidateUpdateAsync()", "methodShortName": "ValidateUpdateAsync()", "fileIndex": 0, "line": 40,
+    "metrics": [
+      { "value": 210, "exceeded": true },
+      { "value": 14, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HabitacionController", "reportPath": "HotelManagement_HabitacionController.html", "methodName": "Update()", "methodShortName": "Update()", "fileIndex": 0, "line": 133,
     "metrics": [
       { "value": 210, "exceeded": true },
       { "value": 14, "exceeded": false },
@@ -278,13 +344,67 @@ var riskHotspots = [
       { "value": 12, "exceeded": false },
     ]},
   {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HabitacionController", "reportPath": "HotelManagement_HabitacionController.html", "methodName": "GetById()", "methodShortName": "GetById()", "fileIndex": 0, "line": 60,
+    "metrics": [
+      { "value": 156, "exceeded": true },
+      { "value": 12, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.ReservaController", "reportPath": "HotelManagement_ReservaController.html", "methodName": "GetById()", "methodShortName": "GetById()", "fileIndex": 0, "line": 113,
+    "metrics": [
+      { "value": 156, "exceeded": true },
+      { "value": 12, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Controllers.DetalleReservaController", "reportPath": "HotelManagement_DetalleReservaController.html", "methodName": "GetAll()", "methodShortName": "GetAll()", "fileIndex": 0, "line": 36,
+    "metrics": [
+      { "value": 110, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HabitacionController", "reportPath": "HotelManagement_HabitacionController.html", "methodName": "Create()", "methodShortName": "Create()", "fileIndex": 0, "line": 89,
+    "metrics": [
+      { "value": 110, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HuespedController", "reportPath": "HotelManagement_HuespedController.html", "methodName": "GetAll()", "methodShortName": "GetAll()", "fileIndex": 0, "line": 26,
+    "metrics": [
+      { "value": 110, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
+  {
     "assembly": "HotelManagement", "class": "Program", "reportPath": "HotelManagement_Program.html", "methodName": "<Main>$(System.String[])", "methodShortName": "<Main>$(...)", "fileIndex": 0, "line": 10,
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
     ]},
   {
+    "assembly": "HotelManagement", "class": "Program", "reportPath": "HotelManagement_Program.html", "methodName": "<Main>$(System.String[])", "methodShortName": "<Main>$(...)", "fileIndex": 0, "line": 18,
+    "metrics": [
+      { "value": 110, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.HabitacionController", "reportPath": "HotelManagement_HabitacionController.html", "methodName": "GetAll()", "methodShortName": "GetAll()", "fileIndex": 0, "line": 26,
+    "metrics": [
+      { "value": 72, "exceeded": true },
+      { "value": 8, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Controllers.ReservaController", "reportPath": "HotelManagement_ReservaController.html", "methodName": "GetAll()", "methodShortName": "GetAll()", "fileIndex": 0, "line": 27,
+    "metrics": [
+      { "value": 72, "exceeded": true },
+      { "value": 8, "exceeded": false },
+    ]},
+  {
     "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Middleware.ErrorHandlingMiddleware", "reportPath": "HotelManagement_ErrorHandlingMiddleware.html", "methodName": "HandleExceptionAsync(Microsoft.AspNetCore.Http.HttpContext,System.Exception)", "methodShortName": "HandleExceptionAsync(...)", "fileIndex": 0, "line": 31,
+    "metrics": [
+      { "value": 72, "exceeded": true },
+      { "value": 8, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Presentacion.Middleware.ErrorHandlingMiddleware", "reportPath": "HotelManagement_ErrorHandlingMiddleware.html", "methodName": "HandleExceptionAsync(Microsoft.AspNetCore.Http.HttpContext,System.Exception)", "methodShortName": "HandleExceptionAsync(...)", "fileIndex": 0, "line": 32,
     "metrics": [
       { "value": 72, "exceeded": true },
       { "value": 8, "exceeded": false },
@@ -297,6 +417,12 @@ var riskHotspots = [
     ]},
   {
     "assembly": "HotelManagement", "class": "HotelManagement.Aplicacion.Validators.ClienteValidator", "reportPath": "HotelManagement_ClienteValidator.html", "methodName": "ValidateDeleteAsync()", "methodShortName": "ValidateDeleteAsync()", "fileIndex": 0, "line": 73,
+    "metrics": [
+      { "value": 42, "exceeded": true },
+      { "value": 6, "exceeded": false },
+    ]},
+  {
+    "assembly": "HotelManagement", "class": "HotelManagement.Aplicacion.Validators.ClienteValidator", "reportPath": "HotelManagement_ClienteValidator.html", "methodName": "ValidateDeleteAsync()", "methodShortName": "ValidateDeleteAsync()", "fileIndex": 0, "line": 69,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
