@@ -2,19 +2,28 @@ import { Component, OnInit, inject, signal, computed, effect } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize, switchMap, tap } from 'rxjs';
-import {
-  NuevaReservaService,
-  ClienteOption,
-  HabitacionOption,
-  HuespedOption
-} from '../../core/services/nueva-reserva.service';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
+import { finalize, switchMap } from 'rxjs/operators';
 
-interface HabitacionForm {
-  habitacionId: string;
-  fechaEntrada: string;
-  fechaSalida: string;
-  huespedIds: string[];
+interface Habitacion {
+  id: string;
+  numero: string;
+  estado: string;
+  tarifaBase: number;
+}
+
+interface ClienteOption {
+  id: string;
+  label: string;
+  nit: string;
+}
+
+interface HuespedOption {
+  id: string;
+  nombre: string;
+  apellido: string;
+  segundo_apellido?: string;
 }
 
 @Component({
@@ -24,14 +33,15 @@ interface HabitacionForm {
   templateUrl: './nueva-reserva.component.html',
   styleUrls: ['./nueva-reserva.component.scss']
 })
-
 export class NuevaReservaComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private api = inject(NuevaReservaService);
+  private http = inject(HttpClient);
+
+  private readonly API_URL = 'http://localhost:5000/api';
 
   clientes = signal<ClienteOption[]>([]);
-  habitaciones = signal<HabitacionOption[]>([]);
+  habitaciones = signal<Habitacion[]>([]);
   huespedes = signal<HuespedOption[]>([]);
   catalogosCargando = signal(false);
 
@@ -39,7 +49,6 @@ export class NuevaReservaComponent implements OnInit {
   mensaje = signal<string | null>(null);
   error = signal<string | null>(null);
 
-  // Sistema de pasos
   pasoActual = signal(1);
   totalPasos = 3;
   habitacionSearchTerm: string[] = [];
@@ -105,9 +114,7 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
 }
 
 
-  /** Si una selección deja de estar libre (o desaparece), la limpiamos. */
   private _syncSeleccionConDisponibilidad = effect(() => {
-    // dispara cuando cambie el catálogo filtrado
     const libres = this.habitacionesLibres();
     const idsLibres = new Set(libres.map(h => h.id));
     for (const fg of this.habitacionesFormArray.controls) {
@@ -122,15 +129,9 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
     clienteId: ['', Validators.required],
     estadoReserva: ['Pendiente', Validators.required],
     montoTotal: [null as number | null, [Validators.required, Validators.min(0)]],
-    habitaciones: this.fb.array<FormGroup<{
-      habitacionId: any;
-      fechaEntrada: any;
-      fechaSalida: any;
-      huespedIds: any;
-    }>>([], Validators.minLength(1))
+    habitaciones: this.fb.array<FormGroup>([], Validators.minLength(1))
   });
 
-  // Computed para validar cada paso (se mantienen pero no se usan en template)
   paso1Valido = computed(() => {
     const clienteId = this.form.get('clienteId')?.value;
     return !!(clienteId && clienteId !== '');
@@ -155,12 +156,16 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
     return this.form.get('habitaciones') as FormArray;
   }
 
-  // Computed para obtener el nombre del cliente seleccionado
   clienteSeleccionado = computed(() => {
     const clienteId = this.form.controls.clienteId.value;
     const cliente = this.clientes().find(c => c.id === clienteId);
     return cliente?.label || 'No seleccionado';
   });
+
+  showSuggestions = false;
+  searchTerm = signal<string>('');
+  huespedSearchTerm: string[] = [];
+  showHuespedSug: boolean[] = [];
 
   ngOnInit(): void {
     this.cargarCatalogos();
@@ -169,24 +174,137 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
 
   private cargarCatalogos(): void {
     this.catalogosCargando.set(true);
-    this.error.set(null);
-    this.api
-      .getClientes()
-      .pipe(
-        tap(list => this.clientes.set(list)),
-        switchMap(() => this.api.getHabitaciones()),
-        tap(list => this.habitaciones.set(list)),
-        switchMap(() => this.api.getHuespedes()),
-        tap(list => this.huespedes.set(list)),
-        finalize(() => this.catalogosCargando.set(false))
-      )
+    forkJoin({
+      clientes: this.http.get<any[]>(`${this.API_URL}/Cliente`),
+      habitaciones: this.http.get<any[]>(`${this.API_URL}/Habitacion`),
+      huespedes: this.http.get<any[]>(`${this.API_URL}/Huesped`)
+    })
+      .pipe(finalize(() => this.catalogosCargando.set(false)))
       .subscribe({
-        next: list => this.huespedes.set(list),
-        error: () => this.error.set('No se pudieron cargar los catálogos. Intenta nuevamente.')
+        next: ({ clientes, habitaciones, huespedes }) => {
+          this.clientes.set(clientes.map((c: any) => ({
+            id: c.id,
+            label: c.razon_Social,
+            nit: c.nit
+          })));
+          
+          this.habitaciones.set(habitaciones.map((h: any) => ({
+            id: h.id,
+            numero: h.numero_Habitacion,
+            estado: h.estado_Habitacion,
+            tarifaBase: h.tarifa_Base || 0
+          })));
+
+          this.huespedes.set(huespedes.map((h: any) => ({
+            id: h.id,
+            nombre: h.nombre || '',
+            apellido: h.apellido || h.apellido_Paterno || '',
+            segundo_apellido: h.segundo_apellido || h.apellido_Materno || ''
+          })));
+        },
+        error: (err) => {
+          console.error('Error al cargar catálogos:', err);
+          this.error.set('Error al cargar la información necesaria');
+        }
       });
   }
 
-  // Navegación de pasos
+  calcularMontoTotal(): void {
+    let montoTotal = 0;
+
+    this.habitacionesFormArray.controls.forEach(habitacionControl => {
+      const habitacionId = habitacionControl.get('habitacionId')?.value;
+      const fechaEntrada = habitacionControl.get('fechaEntrada')?.value;
+      const fechaSalida = habitacionControl.get('fechaSalida')?.value;
+
+      if (habitacionId && fechaEntrada && fechaSalida) {
+        const habitacion = this.habitaciones().find(h => h.id === habitacionId);
+        
+        if (habitacion && habitacion.tarifaBase) {
+          const dias = this.calcularDias(fechaEntrada, fechaSalida);
+          const subtotal = habitacion.tarifaBase * dias;
+          montoTotal += subtotal;
+        }
+      }
+    });
+
+    this.form.patchValue({ montoTotal }, { emitEvent: false });
+  }
+
+  private norm = (v: unknown) =>
+    (v ?? '')
+      .toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '');
+
+  private digits = (v: unknown) => (v ?? '').toString().replace(/\D+/g, '');
+
+  filteredClientes = computed<ClienteOption[]>(() => {
+    const termRaw = this.searchTerm().trim();
+    if (!termRaw) return this.clientes();
+
+    const term = this.norm(termRaw);
+    const termDigits = this.digits(termRaw);
+
+    return this.clientes().filter((c: any) => {
+      const textParts = [c.label, c.razon_Social, c.email];
+      const numParts = [c.nit];
+
+      const textBlob = this.norm(textParts.filter(Boolean).join(' '));
+      const digitsBlob = this.digits(numParts.filter(Boolean).join(' '));
+
+      const byText = textBlob.includes(term);
+      const byDigits = !!termDigits && digitsBlob.includes(termDigits);
+
+      return byText || byDigits;
+    });
+  });
+
+  seleccionarCliente(c: any) {
+    this.form.controls.clienteId.setValue(c.id);
+    this.searchTerm.set(c.label);
+    this.showSuggestions = false;
+  }
+
+  onBlur() {
+    setTimeout(() => this.showSuggestions = false, 200);
+  }
+
+  filteredHuespedes(i: number): HuespedOption[] {
+    const term = this.norm(this.huespedSearchTerm[i] ?? '');
+    const all = this.huespedes();
+    if (!term) return all;
+
+    return all.filter(h => this.norm(h.nombre).includes(term));
+  }
+
+  openHuesped(i: number) {
+    this.ensureHuespedStateIndex(i);
+    this.showHuespedSug[i] = true;
+  }
+
+  onHuespedBlur(i: number) {
+    setTimeout(() => this.showHuespedSug[i] = false, 150);
+  }
+
+  onHuespedInput(i: number, value: string) {
+    this.ensureHuespedStateIndex(i);
+    this.huespedSearchTerm[i] = value;
+  }
+
+  seleccionarHuesped(i: number, h: HuespedOption, inputEl?: HTMLInputElement) {
+    this.agregarHuesped(i, h.id);
+    this.huespedSearchTerm[i] = '';
+    if (inputEl) inputEl.value = '';
+    this.showHuespedSug[i] = false;
+  }
+
+  private ensureHuespedStateIndex(i: number) {
+    while (this.huespedSearchTerm.length <= i) this.huespedSearchTerm.push('');
+    while (this.showHuespedSug.length <= i) this.showHuespedSug.push(false);
+  }
+
   irAPaso(paso: number): void {
     if (paso >= 1 && paso <= this.totalPasos) {
       this.pasoActual.set(paso);
@@ -194,8 +312,11 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
   }
 
   siguientePaso(): void {
-    if (this.pasoActual() < this.totalPasos) {
-      this.pasoActual.set(this.pasoActual() + 1);
+    if (this.pasoActual() === 1 && this.isPaso1Valid()) {
+      this.pasoActual.set(2);
+    } else if (this.pasoActual() === 2 && this.isPaso2Valid()) {
+      this.pasoActual.set(3);
+      this.calcularMontoTotal();
     }
   }
 
@@ -206,20 +327,27 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
   }
 
   agregarHabitacion(): void {
-    const habitacionGroup = this.fb.nonNullable.group({
+    const nuevaHabitacion = this.fb.group({
       habitacionId: ['', Validators.required],
       fechaEntrada: ['', Validators.required],
       fechaSalida: ['', Validators.required],
-      huespedIds: [[] as string[], Validators.minLength(1)]
+      huespedIds: [[], Validators.required]
     });
 
-    this.habitacionesFormArray.push(habitacionGroup);
+    nuevaHabitacion.valueChanges.subscribe(() => {
+      this.calcularMontoTotal();
+    });
+
+    this.habitacionesFormArray.push(nuevaHabitacion);
+    this.showHuespedSug.push(false);
+    this.huespedSearchTerm.push('');
   }
 
   eliminarHabitacion(index: number): void {
-    if (this.habitacionesFormArray.length > 1) {
-      this.habitacionesFormArray.removeAt(index);
-    }
+    this.habitacionesFormArray.removeAt(index);
+    this.showHuespedSug.splice(index, 1);
+    this.huespedSearchTerm.splice(index, 1);
+    this.calcularMontoTotal();
   }
 
   agregarHuesped(habitacionIndex: number, huespedId: string): void {
@@ -242,7 +370,16 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
   }
 
   obtenerNombreHuesped(id: string): string {
-    return this.huespedes().find(h => h.id === id)?.nombre || 'Desconocido';
+    const huesped = this.huespedes().find(h => h.id === id);
+    if (!huesped) return 'Huésped desconocido';
+    
+    const partes = [
+      huesped.nombre,
+      huesped.apellido,
+      huesped.segundo_apellido
+    ].filter(parte => parte && parte.trim() !== '');
+    
+    return partes.join(' ') || 'Sin nombre';
   }
 
   calcularDias(fechaEntrada: string, fechaSalida: string): number {
@@ -266,75 +403,42 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
   }
 
   crearReserva(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.error.set('Por favor, completa todos los campos requeridos correctamente.');
-      return;
-    }
+    if (this.form.invalid || this.submitting()) return;
 
-    const habitaciones = this.habitacionesFormArray.controls;
-    for (let i = 0; i < habitaciones.length; i++) {
-      const huespedIds = habitaciones[i].get('huespedIds')?.value as string[] || [];
-      if (huespedIds.length === 0) {
-        this.error.set(`La habitación ${i + 1} debe tener al menos un huésped asignado.`);
-        this.irAPaso(2);
-        return;
-      }
-    }
-
-    this.error.set(null);
-    this.mensaje.set(null);
     this.submitting.set(true);
-
-    const data = this.form.getRawValue();
+    this.error.set('');
+    this.mensaje.set('');
 
     const reservaPayload = {
-      cliente_ID: data.clienteId,
-      estado_Reserva: data.estadoReserva,
-      monto_Total: data.montoTotal || 0
+      cliente_ID: this.form.value.clienteId!,
+      estado_Reserva: this.form.value.estadoReserva!,
+      monto_Total: this.form.value.montoTotal!
     };
 
-    this.api
-      .createReserva(reservaPayload)
+    this.http.post<any>('http://localhost:5000/api/Reserva', reservaPayload)
       .pipe(
-        switchMap(reservaCreada => {
-          const reservaId = reservaCreada?.id ?? reservaCreada?.ID;
-          
-          if (!reservaId) {
-            throw new Error('La API no devolvió el ID de la reserva creada.');
-          }
-
-          const habitacionesPayload = (data.habitaciones as HabitacionForm[]).map((h: HabitacionForm) => ({
-            habitacion_ID: h.habitacionId,
-            fecha_Entrada: h.fechaEntrada,
-            fecha_Salida: h.fechaSalida,
-            huesped_IDs: h.huespedIds
-          }));
-
-          return this.api.createDetallesMultiples(reservaId, habitacionesPayload);
+        switchMap((reservaCreada: any) => {
+          const detallesPayload = {
+            reserva_ID: reservaCreada.id,
+            habitaciones: this.form.value.habitaciones!.map((h: any) => ({
+              habitacion_ID: h.habitacionId,
+              huesped_IDs: h.huespedIds,
+              fecha_Entrada: h.fechaEntrada,
+              fecha_Salida: h.fechaSalida
+            }))
+          };
+          return this.http.post('http://localhost:5000/api/DetalleReserva/multiple', detallesPayload);
         }),
         finalize(() => this.submitting.set(false))
       )
       .subscribe({
         next: () => {
-          this.mensaje.set('✅ Reserva creada exitosamente.');
-          
-          setTimeout(() => {
-            this.router.navigate(['/reservas']);
-          }, 2000);
+          this.mensaje.set('Reserva creada exitosamente');
+          setTimeout(() => this.router.navigate(['/reservas']), 1500);
         },
-        error: (err: any) => {
-          let mensajeError = '❌ No se pudo crear la reserva.';
-          
-          if (err.error?.errors) {
-            mensajeError += '\n' + err.error.errors.join('\n');
-          } else if (err.error?.message) {
-            mensajeError += ' ' + err.error.message;
-          } else if (err.message) {
-            mensajeError += ' ' + err.message;
-          }
-          
-          this.error.set(mensajeError);
+        error: (err) => {
+          console.error('Error al crear reserva:', err);
+          this.error.set(err.error?.message || 'Error al crear la reserva');
         }
       });
   }
@@ -343,7 +447,6 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
     this.router.navigate(['/reservas']);
   }
 
-  // Nuevas funciones que se evalúan en tiempo real desde el template
   isPaso1Valid(): boolean {
     const clienteId = this.form.get('clienteId')?.value;
     return !!(clienteId && clienteId !== '');
@@ -359,7 +462,6 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
       const huespedIds = (h.get('huespedIds')?.value as string[]) || [];
       if (!habitacionId || habitacionId === '') return false;
       if (!fechaEntrada || !fechaSalida) return false;
-      // validar que fechaSalida sea posterior a fechaEntrada (opcional)
       try {
         if (new Date(fechaSalida) <= new Date(fechaEntrada)) return false;
       } catch {
@@ -374,131 +476,4 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
     const montoCtrl = this.form.get('montoTotal');
     return !!montoCtrl && montoCtrl.valid;
   }
-  // Control de autocompletado
-showSuggestions = false;
-
-seleccionarCliente(c: any) {
-  this.form.controls.clienteId.setValue(c.id);
-  this.searchTerm.set(c.label);
-  this.showSuggestions = false;
-}
-
-// Esconde el menú con pequeño delay para permitir el click
-onBlur() {
-  setTimeout(() => this.showSuggestions = false, 200);
-}
-
-  // === BUSCADOR (cliente por Razón Social o NIT) ===
-searchTerm = signal<string>('');
-
-// Normaliza a dígitos para comparar NIT sin puntos/guiones/espacios
-private onlyDigits = (s: unknown) => (s ?? '').toString().replace(/\D+/g, '');
-
-/// Normaliza texto: minúsculas + sin tildes
-private norm = (v: unknown) =>
-  (v ?? '')
-    .toString()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, ''); // requiere TS target ES2021+ (Angular actual lo soporta)
-
-// Solo dígitos (para NIT)
-private digits = (v: unknown) => (v ?? '').toString().replace(/\D+/g, '');
-
-filteredClientes = computed<ClienteOption[]>(() => {
-  const termRaw = this.searchTerm().trim();
-  if (!termRaw) return this.clientes(); // sin término -> devuelve todo
-
-  const term = this.norm(termRaw);
-  const termDigits = this.digits(termRaw);
-
-  return this.clientes().filter((c: any) => {
-    // Candidatos de texto (agrega aquí cualquier alias que use tu backend)
-    const textParts = [
-      c.label,
-      c.nombre,
-      c.nombreCompleto,
-      c.razonSocial,
-      c.razon_social,
-      c.razon_Social,
-      c.nombreComercial,
-      c.comercialName,
-      c.email,
-    ];
-
-    // Candidatos numéricos (NIT, doc, etc.)
-    const numParts = [
-      c.nit,
-      c.NIT,
-      c.numeroDocumento,
-      c.documento,
-      c.ci,
-      c.ciNit,
-    ];
-
-    // Concatenamos y normalizamos
-    const textBlob = this.norm(textParts.filter(Boolean).join(' '));
-    const digitsBlob = this.digits(numParts.filter(Boolean).join(' '));
-
-    // Coincide por texto o por dígitos
-    const byText = textBlob.includes(term);
-    const byDigits = !!termDigits && digitsBlob.includes(termDigits);
-
-    // Además: por si el NIT está embebido en el label (ej: "Farmacia — NIT 123456")
-    const labelDigits = this.digits(c.label);
-    const byLabelDigits = !!termDigits && labelDigits.includes(termDigits);
-
-    return byText || byDigits || byLabelDigits;
-  });
-});
-// ====== BÚSQUEDA DE HUÉSPEDES (por habitación) ======
-huespedSearchTerm: string[] = [];   // término por índice de habitación
-showHuespedSug: boolean[] = [];     // visibilidad del panel por índice
-
-// Normalizador simple (si ya tienes uno, puedes reutilizarlo)
-private norm2 = (v: unknown) =>
-  (v ?? '').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
-
-// Abrir/cerrar panel de sugerencias
-openHuesped(i: number) {
-  this.ensureHuespedStateIndex(i);
-  this.showHuespedSug[i] = true;
-}
-
-onHuespedBlur(i: number) {
-  // pequeño delay para permitir el mousedown de la opción
-  setTimeout(() => this.showHuespedSug[i] = false, 150);
-}
-
-onHuespedInput(i: number, value: string) {
-  this.ensureHuespedStateIndex(i);
-  this.huespedSearchTerm[i] = value;
-  // si no hay texto pero quieres mostrar todo al enfocar:
-  // this.showHuespedSug[i] = true;
-}
-
-seleccionarHuesped(i: number, h: HuespedOption, inputEl?: HTMLInputElement) {
-  // reutiliza tu lógica existente para agregar al FormArray
-  this.agregarHuesped(i, h.id);
-  // limpia el input y oculta sugerencias
-  this.huespedSearchTerm[i] = '';
-  if (inputEl) inputEl.value = '';
-  this.showHuespedSug[i] = false;
-}
-
-// Lista filtrada por nombre para la habitación i
-filteredHuespedes(i: number): HuespedOption[] {
-  const term = this.norm2(this.huespedSearchTerm[i] ?? '');
-  const all = this.huespedes();
-  if (!term) return all;
-
-  return all.filter(h => this.norm2(h.nombre).includes(term));
-}
-
-// Asegura índices en arrays auxiliares (al agregar/eliminar hab.)
-private ensureHuespedStateIndex(i: number) {
-  while (this.huespedSearchTerm.length <= i) this.huespedSearchTerm.push('');
-  while (this.showHuespedSug.length <= i) this.showHuespedSug.push(false);
-}
-
 }
