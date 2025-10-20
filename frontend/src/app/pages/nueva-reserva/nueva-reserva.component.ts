@@ -51,10 +51,47 @@ export class NuevaReservaComponent implements OnInit {
 
   pasoActual = signal(1);
   totalPasos = 3;
+  habitacionSearchTerm: string[] = [];
+  showHabitacionSug: boolean[] = [];
+
+  private norm3 = (v: unknown) =>
+  (v ?? '').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+
 
   estadosReserva = ['Pendiente', 'Confirmada', 'Cancelada'];
   
-  habitacionesLibres = computed<Habitacion[]>(() => {
+  filteredHabitaciones(i: number): HabitacionOption[] {
+  const term = this.norm3(this.habitacionSearchTerm[i] ?? '');
+  const disponibles = this.getHabitacionesLibres(i);
+  if (!term) return disponibles;
+
+  return disponibles.filter(h => this.norm3(h.numero).includes(term));
+}
+private ensureHabitacionStateIndex(i: number) {
+  while (this.habitacionSearchTerm.length <= i) this.habitacionSearchTerm.push('');
+  while (this.showHabitacionSug.length <= i) this.showHabitacionSug.push(false);
+}
+openHabitacion(i: number) {
+  this.ensureHabitacionStateIndex(i);
+  this.showHabitacionSug[i] = true;
+}
+
+onHabitacionBlur(i: number) {
+  setTimeout(() => this.showHabitacionSug[i] = false, 150);
+}
+
+onHabitacionInput(i: number, value: string) {
+  this.ensureHabitacionStateIndex(i);
+  this.habitacionSearchTerm[i] = value;
+}
+
+seleccionarHabitacion(i: number, h: HabitacionOption) {
+  this.habitacionesFormArray.at(i).patchValue({ habitacionId: h.id });
+  this.habitacionSearchTerm[i] = '';
+  this.showHabitacionSug[i] = false;
+}
+
+habitacionesLibres = computed<HabitacionOption[]>(() => {
     return (this.habitaciones() ?? []).filter(h => {
       const estado = (h.estado ?? '').toString().toLowerCase();
       return estado === 'libre';

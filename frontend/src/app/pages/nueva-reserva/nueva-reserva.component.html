@@ -165,18 +165,35 @@
             <div class="grid">
               <label class="field">
                 <span>Habitación *</span>
-                <select formControlName="habitacionId">
-                  <option value="" disabled>Selecciona habitación</option>
-                  <ng-container *ngIf="habitacionesLibres().length; else noLibres">
-                    <option *ngFor="let h of getHabitacionesLibres(i)" [value]="h.id">
-                      Hab. {{ h.numero }} — {{ h.estado }}
-                    </option>
-                  </ng-container>
-                  <ng-template #noLibres>
-                    <option value="" disabled>No hay habitaciones libres</option>
-                  </ng-template>
-                </select>
+                <div class="autocomplete-container">
+                  <input
+                    #habitacionInput
+                    type="search"
+                    class="cliente-search"
+                    placeholder="Buscar por número de habitación"
+                    [value]="habitacionSearchTerm[i] || ''"
+                    (focus)="openHabitacion(i)"
+                    (input)="onHabitacionInput(i, habitacionInput.value)"
+                    (blur)="onHabitacionBlur(i)"
+                  />
+
+                  <ul class="suggestions" *ngIf="showHabitacionSug[i] && filteredHabitaciones(i).length">
+                    <li
+                      *ngFor="let h of filteredHabitaciones(i)"
+                      class="select-like__option"
+                      (mousedown)="seleccionarHabitacion(i, h)"
+                    >
+                      <span class="option__primary">Hab. {{ h.numero }}</span>
+                      <span class="option__secondary">{{ h.estado }}</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <small *ngIf="habitacion.get('habitacionId')?.invalid && habitacion.get('habitacionId')?.touched" class="error-message">
+                  Debes seleccionar una habitación
+                </small>
               </label>
+
               <label class="field">
                 <span>Fecha de entrada *</span>
                 <input type="date" formControlName="fechaEntrada" />
