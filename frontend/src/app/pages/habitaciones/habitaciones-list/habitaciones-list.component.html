@@ -19,33 +19,126 @@
 
   <div *ngIf="loading" class="loading-state">Cargando...</div>
 
-  <div class="data-table card" *ngIf="!loading && habitaciones.length">
+  <!-- Buscador por número de habitación -->
+  <div class="buscador-container">
+    <input
+      type="text"
+      class="input-busqueda"
+      placeholder="Buscar por número de habitación"
+      [(ngModel)]="busquedaNumero"
+    />
+  </div>
+
+  <div class="data-table card" *ngIf="!loading && habitacionesFiltradas.length">
     <div class="table-header">
       <div>Número</div>
       <div>Piso</div>
       <div>Tipo</div>
       <div>Capacidad</div>
-      <div class="align-right">Tarifa Base (Bs.)</div>
-      <div class="actions">Estado</div>
+      <div>Estado</div> <!-- nueva columna -->
+      <div>Acciones</div>
     </div>
 
-    <div class="table-row" *ngFor="let h of habitaciones">
+    <div class="table-row" *ngFor="let h of habitacionesFiltradas | orderByNumero">
       <div data-label="Número" class="room-number">{{ h.numero }}</div>
       <div data-label="Piso">{{ h.piso }}</div>
       <div data-label="Tipo">{{ h.tipoNombre }}</div>
       <div data-label="Capacidad">{{ h.capacidad }}</div>
-      <div data-label="Tarifa Base" class="align-right total-cell">{{ h.tarifaBase | number:'1.2-2' }}</div>
-      
-      <div data-label="Estado" class="actions status-cell">
-        <!-- Mostrar estado como badge (NO editable) -->
-        <span class="status-badge" [ngClass]="'status-' + (h.estado || 'Libre')">
+
+      <!-- Nueva celda: Estado -->
+      <div data-label="Estado" class="status-cell">
+        <span class="status-badge" [ngClass]="getStatusClass(h.estado)">
           {{ h.estado || 'Libre' }}
         </span>
+      </div>
+
+      <!-- Celda sólo para botones -->
+      <div data-label="Acciones" class="actions">
+        <!-- Botón editar -->
+        <button
+          type="button"
+          (click)="abrirModalEditar(h)"
+          class="btn btn-icon btn-editar"
+          title="Editar habitación">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon-editar">
+            <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.54-2.54a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+
+        <!-- Botón eliminar -->
+        <button
+          type="button"
+          (click)="abrirModalEliminar(h)"
+          class="btn btn-icon btn-danger btn-eliminar"
+          title="Eliminar habitación">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon-eliminar">
+            <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"/></svg>
+        </button>
       </div>
     </div>
   </div>
 
   <div *ngIf="!loading && !habitaciones.length" class="empty-state">
     No hay habitaciones registradas.
+  </div>
+
+  <!-- Modal eliminar habitación -->
+  <div *ngIf="modalEliminarAbierto" class="modal-backdrop">
+    <div class="modal">
+      <h2>¿Eliminar esta habitación?</h2>
+      <p>Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+        <button class="btn btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal editar habitación -->
+  <div *ngIf="modalEditarAbierto" class="modal-backdrop">
+    <div class="modal modal-editar">
+      <h2>Editar habitación</h2>
+      <form (ngSubmit)="guardarEdicion()" #formEditar="ngForm" class="form-grid">
+        <div class="form-group">
+          <label>NÚMERO</label>
+          <input type="text" [(ngModel)]="habitacionAEditar.numero" name="numero" required class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>PISO</label>
+          <input type="text" [(ngModel)]="habitacionAEditar.piso" name="piso" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>TIPO</label>
+          <select [(ngModel)]="habitacionAEditar.tipoId" name="tipoId" class="form-control">
+            <option [ngValue]="null">Seleccione un tipo</option>
+            <option *ngFor="let t of tipos" [ngValue]="t.id">
+              {{ t.tipo_Nombre ?? t.nombre ?? t.tipoNombre }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>CAPACIDAD</label>
+          <input type="number" [(ngModel)]="habitacionAEditar.capacidad" name="capacidad" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>ESTADO</label>
+          <select
+            [(ngModel)]="habitacionAEditar.estado"
+            name="estado"
+            class="form-control status-select"
+            [ngClass]="getStatusClass(habitacionAEditar.estado)">
+           <option [ngValue]="'Libre'">Libre</option>
+           <option [ngValue]="'Reservada'">Reservada</option>
+           <option [ngValue]="'Ocupada'">Ocupada</option>
+           <option [ngValue]="'Fuera de Servicio'">Fuera de Servicio</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalEditar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

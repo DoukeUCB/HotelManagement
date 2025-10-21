@@ -16,6 +16,11 @@ export class NuevoClienteComponent {
   private router = inject(Router);
   private api = inject(ClienteService);
 
+  private _submitting = false;
+  private _mensaje = '';
+  private _error = '';
+
+  // Signals existentes (no tocar)
   submitting = signal(false);
   mensaje = signal<string | null>(null);
   error = signal<string | null>(null);
@@ -33,24 +38,30 @@ export class NuevoClienteComponent {
     }
 
     this.submitting.set(true);
-    this.mensaje.set(null);
     this.error.set(null);
+    this.mensaje.set(null);
 
-    const value = this.form.getRawValue();
+    // Payload con las claves que espera ClienteCreatePayload
+    const payload = {
+      razon_Social: (this.form.value.razonSocial || '').toUpperCase(),
+      nit: (this.form.value.nit || '').toUpperCase(),
+      email: this.form.value.email || ''
+    };
 
-    this.api.createCliente({
-      razon_Social: value.razonSocial,
-      nit: value.nit,
-      email: value.email
-    }).subscribe({
+    this.api.createCliente(payload).subscribe({
       next: () => {
-        this.mensaje.set('Cliente creado correctamente.');
-        this.form.reset();
         this.submitting.set(false);
+        this.mensaje.set('Cliente creado correctamente. Redirigiendo...');
+
+        // Espera 1.5s para que el usuario vea el mensaje, luego redirige a /clientes
+        setTimeout(() => {
+          this.router.navigate(['/clientes']);
+        }, 1500);
       },
-      error: () => {
-        this.error.set('No se pudo crear el cliente. Intenta nuevamente.');
+      error: (err: any) => {
         this.submitting.set(false);
+        console.error('Error creando cliente:', err);
+        this.error.set('No se pudo crear el cliente. Intenta nuevamente.');
       }
     });
   }

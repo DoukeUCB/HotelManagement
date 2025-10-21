@@ -11,7 +11,6 @@ $card-background: #ffffff;
 $libre-color: #28a745;           // Verde para Libre
 $reservada-color: #17a2b8;       // Azul claro/cyan para Reservada
 $ocupada-color: #dc3545;         // Rojo para Ocupada
-$maintenance-color: #ffc107;     // Amarillo para Mantenimiento
 
 :host {
   display: block;
@@ -108,10 +107,10 @@ $maintenance-color: #ffc107;     // Amarillo para Mantenimiento
   background-color: $card-background;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden; 
+  overflow: hidden;
 
-  // Definición de las columnas de la tabla (6 columnas)
-  $grid-cols: 1.2fr 0.6fr 1.5fr 1fr 1.5fr 1.5fr; 
+  // Ahora 6 columnas: Número, Piso, Tipo, Capacidad, Estado, Acciones
+  $grid-cols: 1.2fr 0.6fr 1.5fr 1fr 0.9fr 1fr;
 
   .table-header,
   .table-row {
@@ -144,7 +143,55 @@ $maintenance-color: #ffc107;     // Amarillo para Mantenimiento
   }
 }
 
-// Utilidades de alineación y estilo de celda
+/* Estilos de la celda de estado (badge) */
+.status-cell {
+  display: flex;
+  align-items: center;
+}
+
+/* Badge (ya existente) */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Ajustes para la celda de acciones: alinear a la derecha */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Botones (ya definidos) */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 8px;
+  min-width: 40px;
+  min-height: 36px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+}
+
+.btn-editar {
+  border: 1px solid rgba(37,99,235,0.14);
+  color: #2563eb;
+}
+
+.btn-eliminar {
+  border: 1px solid rgba(220,38,38,0.12);
+  color: #dc2626;
+}
+
+/* Utilidades de alineación y estilo de celda */
 .align-right {
   text-align: right;
 }
@@ -183,10 +230,7 @@ $maintenance-color: #ffc107;     // Amarillo para Mantenimiento
     color: darken($ocupada-color, 20%);
 }
 
-.status-Mantenimiento {
-    background-color: lighten($maintenance-color, 20%);
-    color: darken($maintenance-color, 30%);
-}
+/* Se eliminó .status-Mantenimiento porque no existe en la base de datos */
 
 // Estilos para el selector de estado
 .status-select {
@@ -217,20 +261,116 @@ $maintenance-color: #ffc107;     // Amarillo para Mantenimiento
     color: #b91c1c;
   }
 
-  &.status-Mantenimiento {
-    background-color: rgba(234, 179, 8, 0.1);
-    color: #854d0e;
-  }
-
-  &.status-Fuera-de-Servicio {
-    background-color: rgba(107, 114, 128, 0.1);
-    color: #374151;
-  }
-
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
   }
+}
+
+// Estilos para los modales
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  min-width: 320px;
+  max-width: 90vw;
+}
+
+.modal-editar {
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+
+/* Botones de acción (consistentes con Huéspedes) */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Botón genérico icon-only */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 8px;
+  min-width: 40px;
+  min-height: 36px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+}
+
+/* Botón eliminar (rojo) */
+.btn-eliminar {
+  @extend .btn-icon;
+  border: 1px solid rgba(220,38,38,0.12);
+  color: #dc2626;
+  background: #fff;
+}
+
+/* Botón editar (azul) */
+.btn-editar {
+  @extend .btn-icon;
+  border: 1px solid rgba(37,99,235,0.14);
+  color: #2563eb;
+  background: #fff;
+}
+
+/* Iconos dentro de botones */
+.icon-eliminar, .icon-editar {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+/* Asegura que la celda de acciones tenga espacio suficiente */
+.table-row .actions {
+  padding-left: 8px;
+}
+
+/* Pequeño ajuste para el badge y los botones juntos */
+.status-badge {
+  margin-right: 0.5rem;
 }
 
 /* =======================================================
@@ -308,4 +448,29 @@ $maintenance-color: #ffc107;     // Amarillo para Mantenimiento
       }
     }
   }
+}
+
+.buscador-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5rem 0 1rem 0;
+}
+
+.input-busqueda {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px 8px 30px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff url('data:image/svg+xml;utf8,<svg fill="gray" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z"/></svg>') no-repeat 8px center;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.input-busqueda:focus {
+  border-color: #2563eb;
+  background-color: #f3f4f6;
 }

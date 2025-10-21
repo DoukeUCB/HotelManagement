@@ -1,5 +1,6 @@
 <div class="main-container">
-  <header class="page-header">
+
+  <header class="page-header with-back-link">
     <a (click)="goBack()" class="link-back">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
         <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z" />
@@ -10,32 +11,100 @@
     <span class="header-spacer"></span>
   </header>
 
+  <!-- Buscador centrado -->
+  <div class="buscador-container">
+    <input
+      type="text"
+      class="input-busqueda"
+      placeholder="Buscar cliente por nombre"
+      [(ngModel)]="busqueda"
+    />
+  </div>
+
   <div class="actions-bar">
     <button routerLink="/nuevo-cliente" class="btn btn-primary">+ Nuevo cliente</button>
   </div>
 
   <div *ngIf="loading" class="loading-state">Cargando...</div>
 
-  <div class="data-table card" *ngIf="!loading && clientes.length">
+  <div class="data-table card" *ngIf="!loading && clientesFiltrados.length">
+    
     <div class="table-header">
       <div>Razón Social</div>
       <div>NIT</div>
       <div>Email</div>
-      <div class="actions">Acciones</div>
+      <div>Acciones</div>
     </div>
 
-    <div class="table-row" *ngFor="let c of clientes">
+    <div class="table-row" *ngFor="let c of clientesFiltrados | orderByRazon">
       <div data-label="Razón Social">{{ c.razonSocial }}</div>
-      <div data-label="NIT">{{ c.nit }}</div>
+      <div data-label="NIT">{{ c.documento || c.Documento || c.nit || c.NIT || c.documento_Identidad || c.Documento_Identidad }}</div>
       <div data-label="Email">{{ c.email }}</div>
       <div data-label="Acciones" class="actions">
-        <button (click)="editarCliente(c.id)" class="btn btn-outline">Editar</button>
-        <button (click)="eliminarCliente(c.id)" class="btn btn-danger">Eliminar</button>
+        <!-- Botón editar -->
+        <button
+          type="button"
+          (click)="abrirModalEditar(c)"
+          class="btn btn-icon btn-editar"
+          title="Editar cliente">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon-editar">
+            <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.54-2.54a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <!-- Botón eliminar -->
+        <button
+          type="button"
+          (click)="abrirModalEliminar(c)"
+          class="btn btn-icon btn-danger btn-eliminar"
+          title="Eliminar cliente">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon-eliminar">
+            <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!loading && !clientes.length" class="empty-state">
-    No hay clientes registrados.
+  <div *ngIf="!loading && !clientesFiltrados.length" class="empty-state">
+    No hay clientes.
+  </div>
+
+  <!-- Modal eliminar cliente -->
+  <div *ngIf="modalEliminarAbierto" class="modal-backdrop">
+    <div class="modal">
+      <h2>¿Eliminar este cliente?</h2>
+      <p>Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+        <button class="btn btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal editar cliente -->
+  <div *ngIf="modalEditarAbierto" class="modal-backdrop">
+    <div class="modal modal-editar">
+      <h2>Editar cliente</h2>
+      <form (ngSubmit)="guardarEdicion()" #formEditar="ngForm" class="form-grid">
+        <div class="form-group">
+          <label>RAZÓN SOCIAL <span class="campo-requerido">*</span></label>
+          <input type="text" [(ngModel)]="clienteAEditar.razonSocial" name="razonSocial" required 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>NIT <span class="campo-requerido">*</span></label>
+          <input type="text" [(ngModel)]="clienteAEditar.documento" name="documento" required 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>EMAIL <span class="campo-requerido">*</span></label>
+          <input type="email" [(ngModel)]="clienteAEditar.email" name="email" required class="form-control" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalEditar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cliente</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

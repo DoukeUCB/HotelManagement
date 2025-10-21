@@ -11,13 +11,23 @@
     <span class="header-spacer"></span>
   </header>
 
+  <!-- Buscador centrado -->
+  <div class="buscador-container">
+    <input
+      type="text"
+      class="input-busqueda"
+      placeholder="Buscar cliente por nombre"
+      [(ngModel)]="busqueda"
+    />
+  </div>
+
   <div class="actions-bar">
     <button routerLink="/nuevo-huesped" class="btn btn-primary">+ Nuevo huésped</button>
   </div>
 
   <div *ngIf="loading" class="loading-state">Cargando...</div>
 
-  <div class="data-table card" *ngIf="!loading && huespedes.length">
+  <div class="data-table card" *ngIf="!loading && huespedesFiltrados.length">
     
     <div class="table-header">
       <div>Nombre</div>
@@ -26,18 +36,28 @@
       <div>Acciones</div> <!-- nueva columna -->
     </div>
 
-    <div class="table-row" *ngFor="let h of huespedes">
+    <div class="table-row" *ngFor="let h of huespedesFiltrados | orderByNombre">
       <div data-label="Nombre">{{ nombreCompleto(h) }}</div>
       <div data-label="Documento">{{ h.documento }}</div>
       <div data-label="Fecha Nac.">{{ h.fechaNacimiento | date:'dd/MM/yyyy' }}</div>
       <div data-label="Acciones" class="actions">
-        <!-- Solo botón ELIMINAR para la página de Huéspedes -->
+        <!-- Botón editar -->
         <button
-          (click)="eliminarHuesped(h.id)"
-          class="btn btn-icon btn-danger"
-          title="Eliminar huésped"
-          style="display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;border:1px solid rgba(220,38,38,0.12);background:#fff;color:#dc2626;min-width:40px;min-height:36px;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;">
+          type="button"
+          (click)="abrirModalEditar(h)"
+          class="btn btn-icon btn-editar"
+          title="Editar huésped">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon-editar">
+            <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.54-2.54a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <!-- Botón eliminar -->
+        <button
+          type="button"
+          (click)="abrirModalEliminar(h)"
+          class="btn btn-icon btn-danger btn-eliminar"
+          title="Eliminar huésped">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon-eliminar">
             <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
           </svg>
         </button>
@@ -45,7 +65,64 @@
     </div>
   </div>
 
-  <div *ngIf="!loading && !huespedes.length" class="empty-state">
+  <div *ngIf="!loading && !huespedesFiltrados.length" class="empty-state">
     No hay huéspedes.
+  </div>
+
+  <div *ngIf="modalEliminarAbierto" class="modal-backdrop">
+    <div class="modal">
+      <h2>¿Eliminar este huésped?</h2>
+      <p>Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+        <button class="btn btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal editar huésped -->
+  <div *ngIf="modalEditarAbierto" class="modal-backdrop">
+    <div class="modal modal-editar">
+      <h2>Editar huésped</h2>
+      <form (ngSubmit)="guardarEdicion()" #formEditar="ngForm" class="form-grid">
+        <div class="form-group">
+          <label>PRIMER NOMBRE <span class="campo-requerido">*</span></label>
+          <input type="text" [(ngModel)]="huespedAEditar.primerNombre" name="primerNombre" required 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>SEGUNDO NOMBRE</label>
+          <input type="text" [(ngModel)]="huespedAEditar.segundoNombre" name="segundoNombre" 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>PRIMER APELLIDO <span class="campo-requerido">*</span></label>
+          <input type="text" [(ngModel)]="huespedAEditar.primerApellido" name="primerApellido" required 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>SEGUNDO APELLIDO</label>
+          <input type="text" [(ngModel)]="huespedAEditar.segundoApellido" name="segundoApellido" 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>DOCUMENTO <span class="campo-requerido">*</span></label>
+          <input type="text" [(ngModel)]="huespedAEditar.documento" name="documento" required 
+                 class="form-control uppercase-input" style="text-transform: uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>TELÉFONO</label>
+          <input type="tel" [(ngModel)]="huespedAEditar.telefono" name="telefono" class="form-control" />
+        </div>
+        <div class="form-group fecha-group">
+          <label>FECHA DE NACIMIENTO</label>
+          <input type="date" [(ngModel)]="huespedAEditar.fechaNacimiento" name="fechaNacimiento" class="form-control" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalEditar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar huésped</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

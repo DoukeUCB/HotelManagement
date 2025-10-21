@@ -9,7 +9,9 @@
     <section class="form-grid">
       <label class="campo">
         <span>Razón Social *</span>
-        <input type="text" formControlName="razonSocial" />
+        <input type="text" formControlName="razonSocial"
+               class="uppercase-input"
+               (input)="form.controls.razonSocial.setValue($any($event.target).value.toUpperCase())" />
         <small *ngIf="form.controls.razonSocial.invalid && form.controls.razonSocial.touched">
           Campo obligatorio.
         </small>

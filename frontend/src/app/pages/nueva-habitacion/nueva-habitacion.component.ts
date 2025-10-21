@@ -37,7 +37,7 @@ export class NuevaHabitacionComponent implements OnInit {
     estado: ['Libre', Validators.required]
   });
 
-  estadosDisponibles = ['Libre', 'Reservada', 'Ocupada', 'Mantenimiento', 'Fuera de Servicio'];
+  estadosDisponibles = ['Libre', 'Reservada', 'Ocupada', 'Fuera de Servicio'];
 
   ngOnInit(): void {
     this.cargarTiposHabitacion();

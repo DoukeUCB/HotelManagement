@@ -46,12 +46,6 @@ export const routes: Routes = [
         .then(m => m.NuevoClienteComponent)
   },
   {
-    path: 'editar-cliente',
-    loadComponent: () =>
-      import('./pages/editar-cliente/editar-cliente.component')
-        .then(m => m.EditarClienteComponent)
-  },
-  {
     path: 'nuevo-huesped',
     loadComponent: () =>
       import('./pages/nuevo-huesped/nuevo-huesped.component')

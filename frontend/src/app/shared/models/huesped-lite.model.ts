@@ -7,6 +7,7 @@ export interface HuespedLite {
   fechaNacimiento: string; // ISO yyyy-MM-dd
   documento: string;
   nombreCompleto?: string; // Campo adicional para cuando viene del API
+  telefono?: string; // Añadido campo teléfono
 }
 
 export function nombreCompleto(h: HuespedLite): string {
