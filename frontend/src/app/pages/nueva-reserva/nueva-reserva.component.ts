@@ -26,6 +26,16 @@ interface HuespedOption {
   segundo_apellido?: string;
 }
 
+export interface HabitacionOption {
+  id: string;
+  numero: string | number;
+  tipoNombre?: string;
+  piso?: string | number;
+  capacidad?: number;
+  estado?: string;
+  // agrega aquí otros campos que uses en el componente
+}
+
 @Component({
   selector: 'app-nueva-reserva',
   standalone: true,
