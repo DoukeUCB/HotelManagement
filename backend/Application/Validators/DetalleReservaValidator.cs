@@ -22,27 +22,27 @@ namespace HotelManagement.Aplicacion.Validators
 
         public async Task ValidateCreateAsync(DetalleReservaCreateDTO dto)
         {
-            var errors = new List<string>();
+            var errors = new Dictionary<string, List<string>>();
 
             if (!IsValidUuid(dto.Reserva_ID))
-                errors.Add("Reserva_ID debe ser un UUID válido");
+                errors["reserva_ID"] = new List<string> { "Reserva_ID debe ser un UUID válido" };
             if (!IsValidUuid(dto.Habitacion_ID))
-                errors.Add("Habitacion_ID debe ser un UUID válido");
+                errors["habitacion_ID"] = new List<string> { "Habitacion_ID debe ser un UUID válido" };
             if (!IsValidUuid(dto.Huesped_ID))
-                errors.Add("Huesped_ID debe ser un UUID válido");
+                errors["huesped_ID"] = new List<string> { "Huesped_ID debe ser un UUID válido" };
 
             if (dto.Fecha_Entrada < DateTime.Today.AddDays(-1)) // Permitir reservas de hoy
-                errors.Add("Fecha_Entrada no puede ser muy anterior a hoy");
+                errors["fecha_Entrada"] = new List<string> { "Fecha_Entrada no puede ser muy anterior a hoy" };
             
             if (dto.Fecha_Salida <= dto.Fecha_Entrada)
-                errors.Add("Fecha_Salida debe ser posterior a Fecha_Entrada");
+                errors["fecha_Salida"] = new List<string> { "Fecha_Salida debe ser posterior a Fecha_Entrada" };
 
             if (IsValidUuid(dto.Reserva_ID))
             {
                 var reservaExists = await _context.Reservas
                     .AnyAsync(r => r.ID == ConvertToGuid(dto.Reserva_ID));
                 if (!reservaExists)
-                    errors.Add($"No existe una reserva con ID: {dto.Reserva_ID}");
+                    errors["reserva_ID"] = new List<string> { $"No existe una reserva con ID: {dto.Reserva_ID}" };
             }
 
             if (IsValidUuid(dto.Habitacion_ID))
@@ -50,7 +50,7 @@ namespace HotelManagement.Aplicacion.Validators
                 var habitacionExists = await _context.Habitaciones
                     .AnyAsync(h => h.ID == ConvertToGuid(dto.Habitacion_ID));
                 if (!habitacionExists)
-                    errors.Add($"No existe una habitación con ID: {dto.Habitacion_ID}");
+                    errors["habitacion_ID"] = new List<string> { $"No existe una habitación con ID: {dto.Habitacion_ID}" };
             }
 
             if (IsValidUuid(dto.Huesped_ID))
@@ -58,7 +58,7 @@ namespace HotelManagement.Aplicacion.Validators
                 var huespedExists = await _context.Huespedes
                     .AnyAsync(h => h.ID == ConvertToGuid(dto.Huesped_ID));
                 if (!huespedExists)
-                    errors.Add($"No existe un huésped con ID: {dto.Huesped_ID}");
+                    errors["huesped_ID"] = new List<string> { $"No existe un huésped con ID: {dto.Huesped_ID}" };
             }
 
             if (errors.Any())
@@ -67,41 +67,41 @@ namespace HotelManagement.Aplicacion.Validators
 
         public async Task ValidateUpdateAsync(string id, DetalleReservaUpdateDTO dto)
         {
-            var errors = new List<string>();
+            var errors = new Dictionary<string, List<string>>();
 
             if (!IsValidUuid(id))
-                errors.Add("ID debe ser un UUID válido");
+                errors["id"] = new List<string> { "ID debe ser un UUID válido" };
 
             if (dto.Fecha_Entrada.HasValue && dto.Fecha_Entrada.Value < DateTime.Today)
-                errors.Add("Fecha_Entrada no puede ser anterior a hoy");
+                errors["fecha_Entrada"] = new List<string> { "Fecha_Entrada no puede ser anterior a hoy" };
             
             if (dto.Fecha_Entrada.HasValue && dto.Fecha_Salida.HasValue && 
                 dto.Fecha_Salida.Value <= dto.Fecha_Entrada.Value)
-                errors.Add("Fecha_Salida debe ser posterior a Fecha_Entrada");
+                errors["fecha_Salida"] = new List<string> { "Fecha_Salida debe ser posterior a Fecha_Entrada" };
 
             if (!string.IsNullOrEmpty(dto.Habitacion_ID))
             {
                 if (!IsValidUuid(dto.Habitacion_ID))
-                    errors.Add("Habitacion_ID debe ser un UUID válido");
+                    errors["habitacion_ID"] = new List<string> { "Habitacion_ID debe ser un UUID válido" };
                 else
                 {
                     var habitacionExists = await _context.Habitaciones
                         .AnyAsync(h => h.ID == ConvertToGuid(dto.Habitacion_ID));
                     if (!habitacionExists)
-                        errors.Add($"No existe una habitación con ID: {dto.Habitacion_ID}");
+                        errors["habitacion_ID"] = new List<string> { $"No existe una habitación con ID: {dto.Habitacion_ID}" };
                 }
             }
 
             if (!string.IsNullOrEmpty(dto.Huesped_ID))
             {
                 if (!IsValidUuid(dto.Huesped_ID))
-                    errors.Add("Huesped_ID debe ser un UUID válido");
+                    errors["huesped_ID"] = new List<string> { "Huesped_ID debe ser un UUID válido" };
                 else
                 {
                     var huespedExists = await _context.Huespedes
                         .AnyAsync(h => h.ID == ConvertToGuid(dto.Huesped_ID));
                     if (!huespedExists)
-                        errors.Add($"No existe un huésped con ID: {dto.Huesped_ID}");
+                        errors["huesped_ID"] = new List<string> { $"No existe un huésped con ID: {dto.Huesped_ID}" };
                 }
             }
 
@@ -112,13 +112,13 @@ namespace HotelManagement.Aplicacion.Validators
         public async Task ValidateDeleteAsync(string id)
         {
             if (!IsValidUuid(id))
-                throw new ValidationException("ID debe ser un UUID válido");
+                throw new BadRequestException("ID debe ser un UUID válido", "id");
 
             var exists = await _context.DetalleReservas
                 .AnyAsync(d => d.ID == ConvertToGuid(id));
             
             if (!exists)
-                throw new NotFoundException($"No se encontró el detalle de reserva con ID: {id}");
+                throw new NotFoundException($"No se encontró el detalle de reserva con ID: {id}", "id");
         }
 
         private bool IsValidUuid(string value)

@@ -53,6 +53,18 @@ export class HuespedService {
     return this.http.delete<void>(`${API_BASE}/Huesped/${id}`);
   }
 
+  // Verifica si un documento de identidad ya existe
+  checkDocumentoExists(documento: string): Observable<boolean> {
+    return this.http.get<any[]>(`${API_BASE}/Huesped`).pipe(
+      map(huespedes => {
+        const documentoUpper = documento.toUpperCase();
+        return huespedes.some(h => 
+          (h.documento_Identidad || h.Documento_Identidad || '').toUpperCase() === documentoUpper
+        );
+      })
+    );
+  }
+
   updateHuesped(huesped: any): Observable<HuespedLite> {
     // Combinar primer nombre y segundo nombre si ambos existen
     const nombreCompleto = huesped.segundoNombre 
