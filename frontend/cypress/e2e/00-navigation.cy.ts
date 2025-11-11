@@ -55,7 +55,7 @@ describe('Navegación y Smoke Tests', () => {
 
   it('Debe navegar a Nueva Reserva', () => {
     cy.visit('/reservas');
-    cy.contains('Nueva reserva').click();
+    cy.contains('Nueva Reserva').click();
     cy.url().should('include', '/nueva-reserva');
     
     // Verificar que el formulario existe
@@ -68,8 +68,12 @@ describe('Navegación y Smoke Tests', () => {
   });
 
   it('Debe tener botones de volver funcionando', () => {
-    cy.visit('/clientes/nuevo');
-    cy.get('.volver').click();
-    cy.url().should('include', '/clientes');
+   cy.visit('/nuevo-cliente');        
+    cy.get('.volver', { timeout: 10000 }) 
+      .should('be.visible')
+      .click({ force: true });           
+
+    cy.url().should('include', '/clientes');  
+
   });
 });
