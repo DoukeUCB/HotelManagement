@@ -66,8 +66,7 @@
 
         <div class="grid">
           <!-- Campo combinado buscador/autocompletar -->
-          <!-- Campo combinado buscador/autocompletar -->
-          <label class="field">
+          <label class="field" [class.campo-error]="hasLocalError('clienteId') || hasServerError('cliente_ID')">
             <span>Seleccionar Cliente *</span>
 
             <div class="autocomplete-container">
@@ -77,6 +76,7 @@
                 class="cliente-search"
                 placeholder="Buscar por Razón Social o NIT"
                 [value]="searchTerm()"
+                [class.input-error]="hasLocalError('clienteId') || hasServerError('cliente_ID')"
                 (input)="searchTerm.set(buscadorCliente.value)"
                 (focus)="showSuggestions = true"
                 (blur)="onBlur()"
@@ -95,21 +95,43 @@
               </ul>
             </div>
 
-            <small *ngIf="form.controls.clienteId.invalid && form.controls.clienteId.touched" class="error-message">
-              Debes seleccionar un cliente
+            <!-- Error de validación local -->
+            <small 
+              *ngIf="hasLocalError('clienteId') && !hasServerError('cliente_ID')" 
+              class="error-message">
+              {{ getLocalError('clienteId') }}
+            </small>
+            <!-- Error del servidor -->
+            <small 
+              *ngIf="hasServerError('cliente_ID')"
+              class="error-message server-error">
+              {{ getServerError('cliente_ID') }}
             </small>
           </label>
 
-
-
-          <label class="field">
+          <label class="field" [class.campo-error]="hasLocalError('estadoReserva') || hasServerError('estado_Reserva')">
             <span>Estado de la Reserva </span>
-            <select formControlName="estadoReserva">
+            <select 
+              formControlName="estadoReserva"
+              [class.input-error]="hasLocalError('estadoReserva') || hasServerError('estado_Reserva')"
+            >
               <option *ngFor="let estado of estadosReserva" [value]="estado">
                 {{ estado }}
               </option>
             </select>
             <small class="field-hint">Por defecto: Pendiente</small>
+            <!-- Error de validación local -->
+            <small 
+              *ngIf="hasLocalError('estadoReserva') && !hasServerError('estado_Reserva')"
+              class="error-message">
+              {{ getLocalError('estadoReserva') }}
+            </small>
+            <!-- Error del servidor -->
+            <small 
+              *ngIf="hasServerError('estado_Reserva')"
+              class="error-message server-error">
+              {{ getServerError('estado_Reserva') }}
+            </small>
           </label>
         </div>
 
@@ -345,7 +367,7 @@
           </div>
         </div>
 
-        <label class="field monto-field">
+        <label class="field monto-field" [class.campo-error]="hasLocalError('montoTotal') || hasServerError('monto_Total')">
           <span>Monto Total (Bs.)</span>
           <input 
             type="number" 
@@ -355,12 +377,25 @@
             placeholder="0.00"
             readonly 
             class="readonly-field"
+            [class.input-error]="hasLocalError('montoTotal') || hasServerError('monto_Total')"
           />
           <small class="field-hint">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11 11V17H13V11H11ZM11 7V9H13V7H11Z"></path>
             </svg>
             Calculado automáticamente: Tarifa base × días de estadía × habitaciones
+          </small>
+          <!-- Error de validación local -->
+          <small 
+            *ngIf="hasLocalError('montoTotal') && !hasServerError('monto_Total')"
+            class="error-message">
+            {{ getLocalError('montoTotal') }}
+          </small>
+          <!-- Error del servidor -->
+          <small 
+            *ngIf="hasServerError('monto_Total')"
+            class="error-message server-error">
+            {{ getServerError('monto_Total') }}
           </small>
         </label>
 
