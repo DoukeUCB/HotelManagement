@@ -1,5 +1,6 @@
 using HotelManagement.Datos.Config;
 using HotelManagement.DTOs;
+using HotelManagement.Aplicacion.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,17 @@ namespace HotelManagement.Presentacion.Controllers
     public class HuespedController : ControllerBase
     {
         private readonly HotelDbContext _context;
+        private readonly IHuespedValidator _validator;
+        private readonly ILogger<HuespedController> _logger;
 
-        public HuespedController(HotelDbContext context)
+        public HuespedController(
+            HotelDbContext context, 
+            IHuespedValidator validator,
+            ILogger<HuespedController> logger)
         {
             _context = context;
+            _validator = validator;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -86,6 +94,12 @@ namespace HotelManagement.Presentacion.Controllers
         [HttpPost]
         public async Task<ActionResult<HuespedDTO>> Create([FromBody] HuespedCreateDTO dto)
         {
+            _logger.LogInformation("POST /api/Huesped - Creando nuevo huésped");
+            _logger.LogInformation("Datos recibidos: Nombre={Nombre}, Apellido={Apellido}, Documento={Documento}", 
+                dto.Nombre, dto.Apellido, dto.Documento_Identidad);
+
+            await _validator.ValidateCreateAsync(dto);
+
             DateTime? fechaNacimiento = null;
             if (!string.IsNullOrWhiteSpace(dto.Fecha_Nacimiento))
             {
@@ -110,6 +124,8 @@ namespace HotelManagement.Presentacion.Controllers
 
             _context.Huespedes.Add(huesped);
             await _context.SaveChangesAsync();
+            
+            _logger.LogInformation("Huésped creado exitosamente con ID: {ID}", GuidToString(huesped.ID));
 
             var result = new HuespedDTO
             {
@@ -129,6 +145,10 @@ namespace HotelManagement.Presentacion.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<HuespedDTO>> Update(string id, [FromBody] HuespedUpdateDTO dto)
         {
+            _logger.LogInformation("🟡 PUT /api/Huesped/{ID} - Actualizando huésped", id);
+
+            await _validator.ValidateUpdateAsync(id, dto);
+
             if (!Guid.TryParse(id, out var guid))
                 return BadRequest("ID inválido.");
 
@@ -178,6 +198,10 @@ namespace HotelManagement.Presentacion.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<HuespedDTO>> PartialUpdate(string id, [FromBody] HuespedUpdateDTO dto)
         {
+            _logger.LogInformation("PATCH /api/Huesped/{ID} - Actualización parcial", id);
+
+            await _validator.ValidateUpdateAsync(id, dto);
+
             if (!Guid.TryParse(id, out var guid))
                 return BadRequest("ID inválido.");
 
@@ -234,6 +258,10 @@ namespace HotelManagement.Presentacion.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
+            _logger.LogInformation("DELETE /api/Huesped/{ID} - Eliminando huésped", id);
+
+            await _validator.ValidateDeleteAsync(id);
+
             if (!Guid.TryParse(id, out var guid))
                 return BadRequest("ID inválido.");
 

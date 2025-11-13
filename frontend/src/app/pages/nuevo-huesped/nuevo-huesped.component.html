@@ -7,48 +7,144 @@
 
   <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
     <section class="form-grid">
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('primerNombre') || hasServerError('nombre')">
         <span>Primer nombre *</span>
-        <input type="text" formControlName="primerNombre" />
-        <small *ngIf="form.controls.primerNombre.invalid && form.controls.primerNombre.touched">
-          Campo obligatorio.
+        <input 
+          type="text" 
+          formControlName="primerNombre"
+          [class.input-error]="hasLocalError('primerNombre') || hasServerError('nombre')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('primerNombre') && !hasServerError('nombre')"
+          class="error-message">
+          {{ getLocalError('primerNombre') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('nombre')"
+          class="error-message server-error">
+          {{ getServerError('nombre') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('segundoNombre')">
         <span>Segundo nombre</span>
-        <input type="text" formControlName="segundoNombre" />
+        <input 
+          type="text" 
+          formControlName="segundoNombre"
+          [class.input-error]="hasLocalError('segundoNombre')"
+        />
+        <small 
+          *ngIf="hasLocalError('segundoNombre')"
+          class="error-message">
+          {{ getLocalError('segundoNombre') }}
+        </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('primerApellido') || hasServerError('apellido')">
         <span>Primer apellido *</span>
-        <input type="text" formControlName="primerApellido" />
-        <small *ngIf="form.controls.primerApellido.invalid && form.controls.primerApellido.touched">
-          Campo obligatorio.
+        <input 
+          type="text" 
+          formControlName="primerApellido"
+          [class.input-error]="hasLocalError('primerApellido') || hasServerError('apellido')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('primerApellido') && !hasServerError('apellido')"
+          class="error-message">
+          {{ getLocalError('primerApellido') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('apellido')"
+          class="error-message server-error">
+          {{ getServerError('apellido') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('segundoApellido') || hasServerError('segundoApellido')">
         <span>Segundo apellido</span>
-        <input type="text" formControlName="segundoApellido" />
-      </label>
-
-      <label class="campo">
-        <span>Documento *</span>
-        <input type="text" formControlName="documento" />
-        <small *ngIf="form.controls.documento.invalid && form.controls.documento.touched">
-          Campo obligatorio.
+        <input 
+          type="text" 
+          formControlName="segundoApellido"
+          [class.input-error]="hasLocalError('segundoApellido') || hasServerError('segundoApellido')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('segundoApellido') && !hasServerError('segundoApellido')"
+          class="error-message">
+          {{ getLocalError('segundoApellido') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('segundoApellido')"
+          class="error-message server-error">
+          {{ getServerError('segundoApellido') }}
         </small>
       </label>
 
-      <label class="campo">
-        <span>Teléfono</span>
-        <input type="tel" formControlName="telefono" />
+      <label class="campo" [class.campo-error]="hasLocalError('documento') || hasServerError('documentoIdentidad')">
+        <span>Documento *</span>
+        <input 
+          type="text" 
+          formControlName="documento"
+          [class.input-error]="hasLocalError('documento') || hasServerError('documentoIdentidad')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('documento') && !hasServerError('documentoIdentidad')"
+          class="error-message">
+          {{ getLocalError('documento') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('documentoIdentidad')"
+          class="error-message server-error">
+          {{ getServerError('documentoIdentidad') }}
+        </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('telefono') || hasServerError('telefono')">
+        <span>Teléfono</span>
+        <input 
+          type="tel" 
+          formControlName="telefono"
+          [class.input-error]="hasLocalError('telefono') || hasServerError('telefono')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('telefono') && !hasServerError('telefono')"
+          class="error-message">
+          {{ getLocalError('telefono') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('telefono')"
+          class="error-message server-error">
+          {{ getServerError('telefono') }}
+        </small>
+      </label>
+
+      <label class="campo" [class.campo-error]="hasLocalError('fechaNacimiento') || hasServerError('fechaNacimiento')">
         <span>Fecha de nacimiento</span>
-        <input type="date" formControlName="fechaNacimiento" />
+        <input 
+          type="date" 
+          formControlName="fechaNacimiento"
+          [class.input-error]="hasLocalError('fechaNacimiento') || hasServerError('fechaNacimiento')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('fechaNacimiento') && !hasServerError('fechaNacimiento')"
+          class="error-message">
+          {{ getLocalError('fechaNacimiento') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('fechaNacimiento')"
+          class="error-message server-error">
+          {{ getServerError('fechaNacimiento') }}
+        </small>
       </label>
     </section>
 

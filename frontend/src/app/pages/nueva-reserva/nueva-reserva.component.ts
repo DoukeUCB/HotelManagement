@@ -486,4 +486,31 @@ habitacionesLibres = computed<HabitacionOption[]>(() => {
     const montoCtrl = this.form.get('montoTotal');
     return !!montoCtrl && montoCtrl.valid;
   }
+
+  // Mapa para almacenar errores del servidor
+  serverErrors = new Map<string, string>();
+
+  // Métodos de validación local
+  hasLocalError(field: string): boolean {
+    const control = this.form.get(field);
+    return !!(control && control.invalid && control.touched);
+  }
+
+  getLocalError(field: string): string {
+    const control = this.form.get(field);
+    if (control?.errors) {
+      if (control.errors['required']) return 'Este campo es obligatorio';
+      if (control.errors['min']) return 'Valor inválido';
+    }
+    return '';
+  }
+
+  // Métodos de validación de servidor
+  hasServerError(field: string): boolean {
+    return this.serverErrors.has(field);
+  }
+
+  getServerError(field: string): string {
+    return this.serverErrors.get(field) || '';
+  }
 }

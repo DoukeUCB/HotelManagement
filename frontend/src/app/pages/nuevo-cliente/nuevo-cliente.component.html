@@ -7,36 +7,80 @@
 
   <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
     <section class="form-grid">
-      <label class="campo">
+      <label class="campo" [class.campo-error]="(hasLocalError('razonSocial') || hasLocalErrorDirty('razonSocial')) || hasServerError('razon_Social')">
         <span>Razón Social *</span>
-        <input type="text" formControlName="razonSocial"
-               class="uppercase-input"
-               (input)="form.controls.razonSocial.setValue($any($event.target).value.toUpperCase())" />
-        <small *ngIf="form.controls.razonSocial.invalid && form.controls.razonSocial.touched">
-          Campo obligatorio.
+        <input 
+          type="text" 
+          formControlName="razonSocial"
+          class="uppercase-input"
+          placeholder="Ej: EMPRESA S.A., COMERCIAL XYZ"
+          [class.input-error]="(hasLocalError('razonSocial') || hasLocalErrorDirty('razonSocial')) || hasServerError('razon_Social')"
+          (input)="form.controls['razonSocial'].setValue($any($event.target).value.toUpperCase())"
+          maxlength="100"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="(hasLocalError('razonSocial') || hasLocalErrorDirty('razonSocial')) && !hasServerError('razon_Social')"
+          class="error-message">
+          {{ getLocalError('razonSocial') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('razon_Social')"
+          class="error-message server-error">
+          {{ getServerError('razon_Social') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="(hasLocalError('nit') || hasLocalErrorDirty('nit')) || hasServerError('nit')">
         <span>NIT *</span>
-        <input type="text" formControlName="nit" />
-        <small *ngIf="form.controls.nit.invalid && form.controls.nit.touched">
-          Campo obligatorio.
+        <input 
+          type="text" 
+          formControlName="nit"
+          placeholder="Ej: 1234567890"
+          [class.input-error]="(hasLocalError('nit') || hasLocalErrorDirty('nit')) || hasServerError('nit')"
+          maxlength="13"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="(hasLocalError('nit') || hasLocalErrorDirty('nit')) && !hasServerError('nit')"
+          class="error-message">
+          {{ getLocalError('nit') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('nit')"
+          class="error-message server-error">
+          {{ getServerError('nit') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="(hasLocalError('email') || hasLocalErrorDirty('email')) || hasServerError('email')">
         <span>Email *</span>
-        <input type="email" formControlName="email" />
-        <small *ngIf="form.controls.email.invalid && form.controls.email.touched">
-          Email inválido.
+        <input 
+          type="email" 
+          formControlName="email"
+          placeholder="ejemplo@correo.com"
+          [class.input-error]="(hasLocalError('email') || hasLocalErrorDirty('email')) || hasServerError('email')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="(hasLocalError('email') || hasLocalErrorDirty('email')) && !hasServerError('email')"
+          class="error-message">
+          {{ getLocalError('email') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('email')"
+          class="error-message server-error">
+          {{ getServerError('email') }}
         </small>
       </label>
     </section>
 
     <div class="acciones">
       <button type="button" class="btn btn-terciario" (click)="cancelar()">Cancelar</button>
-      <button type="submit" class="btn btn-primario" [disabled]="submitting()">
+      <button type="submit" class="btn btn-primario" [disabled]="submitting() || form.invalid">
         {{ submitting() ? 'Guardando…' : 'Guardar cliente' }}
       </button>
     </div>

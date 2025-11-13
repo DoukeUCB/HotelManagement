@@ -8,13 +8,9 @@ using HotelManagement.Application.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HotelManagement.Datos.Repositories;
-
-
-
 using DotNetEnv;
 
 
-// Cargar variables de entorno desde .env
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,7 +47,10 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 //Cliente
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IClienteService, ClienteService>(); 
-builder.Services.AddScoped<IClienteValidator, ClienteValidator>(); 
+builder.Services.AddScoped<IClienteValidator, ClienteValidator>();
+builder.Services.AddScoped<HotelManagement.Aplicacion.Validators.IHuespedValidator, HotelManagement.Aplicacion.Validators.HuespedValidator>();
+builder.Services.AddScoped<HotelManagement.Aplicacion.Validators.IHabitacionValidator, HotelManagement.Aplicacion.Validators.HabitacionValidator>();
+
 // Configurar controladores
 builder.Services.AddControllers();
 

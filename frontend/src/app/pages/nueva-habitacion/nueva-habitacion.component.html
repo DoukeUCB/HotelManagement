@@ -7,42 +7,99 @@
 
   <form [formGroup]="form" (ngSubmit)="guardar()" class="tarjeta">
     <section class="form-grid">
-      <label class="campo">
+      <label class="campo" [class.campo-error]="(hasLocalError('numero') || hasLocalErrorDirty('numero')) || hasServerError('numero')">
         <span>Número de Habitación *</span>
-        <input type="text" formControlName="numero" placeholder="Ej: 101" />
-        <small *ngIf="form.controls.numero.invalid && form.controls.numero.touched">
-          Campo obligatorio.
+        <input 
+          type="text" 
+          formControlName="numero" 
+          placeholder="Ej: 101, 120A, 205B"
+          [class.input-error]="(hasLocalError('numero') || hasLocalErrorDirty('numero')) || hasServerError('numero')"
+          (input)="form.controls['numero'].setValue($any($event.target).value.toUpperCase())"
+          maxlength="4"
+        />
+        <!-- Error de validación local - mostrar si está touched O dirty (ha escrito algo) -->
+        <small 
+          *ngIf="(hasLocalError('numero') || hasLocalErrorDirty('numero')) && !hasServerError('numero')"
+          class="error-message">
+          {{ getLocalError('numero') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('numero')"
+          class="error-message server-error">
+          {{ getServerError('numero') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('piso') || hasServerError('piso')">
         <span>Piso *</span>
-        <input type="number" formControlName="piso" min="1" />
-        <small *ngIf="form.controls.piso.invalid && form.controls.piso.touched">
-          Ingrese un piso válido.
+        <input 
+          type="number" 
+          formControlName="piso" 
+          min="1"
+          [class.input-error]="hasLocalError('piso') || hasServerError('piso')"
+        />
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('piso') && !hasServerError('piso')"
+          class="error-message">
+          {{ getLocalError('piso') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('piso')"
+          class="error-message server-error">
+          {{ getServerError('piso') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('tipoHabitacionId') || hasServerError('tipo_Habitacion_ID')">
         <span>Tipo de Habitación *</span>
-        <select formControlName="tipoHabitacionId">
+        <select 
+          formControlName="tipoHabitacionId"
+          [class.input-error]="hasLocalError('tipoHabitacionId') || hasServerError('tipo_Habitacion_ID')"
+        >
           <option value="" disabled>Seleccione un tipo</option>
           <option *ngFor="let tipo of tiposHabitacion()" [value]="tipo.id">
             {{ tipo.nombre }} - {{ tipo.capacidad_Maxima }} personas - Bs. {{ tipo.precio_Base }}
           </option>
         </select>
-        <small *ngIf="form.controls.tipoHabitacionId.invalid && form.controls.tipoHabitacionId.touched">
-          Seleccione un tipo de habitación.
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('tipoHabitacionId') && !hasServerError('tipo_Habitacion_ID')"
+          class="error-message">
+          {{ getLocalError('tipoHabitacionId') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('tipo_Habitacion_ID')"
+          class="error-message server-error">
+          {{ getServerError('tipo_Habitacion_ID') }}
         </small>
       </label>
 
-      <label class="campo">
+      <label class="campo" [class.campo-error]="hasLocalError('estado') || hasServerError('estado')">
         <span>Estado *</span>
-        <select formControlName="estado">
+        <select 
+          formControlName="estado"
+          [class.input-error]="hasLocalError('estado') || hasServerError('estado')"
+        >
           <option *ngFor="let estado of estadosDisponibles" [value]="estado">
             {{ estado }}
           </option>
         </select>
+        <!-- Error de validación local -->
+        <small 
+          *ngIf="hasLocalError('estado') && !hasServerError('estado')"
+          class="error-message">
+          {{ getLocalError('estado') }}
+        </small>
+        <!-- Error del servidor -->
+        <small 
+          *ngIf="hasServerError('estado')"
+          class="error-message server-error">
+          {{ getServerError('estado') }}
+        </small>
       </label>
     </section>
 
@@ -50,7 +107,7 @@
       <button type="button" class="btn btn-terciario" (click)="cancelar()">
         Cancelar
       </button>
-      <button type="submit" class="btn btn-primario" [disabled]="submitting()">
+      <button type="submit" class="btn btn-primario" [disabled]="submitting() || form.invalid">
         {{ submitting() ? 'Guardando…' : 'Guardar habitación' }}
       </button>
     </div>

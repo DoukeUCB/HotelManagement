@@ -2,24 +2,37 @@ namespace HotelManagement.Aplicacion.Exceptions
 {
     public class NotFoundException : Exception
     {
-        public NotFoundException(string message) : base(message) { }
+        public string Field { get; }
+        
+        public NotFoundException(string message, string field = "") : base(message) 
+        { 
+            Field = field;
+        }
     }
 
     public class BadRequestException : Exception
     {
-        public BadRequestException(string message) : base(message) { }
+        public string Field { get; }
+        
+        public BadRequestException(string message, string field = "") : base(message) 
+        { 
+            Field = field;
+        }
     }
 
     public class ValidationException : Exception
     {
-        public List<string> Errors { get; }
+        public Dictionary<string, List<string>> Errors { get; }
 
-        public ValidationException(string message) : base(message)
+        public ValidationException(string field, string message) : base("Errores de validación")
         {
-            Errors = new List<string> { message };
+            Errors = new Dictionary<string, List<string>>
+            {
+                { field, new List<string> { message } }
+            };
         }
 
-        public ValidationException(List<string> errors) : base("Errores de validación")
+        public ValidationException(Dictionary<string, List<string>> errors) : base("Errores de validación")
         {
             Errors = errors;
         }
@@ -27,6 +40,21 @@ namespace HotelManagement.Aplicacion.Exceptions
 
     public class ConflictException : Exception
     {
-        public ConflictException(string message) : base(message) { }
+        public string Field { get; }
+        
+        public ConflictException(string message, string field = "") : base(message) 
+        { 
+            Field = field;
+        }
+    }
+
+    public class UnauthorizedException : Exception
+    {
+        public UnauthorizedException(string message = "No autorizado") : base(message) { }
+    }
+
+    public class ForbiddenException : Exception
+    {
+        public ForbiddenException(string message = "Acceso prohibido") : base(message) { }
     }
 }
