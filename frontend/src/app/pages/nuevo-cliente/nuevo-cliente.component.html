@@ -15,8 +15,6 @@
           class="uppercase-input"
           placeholder="Ej: EMPRESA S.A., COMERCIAL XYZ"
           [class.input-error]="(hasLocalError('razonSocial') || hasLocalErrorDirty('razonSocial')) || hasServerError('razon_Social')"
-          (input)="form.controls['razonSocial'].setValue($any($event.target).value.toUpperCase())"
-          maxlength="100"
         />
         <!-- Error de validación local -->
         <small 
