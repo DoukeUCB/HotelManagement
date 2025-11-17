@@ -46,7 +46,7 @@ jobs:
         if: always()
         with:
           name: Backend Integration Tests
-          path: backend/Tests/TestResults/test-results.trx
+          path: './backend/Tests/TestResults/*.trx'
           reporter: dotnet-trx
           fail-on-error: true
       
