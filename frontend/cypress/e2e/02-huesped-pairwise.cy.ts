@@ -145,7 +145,6 @@ describe('Huéspedes CRUD', () => {
   it('Muestra errores en campos obligatorios', () => {
     cy.visit('/nuevo-huesped');
     cy.get('button[type="submit"]', { timeout: 10000 }).click();
-    // Valida que haya mensajes de error visibles
     cy.get('small').should('contain.text', 'Este campo es obligatorio');
     cy.get('input[formControlName="primerNombre"]').should('have.class', 'ng-invalid');
     cy.get('input[formControlName="primerApellido"]').should('have.class', 'ng-invalid');
