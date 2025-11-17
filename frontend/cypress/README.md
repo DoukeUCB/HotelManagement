@@ -60,7 +60,7 @@ npm install
 ### Modo Interactivo (Recomendado para desarrollo)
 
 ```bash
-npx cypress open
+ git push --set-upstream origin fix/e2eTests
 ```
 
 Esto abrirá la interfaz gráfica de Cypress donde puedes:
