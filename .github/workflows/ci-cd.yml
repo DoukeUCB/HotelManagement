@@ -72,13 +72,13 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./frontend
-          start: npm run dev
-          wait-on: 'http://localhost:5173'
+          start: npm start
+          wait-on: 'http://localhost:4200'
           wait-on-timeout: 120
           browser: chrome
           headed: false
         env:
-          CYPRESS_baseUrl: http://localhost:5173
+          CYPRESS_baseUrl: http://localhost:4200
 
       - name: Stop background services
         if: always()
