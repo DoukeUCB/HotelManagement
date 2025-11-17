@@ -76,10 +76,11 @@ jobs:
       - name: Run Cypress E2E
         uses: cypress-io/github-action@v6
         with:
+          working-directory: ./frontend
           wait-on: 'http://localhost:5173'
           wait-on-timeout: 120
           browser: chrome
-          headless: true
+          headed: false
         env:
           CYPRESS_baseUrl: http://localhost:5173
 
