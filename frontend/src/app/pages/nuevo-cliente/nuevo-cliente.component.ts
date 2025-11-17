@@ -35,11 +35,13 @@ export class NuevoClienteComponent implements OnInit {
     this.form = this.fb.group({
       razonSocial: ['', [
         Validators.required,
+        Validators.maxLength(20),
         this.razonSocialValidator.bind(this)
       ]],
       nit: ['', [
         Validators.required,
-        this.nitValidator.bind(this)
+        Validators.minLength(7),
+        Validators.maxLength(13),
       ]],
       email: ['', [
         Validators.required,
@@ -160,10 +162,15 @@ export class NuevoClienteComponent implements OnInit {
       if (control.errors['email']) return 'Email inválido';
       
       // Errores de Razón Social
-      if (field === 'razonSocial' && control.errors['formatoInvalido']) {
-        return 'Solo se permiten letras, números, espacios, puntos y comas';
+      if (field === 'razonSocial') {
+        if (control.errors['formatoInvalido']) {
+          return 'Solo se permiten letras, números, espacios, puntos y comas';
+        }
+        if (control.errors['maxlength']) {
+          return 'La Razón Social no puede exceder 20 caracteres';
+        }
       }
-      
+
       // Errores de NIT
       if (field === 'nit') {
         if (control.errors['formatoInvalido']) {

@@ -7,7 +7,13 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.ts',
     viewportWidth: 1280,
     viewportHeight: 720,
-    video: false,
+
+    // 👉 ACTIVAR GRABACIÓN
+    video: true,
+
+    // 👉 CARPETA DONDE SE GUARDAN LOS VIDEOS
+    videosFolder: 'cypress/mis-videos',
+
     screenshotOnRunFailure: true,
     defaultCommandTimeout: 10000,
     requestTimeout: 10000,
