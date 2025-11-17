@@ -49,11 +49,6 @@ jobs:
           npm ci --no-audit --no-fund
           npm run build
 
-      - name: Serve frontend (background)
-        run: |
-          npx http-server ./dist/frontend -p 5173 &>/dev/null &
-          echo "Frontend served on http://localhost:5173"
-
       - name: Start backend API (background)
         run: |
           cd backend
@@ -77,6 +72,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./frontend
+          start: npm run dev
           wait-on: 'http://localhost:5173'
           wait-on-timeout: 120
           browser: chrome
