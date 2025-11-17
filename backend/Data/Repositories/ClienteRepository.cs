@@ -20,8 +20,7 @@ namespace HotelManagement.Repositories
 
         public async Task<Cliente?> GetByIdAsync(byte[] id)
         {
-            return await _context.Clientes
-                .FirstOrDefaultAsync(c => c.ID.SequenceEqual(id));
+            return await _context.Clientes.FindAsync(id);
         }
         
         public async Task<Cliente?> GetByEmailAsync(string email)
@@ -46,8 +45,7 @@ namespace HotelManagement.Repositories
 
         public async Task<bool> DeleteAsync(byte[] id)
         {
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(c => c.ID.SequenceEqual(id));
+            var cliente = await _context.Clientes.FindAsync(id);
             
             if (cliente == null)
                 return false;
