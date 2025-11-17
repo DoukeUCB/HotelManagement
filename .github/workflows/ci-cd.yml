@@ -35,24 +35,35 @@ jobs:
       - name: Restaurar dependencias
         run: dotnet restore
       
-      - name: 🔨 Build del proyecto
+      - name: Build del proyecto
         run: dotnet build --configuration Release --no-restore
       
       - name: Ejecutar pruebas de integración
         run: dotnet test Tests/HotelManagement.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
       
-      - name: Listar archivos TRX generados
+      - name: Listar archivos TRX generados (debug)
         if: always()
-        run: find . -name "*.trx" -type f
+        run: |
+          echo "=== Archivos TRX desde working directory (backend) ==="
+          find . -name "*.trx" -type f
+          echo "=== Ruta completa desde raíz ==="
+          ls -la Tests/TestResults/ || echo "No existe Tests/TestResults/"
+      
+      - name: Subir archivos TRX como artefacto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: backend/Tests/TestResults/*.trx
+          retention-days: 1
       
       - name: Publicar resultados de tests
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Backend Integration Tests
-          path: 'backend/Tests/TestResults/*.trx'
+          path: 'backend/Tests/TestResults/**/*.trx'
           reporter: dotnet-trx
-          fail-on-error: true
       
       - name: Subir artefactos de build
         uses: actions/upload-artifact@v4
@@ -87,7 +98,7 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
       
-      - name: 🔨 Build del proyecto
+      - name: Build del proyecto
         run: npm run build
       
       - name: Subir artefactos de build
