@@ -41,12 +41,16 @@ jobs:
       - name: Ejecutar pruebas de integración
         run: dotnet test Tests/HotelManagement.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
       
+      - name: Listar archivos TRX generados
+        if: always()
+        run: find . -name "*.trx" -type f
+      
       - name: Publicar resultados de tests
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Backend Integration Tests
-          path: './backend/Tests/TestResults/*.trx'
+          path: 'backend/Tests/TestResults/*.trx'
           reporter: dotnet-trx
           fail-on-error: true
       
