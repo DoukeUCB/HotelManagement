@@ -48,7 +48,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IClienteService, ClienteService>(); 
 builder.Services.AddScoped<IClienteValidator, ClienteValidator>();
+
+//Huesped
+builder.Services.AddScoped<IHuespedRepository, HuespedRepository>();
 builder.Services.AddScoped<HotelManagement.Aplicacion.Validators.IHuespedValidator, HotelManagement.Aplicacion.Validators.HuespedValidator>();
+
+//Habitacion
+builder.Services.AddScoped<IHabitacionRepository, HabitacionRepository>();
 builder.Services.AddScoped<HotelManagement.Aplicacion.Validators.IHabitacionValidator, HotelManagement.Aplicacion.Validators.HabitacionValidator>();
 
 // Configurar controladores
@@ -85,6 +91,9 @@ var app = builder.Build();
 
 // Middleware de manejo de errores
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+// Health check endpoint para CI/CD
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
 // Configurar pipeline HTTP
 app.UseSwagger();

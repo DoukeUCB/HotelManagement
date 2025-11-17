@@ -22,9 +22,12 @@ namespace HotelManagement.Datos.Repositories
 
         public async Task<Reserva?> GetByIdAsync(byte[] id)
         {
-            return await _context.Reservas
-                .Include(r => r.Cliente)
-                .FirstOrDefaultAsync(r => r.ID.SequenceEqual(id));
+            var reserva = await _context.Reservas.FindAsync(id);
+            if (reserva != null)
+            {
+                await _context.Entry(reserva).Reference(r => r.Cliente).LoadAsync();
+            }
+            return reserva;
         }
 
         public async Task AddAsync(Reserva reserva)

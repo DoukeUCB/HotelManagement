@@ -1,0 +1,254 @@
+name: CI/CD Pipeline - Hotel Management
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  NODE_VERSION: '20.x'
+
+jobs:
+  # ============================================
+  # JOB 1: Backend - Build y Tests de Integración
+  # ============================================
+  backend-tests:
+    name: 🔧 Backend Build & Integration Tests
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+      
+      - name: ⚙️ Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: 📦 Restaurar dependencias
+        run: dotnet restore
+      
+      - name: 🔨 Build del proyecto
+        run: dotnet build --configuration Release --no-restore
+      
+      - name: 🧪 Ejecutar pruebas de integración
+        run: dotnet test Tests/HotelManagement.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      
+      - name: 📊 Publicar resultados de tests
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Backend Integration Tests
+          path: backend/Tests/TestResults/test-results.trx
+          reporter: dotnet-trx
+          fail-on-error: true
+      
+      - name: 📤 Subir artefactos de build
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: backend-build
+          path: backend/bin/Release/net9.0/
+          retention-days: 1
+
+  # ============================================
+  # JOB 2: Frontend - Build y preparación para E2E
+  # ============================================
+  frontend-build:
+    name: 🎨 Frontend Build
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./frontend
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+      
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: 📦 Instalar dependencias
+        run: npm ci
+      
+      - name: 🔨 Build del proyecto
+        run: npm run build
+      
+      - name: 📤 Subir artefactos de build
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: frontend-build
+          path: frontend/dist/
+          retention-days: 1
+
+  # ============================================
+  # JOB 3: E2E Tests con Cypress
+  # ============================================
+  e2e-tests:
+    name: 🧪 E2E Tests (Cypress)
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-build]
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        spec:
+          - cypress/e2e/00-navigation.cy.ts
+          - cypress/e2e/01-cliente-pairwise.cy.ts
+          - cypress/e2e/02-huesped-pairwise.cy.ts
+          - cypress/e2e/03-reserva-pairwise.cy.ts
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+      
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: ⚙️ Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: 📦 Instalar dependencias del frontend
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: 📦 Restaurar dependencias del backend
+        working-directory: ./backend
+        run: dotnet restore
+      
+      - name: 🚀 Iniciar Backend API (background)
+        working-directory: ./backend
+        run: |
+          nohup dotnet run --no-restore > backend.log 2>&1 &
+          echo $! > backend.pid
+          
+          # Esperar a que el backend esté listo (máximo 60 segundos)
+          for i in {1..12}; do
+            if curl -f http://localhost:5000/health 2>/dev/null; then
+              echo "✅ Backend está listo"
+              break
+            fi
+            echo "⏳ Esperando al backend... intento $i/12"
+            sleep 5
+          done
+          
+          # Verificar una vez más
+          curl -f http://localhost:5000/health || {
+            echo "❌ Backend no respondió en health check"
+            cat backend.log
+            exit 1
+          }
+      
+      - name: 🚀 Iniciar Frontend (background)
+        working-directory: ./frontend
+        run: |
+          npm run dev &
+          echo $! > frontend.pid
+          sleep 5
+      
+      - name: 🧪 Ejecutar Cypress E2E Tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ./frontend
+          spec: ${{ matrix.spec }}
+          wait-on: 'http://localhost:5173'
+          wait-on-timeout: 120
+          browser: chrome
+          headed: false
+      
+      - name: 📸 Subir screenshots de fallos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-${{ matrix.spec }}
+          path: frontend/cypress/screenshots
+          retention-days: 7
+      
+      - name: 🎥 Subir videos de tests
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos-${{ matrix.spec }}
+          path: frontend/cypress/videos
+          retention-days: 7
+      
+      - name: 🛑 Detener servicios
+        if: always()
+        run: |
+          if [ -f backend/backend.pid ]; then
+            kill $(cat backend/backend.pid) || true
+          fi
+          if [ -f frontend/frontend.pid ]; then
+            kill $(cat frontend/frontend.pid) || true
+          fi
+
+  # ============================================
+  # JOB 4: Resumen de Resultados
+  # ============================================
+  test-summary:
+    name: 📊 Test Summary
+    runs-on: ubuntu-latest
+    needs: [backend-tests, e2e-tests]
+    if: always()
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+      
+      - name: 📊 Generar resumen
+        run: |
+          echo "# 🎯 Resumen de Pruebas - Hotel Management" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📅 Fecha: $(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔍 Resultados por Tipo de Prueba" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Tipo | Estado |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔧 Backend Integration Tests | ${{ needs.backend-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🧪 E2E Tests (Cypress) | ${{ needs.e2e-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📝 Detalles" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Actor**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow**: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================
+  # JOB 5: Quality Gate (opcional)
+  # ============================================
+  quality-gate:
+    name: 🚦 Quality Gate
+    runs-on: ubuntu-latest
+    needs: [backend-tests, e2e-tests]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: ✅ Verificar calidad
+        run: |
+          if [ "${{ needs.backend-tests.result }}" != "success" ] || [ "${{ needs.e2e-tests.result }}" != "success" ]; then
+            echo "❌ Quality gate failed: Some tests did not pass"
+            exit 1
+          else
+            echo "✅ Quality gate passed: All tests successful"
+          fi
