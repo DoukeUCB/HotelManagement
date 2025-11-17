@@ -1,5 +1,11 @@
 # Hotel Management API
 
+[![CI/CD Pipeline](https://github.com/DoukeUCB/HotelManagement/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/DoukeUCB/HotelManagement/actions/workflows/ci-cd.yml)
+[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-39%20passing-brightgreen)](./backend/Tests/RESUMEN_PRUEBAS_INTEGRACION.md)
+[![E2E Tests](https://img.shields.io/badge/E2E%20Tests-Cypress-17202C?logo=cypress)](./frontend/cypress/e2e)
+[![.NET Version](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Sistema de gestión de reservas de hotel desarrollado en C# con .NET 9.0, implementando una arquitectura de 3 capas y operaciones CRUD para detalles de reservas.
 
 ## 🏗️ Arquitectura
