@@ -76,6 +76,12 @@ namespace HotelManagement.Application.Services
 
         public async Task AddAsync(ReservaCreateDTO dto)
         {
+            // Validar monto
+            if (dto.Monto_Total < 0)
+            {
+                throw new ValidationException("Monto_Total", "El monto total debe ser mayor o igual a cero");
+            }
+
             var clienteId = Guid.Parse(dto.Cliente_ID).ToByteArray();
             var cliente = await _clienteRepository.GetByIdAsync(clienteId);
             

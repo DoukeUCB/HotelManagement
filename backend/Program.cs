@@ -10,18 +10,26 @@ using FluentValidation.AspNetCore;
 using HotelManagement.Datos.Repositories;
 using DotNetEnv;
 
-
-Env.Load();
+var rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
+var envPath = Path.Combine(rootPath, ".env");
+if (File.Exists(envPath))
+{
+    Env.Load(envPath);
+    Console.WriteLine($"[INFO] Archivo .env cargado desde: {envPath}");
+}
+else
+{
+    Console.WriteLine($"[WARN] Archivo .env no encontrado en: {envPath}");
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de la cadena de conexión
 var server = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
-var port = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
+var port = Environment.GetEnvironmentVariable("PORT") ?? Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
 var database = Environment.GetEnvironmentVariable("DB_NAME") ?? "HotelDB";
 var user = Environment.GetEnvironmentVariable("DB_USER") ?? "root";
 var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
-Console.WriteLine($"Conectando a MySQL en {server}:{port} como {user}");
+Console.WriteLine($"[INFO] Conectando a MySQL en {server}:{port} como {user}");
 
 var connectionString = $"Server={server};Port={port};Database={database};User={user};Password={password};";
 

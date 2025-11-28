@@ -1,0 +1,17 @@
+# Archivos de prueba y resultados
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Binarios
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Reqnroll generados
+*.feature.cs
