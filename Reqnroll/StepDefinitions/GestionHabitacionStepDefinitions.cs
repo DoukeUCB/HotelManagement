@@ -4,6 +4,7 @@ using HotelManagement.DTOs;
 using HotelManagement.Models;
 using HotelManagement.Application.Services;
 using HotelManagement.Services;
+using System.Diagnostics;
 using HotelManagement.Repositories;
 using HotelManagement.Datos.Config; 
 using HotelManagement.Aplicacion.Validators;
@@ -31,9 +32,8 @@ namespace Reqnroll.StepDefinitions
         private string? _habitacionCreadaId;
         private HabitacionDTO? _habitacionConsultada;
         
-        // Resultados
+        // Resultados (Usar _context para compartir entre step definitions)
         private bool _operacionExitosa;
-        private string? _mensajeError;
 
         public GestionHabitacionStepDefinitions(HotelTestContext context)
         {
@@ -59,7 +59,7 @@ namespace Reqnroll.StepDefinitions
             _habitacionCreadaId = null;
             _habitacionConsultada = null;
             _operacionExitosa = false;
-            _mensajeError = null;
+            _context.MensajeError = null;
         }
 
         [AfterScenario]
@@ -73,13 +73,17 @@ namespace Reqnroll.StepDefinitions
         [Given(@"que existe un Tipo de Habitación para pruebas:")]
         public async Task DadoQueExisteUnTipoDeHabitacionParaPruebas(Table table)
         {
-            var row = table.Rows.First();
+            // La tabla tiene formato: Campo | Valor
+            var nombreRow = table.Rows.FirstOrDefault(r => r["Campo"] == "Nombre");
+            var capacidadRow = table.Rows.FirstOrDefault(r => r["Campo"] == "Capacidad_Maxima");
+            var precioRow = table.Rows.FirstOrDefault(r => r["Campo"] == "Precio_Base");
+
             var tipoHab = new TipoHabitacion
             {
                 ID = Guid.NewGuid().ToByteArray(),
-                Nombre = row["Nombre"],
-                Capacidad_Maxima = byte.Parse(row["Capacidad_Maxima"]),
-                Precio_Base = decimal.Parse(row["Precio_Base"]),
+                Nombre = nombreRow?["Valor"] ?? string.Empty,
+                Capacidad_Maxima = byte.Parse(capacidadRow?["Valor"] ?? "0"),
+                Precio_Base = decimal.Parse(precioRow?["Valor"] ?? "0"),
                 Activo = true,
                 Fecha_Creacion = DateTime.Now,
                 Fecha_Actualizacion = DateTime.Now
@@ -119,18 +123,26 @@ namespace Reqnroll.StepDefinitions
         public async Task DadoQueExisteUnaHabitacionConNumeroYPisoEnElSistema(string numeroHabitacion, short piso)
         {
             await DadoQueYaExisteUnaHabitacionConElNumero(numeroHabitacion);
-            var hab = await _context.DbContext!.Habitaciones.FirstAsync(h => new Guid(h.ID).ToString() == _habitacionCreadaId);
-            hab.Piso = piso;
-            await _context.DbContext.SaveChangesAsync();
+            var habitaciones = await _context.DbContext!.Habitaciones.ToListAsync();
+            var hab = habitaciones.FirstOrDefault(h => new Guid(h.ID).ToString() == _habitacionCreadaId);
+            if (hab != null)
+            {
+                hab.Piso = piso;
+                await _context.DbContext.SaveChangesAsync();
+            }
         }
 
         [Given(@"que existe una habitación con número ""(.*)"" y estado ""(.*)"" en el sistema")]
         public async Task DadoQueExisteUnaHabitacionConNumeroYEstadoEnElSistema(string numeroHabitacion, string estado)
         {
             await DadoQueYaExisteUnaHabitacionConElNumero(numeroHabitacion);
-            var hab = await _context.DbContext!.Habitaciones.FirstAsync(h => new Guid(h.ID).ToString() == _habitacionCreadaId);
-            hab.Estado_Habitacion = estado;
-            await _context.DbContext.SaveChangesAsync();
+            var habitaciones = await _context.DbContext!.Habitaciones.ToListAsync();
+            var hab = habitaciones.FirstOrDefault(h => new Guid(h.ID).ToString() == _habitacionCreadaId);
+            if (hab != null)
+            {
+                hab.Estado_Habitacion = estado;
+                await _context.DbContext.SaveChangesAsync();
+            }
         }
 
         [Given(@"que el sistema no contiene ninguna habitación con ID ""(.*)""")]
@@ -164,7 +176,7 @@ namespace Reqnroll.StepDefinitions
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
         
@@ -181,13 +193,14 @@ namespace Reqnroll.StepDefinitions
 
             try
             {
-                await _habitacionService!.CreateAsync(dto);
+                _habitacionConsultada = await _habitacionService!.CreateAsync(dto);
                 _operacionExitosa = true;
+                _context.MensajeError = null;
             }
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -203,7 +216,7 @@ namespace Reqnroll.StepDefinitions
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -222,11 +235,12 @@ namespace Reqnroll.StepDefinitions
                 // Asumiendo un método PartialUpdateAsync en IHabitacionService
                 _habitacionConsultada = await _habitacionService!.PartialUpdateAsync(_habitacionCreadaId!, dto); 
                 _operacionExitosa = true;
+                _context.MensajeError = null;
             }
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -243,13 +257,14 @@ namespace Reqnroll.StepDefinitions
 
             try
             {
-                await _habitacionService!.CreateAsync(dto);
+                _habitacionConsultada = await _habitacionService!.CreateAsync(dto);
                 _operacionExitosa = true;
+                _context.MensajeError = null;
             }
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -261,11 +276,12 @@ namespace Reqnroll.StepDefinitions
             {
                 // Asumiendo un método DeleteAsync en IHabitacionService
                 _operacionExitosa = await _habitacionService!.DeleteAsync(_habitacionCreadaId!);
+                _context.MensajeError = null;
             }
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -304,20 +320,6 @@ namespace Reqnroll.StepDefinitions
         public void EntoncesSuNuevoEstadoDebeSer(string estado)
         {
             _habitacionConsultada!.Estado_Habitacion.Should().Be(estado);
-        }
-
-        [Then(@"la creación debe fallar")]
-        [Then(@"la operación debe fallar")]
-        public void EntoncesLaOperacionDebeFallar()
-        {
-            _operacionExitosa.Should().BeFalse("la operación debería haber fallado");
-        }
-
-        [Then(@"el error debe indicar ""(.*)""")]
-        public void EntoncesElErrorDebeIndicar(string textoError)
-        {
-            _mensajeError.Should().NotBeNullOrEmpty("debe existir un mensaje de error");
-            _mensajeError!.ToLower().Should().Contain(textoError.ToLower());
         }
 
         #endregion

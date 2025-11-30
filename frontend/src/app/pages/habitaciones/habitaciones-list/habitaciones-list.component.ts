@@ -85,28 +85,22 @@ export class HabitacionesListComponent implements OnInit, OnDestroy {
 
   // Editar
   abrirModalEditar(h: any) {
-    // clonar
-    this.habitacionAEditar = { ...h };
-    this.originalEstado = (h.estado ?? 'Libre'); // guardar estado original
-
-    // intentar asignar tipoId si el objeto tiene tipoId o tipoNombre
-    if (!this.habitacionAEditar.tipoId && this.habitacionAEditar.tipoNombre) {
-      const match = this.tipos.find(t => {
-        const nombreTipo = (t.tipo_Nombre ?? t.nombre ?? t.tipoNombre ?? '').toString().trim();
-        return nombreTipo === this.habitacionAEditar.tipoNombre;
-      });
-      if (match) {
-        this.habitacionAEditar.tipoId = match.id ?? match.ID ?? match.tipo_Id;
-        this.habitacionAEditar.tipoNombre = this.habitacionAEditar.tipoNombre || (match.tipo_Nombre ?? match.nombre ?? match.tipoNombre);
-      }
-    } else if (this.habitacionAEditar.tipoId && !this.habitacionAEditar.tipoNombre) {
-      // si tenemos tipoId pero no tipoNombre, buscar y asignar nombre
-      const match2 = this.tipos.find(t => (t.id ?? t.ID ?? t.tipo_Id) === this.habitacionAEditar.tipoId);
-      if (match2) {
-        this.habitacionAEditar.tipoNombre = match2.tipo_Nombre ?? match2.nombre ?? match2.tipoNombre;
-      }
-    }
-
+    console.log('=== HABITACIÓN ORIGINAL ===');
+    console.log('Datos completos de h:', h);
+    
+    // Intentar obtener el tipoId de diferentes posibles propiedades
+    const tipoId = h.tipoId ?? h.tipo_Id ?? h.Tipo_Habitacion_ID ?? h.tipo_Habitacion_ID ?? null;
+    
+    this.habitacionAEditar = { 
+      id: h.id,
+      numero: h.numero,
+      piso: h.piso,
+      tipoId: tipoId,  // Usar el valor que encontramos
+      capacidad: h.capacidad,
+      estado: h.estado || 'Libre'
+    };
+    
+    console.log('habitacionAEditar creado:', this.habitacionAEditar);
     this.modalEditarAbierto = true;
   }
 
@@ -116,59 +110,80 @@ export class HabitacionesListComponent implements OnInit, OnDestroy {
   }
 
   guardarEdicion() {
-    if (!this.habitacionAEditar) return;
-
-    const tipoSeleccionado = this.tipos.find(t => (t.id ?? t.ID ?? t.tipo_Id) === this.habitacionAEditar.tipoId);
-    const tipoNombre = tipoSeleccionado ? (tipoSeleccionado.tipo_Nombre ?? tipoSeleccionado.nombre ?? tipoSeleccionado.tipoNombre) : (this.habitacionAEditar.tipoNombre ?? '');
-
-    // normalizar estado para backend (ya no hay tratamiento especial para "Mantenimiento")
-    const estadoBackend = this.normalizeEstadoForBackend(this.habitacionAEditar.estado);
-
-    // Si solo cambió el estado, intentar el endpoint específico con variantes de payload (genérico)
-    if (this.originalEstado !== null && this.habitacionAEditar.estado !== this.originalEstado) {
-      const variantesPayloads = [
-        { estado_Habitacion: estadoBackend },
-        { Estado_Habitacion: estadoBackend },
-        { estado: estadoBackend },
-        { Estado: estadoBackend },
-        { EstadoHabitacion: estadoBackend },
-        { estadoHabitacion: estadoBackend }
-      ];
-
-      const tryVariant = (i: number) => {
-        if (i >= variantesPayloads.length) {
-          alert('No se pudo actualizar el estado. Revisa el servidor o los logs (probé varias variantes de payload).');
-          return;
-        }
-
-        const payload = variantesPayloads[i];
-        console.log(`Probando variante ${i + 1}:`, payload);
-
-        this.habitacionService.updateEstadoKey(this.habitacionAEditar.id, payload).subscribe({
-          next: (resp) => {
-            console.log('updateEstado OK, respuesta:', resp);
-            this.habitaciones = this.habitaciones.map(h => h.id === this.habitacionAEditar.id ? { ...h, estado: estadoBackend } : h);
-            this.cerrarModalEditar();
-          },
-          error: (err: any) => {
-            console.warn(`Variante ${i + 1} falló:`, err);
-            if (i < variantesPayloads.length - 1) {
-              tryVariant(i + 1);
-            } else {
-              console.error('Cuerpo de error final del servidor:', err?.error ?? err);
-              const serverMsg = err?.error ? (typeof err.error === 'string' ? err.error : JSON.stringify(err.error)) : (err?.message || `HTTP ${err?.status}` );
-              alert(`No se pudo actualizar el estado. Respuesta servidor: ${serverMsg}`);
-            }
-          }
-        });
-      };
-
-      tryVariant(0);
+    if (!this.habitacionAEditar.id) {
+      console.error('Error: No se encontró el ID de la habitación');
+      alert('Error: No se encontró el ID de la habitación');
       return;
     }
+    
+    // Validar que tipoId no sea null o undefined
+    if (!this.habitacionAEditar.tipoId) {
+      console.error('Error: No se seleccionó un tipo de habitación');
+      alert('Error: Debe seleccionar un tipo de habitación');
+      return;
+    }
+    
+    console.log('=== DATOS DE EDICIÓN ===');
+    console.log('habitacionAEditar:', this.habitacionAEditar);
+    console.log('tipos disponibles:', this.tipos);
+    
+    // Buscar el nombre del tipo seleccionado
+    const tipoSeleccionado = this.tipos.find(t => t.id === this.habitacionAEditar.tipoId);
+    console.log('Tipo seleccionado:', tipoSeleccionado);
+    
+    const tipoNombre = tipoSeleccionado?.tipo_Nombre ?? tipoSeleccionado?.nombre ?? tipoSeleccionado?.tipoNombre ?? '';
+    
+    // Asegurarse de que tipoId no sea null/undefined antes de enviarlo
+    const tipoIdFinal = this.habitacionAEditar.tipoId;
+    
+    // Transformar el objeto al formato que espera el backend
+    const payload = {
+      id: this.habitacionAEditar.id,
+      ID: this.habitacionAEditar.id,
+      numero_Habitacion: this.habitacionAEditar.numero,
+      piso: this.habitacionAEditar.piso,
+      tipo_Id: tipoIdFinal,
+      Tipo_Habitacion_ID: tipoIdFinal,  // Campo REQUERIDO por el backend
+      tipo_Nombre: tipoNombre,
+      capacidad_Maxima: parseInt(this.habitacionAEditar.capacidad),
+      estado_Habitacion: this.habitacionAEditar.estado || 'Libre'
+    };
 
-    // Si no es solo cambio de estado, usar la actualización completa
-    this._guardarEdicionCompleta(tipoNombre, estadoBackend);
+    console.log('=== PAYLOAD A ENVIAR ===');
+    console.log(JSON.stringify(payload, null, 2));
+    
+    this.habitacionService.updateHabitacion(payload)
+      .subscribe({
+        next: (response) => {
+          console.log('=== RESPUESTA EXITOSA ===');
+          console.log('response:', response);
+          alert('Habitación actualizada correctamente');
+          this.cerrarModalEditar();
+          this.cargarHabitaciones();
+        },
+        error: (err: any) => {
+          console.error('=== ERROR AL ACTUALIZAR ===');
+          console.error('Error completo:', err);
+          console.error('Status:', err.status);
+          console.error('Status Text:', err.statusText);
+          console.error('Error body:', err.error);
+          console.error('URL:', err.url);
+          
+          let mensaje = 'No se pudo actualizar la habitación.\n\n';
+          if (err.status === 404) {
+            mensaje += 'Error 404: La habitación no fue encontrada en el servidor.';
+          } else if (err.status === 400) {
+            mensaje += 'Error 400: Datos inválidos.\n';
+            mensaje += JSON.stringify(err.error);
+          } else if (err.status === 500) {
+            mensaje += 'Error 500: Error interno del servidor.';
+          } else {
+            mensaje += `Error ${err.status}: ${err.statusText}`;
+          }
+          
+          alert(mensaje);
+        }
+      });
   }
 
   // Extrae la lógica de actualización completa para reusar desde el fallback

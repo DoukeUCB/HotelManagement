@@ -36,7 +36,6 @@ namespace Reqnroll.StepDefinitions
         private ReservaDTO? _reservaCreada;
         private List<DetalleReservaDTO>? _detallesReserva;
         private bool _operacionExitosa;
-        private string? _mensajeError;
 
         public CrearReservaCompletaStepDefinitions(HotelTestContext context)
         {
@@ -70,7 +69,7 @@ namespace Reqnroll.StepDefinitions
             // Reset estado
             _habitacionesAgregadas = new List<DetalleHabitacionDTO>();
             _operacionExitosa = false;
-            _mensajeError = null;
+            _context.MensajeError = null;
         }
 
         [AfterScenario]
@@ -192,7 +191,7 @@ namespace Reqnroll.StepDefinitions
             if (habitacion == null)
             {
                 _operacionExitosa = false;
-                _mensajeError = $"No se encontró la habitación {numeroHabitacion}";
+                _context.MensajeError = $"No se encontró la habitación {numeroHabitacion}";
                 return;
             }
 
@@ -239,7 +238,7 @@ namespace Reqnroll.StepDefinitions
             if (habitacion == null)
             {
                 _operacionExitosa = false;
-                _mensajeError = $"No se encontró la habitación {numeroHabitacion}";
+                _context.MensajeError = $"No se encontró la habitación {numeroHabitacion}";
             }
         }
 
@@ -256,7 +255,7 @@ namespace Reqnroll.StepDefinitions
             if (fechaSalida <= fechaEntrada)
             {
                 _operacionExitosa = false;
-                _mensajeError = "La fecha de salida debe ser posterior a la fecha de entrada";
+                _context.MensajeError = "La fecha de salida debe ser posterior a la fecha de entrada";
             }
         }
 
@@ -313,7 +312,7 @@ namespace Reqnroll.StepDefinitions
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -368,7 +367,7 @@ namespace Reqnroll.StepDefinitions
             catch (Exception ex)
             {
                 _operacionExitosa = false;
-                _mensajeError = ex.Message;
+                _context.MensajeError = ex.Message;
             }
         }
 
@@ -439,8 +438,8 @@ namespace Reqnroll.StepDefinitions
         [Then(@"el error debe indicar ""(.*)""")]
         public void EntoncesElErrorDebeIndicar(string textoError)
         {
-            _mensajeError.Should().NotBeNull("debe existir un mensaje de error");
-            _mensajeError!.ToLower().Should().Contain(textoError.ToLower());
+            _context.MensajeError.Should().NotBeNull("debe existir un mensaje de error");
+            _context.MensajeError!.ToLower().Should().Contain(textoError.ToLower());
         }
 
         #endregion
