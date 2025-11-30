@@ -14,7 +14,7 @@ namespace Reqnroll.StepDefinitions
     [Binding]
     public class CrearReservaCompletaStepDefinitions
     {
-        private readonly ReservaTestContext _context;
+        private readonly HotelTestContext _context;
         
         // Servicios
         private IClienteService? _clienteService;
@@ -38,7 +38,7 @@ namespace Reqnroll.StepDefinitions
         private bool _operacionExitosa;
         private string? _mensajeError;
 
-        public CrearReservaCompletaStepDefinitions(ReservaTestContext context)
+        public CrearReservaCompletaStepDefinitions(HotelTestContext context)
         {
             _context = context;
         }
