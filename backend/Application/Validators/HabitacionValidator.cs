@@ -45,7 +45,7 @@ namespace HotelManagement.Aplicacion.Validators
                 var numeroExists = await _context.Habitaciones.AnyAsync(h => h.Numero_Habitacion == dto.Numero_Habitacion);
                 if (numeroExists)
                 {
-                    errors["numero_Habitacion"] = new List<string> { $"Ya existe una habitación con el número: {dto.Numero_Habitacion}" };
+                    errors["numero_Habitacion"] = new List<string> { $"Ya existe una habitación con el número de habitación: {dto.Numero_Habitacion}" };
                 }
             }
 
@@ -60,7 +60,7 @@ namespace HotelManagement.Aplicacion.Validators
             }
 
             // Validar Estado de Habitación
-            var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio" };
+            var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
             if (string.IsNullOrWhiteSpace(dto.Estado_Habitacion))
             {
                 errors["estado_Habitacion"] = new List<string> { "El Estado de Habitación es obligatorio" };
@@ -129,7 +129,7 @@ namespace HotelManagement.Aplicacion.Validators
                     .AnyAsync(h => h.Numero_Habitacion == dto.Numero_Habitacion && !h.ID.SequenceEqual(guidBytes));
                 if (numeroExists)
                 {
-                    errors["numero_Habitacion"] = new List<string> { $"Ya existe otra habitación con el número: {dto.Numero_Habitacion}" };
+                    errors["numero_Habitacion"] = new List<string> { $"Ya existe otra habitación con el número de habitación: {dto.Numero_Habitacion}" };
                 }
             }
 
@@ -140,7 +140,7 @@ namespace HotelManagement.Aplicacion.Validators
             }
 
             // Validar Estado de Habitación
-            var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio" };
+            var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
             if (!estadosValidos.Contains(dto.Estado_Habitacion))
             {
                 errors["estado_Habitacion"] = new List<string> { $"El Estado de Habitación debe ser uno de: {string.Join(", ", estadosValidos)}" };
@@ -157,7 +157,7 @@ namespace HotelManagement.Aplicacion.Validators
                 var tipoExists = await _context.TipoHabitaciones.AnyAsync(t => t.ID.SequenceEqual(tipoBytes));
                 if (!tipoExists)
                 {
-                    errors["tipo_Habitacion_ID"] = new List<string> { "El Tipo de Habitación especificado no existe" };
+                    errors["tipo_Habitacion_ID"] = new List<string> { "El tipo de habitación especificado no existe" };
                 }
             }
 
@@ -199,7 +199,7 @@ namespace HotelManagement.Aplicacion.Validators
                         .AnyAsync(h => h.Numero_Habitacion == dto.Numero_Habitacion && !h.ID.SequenceEqual(guidBytes));
                     if (numeroExists)
                     {
-                        errors["numero_Habitacion"] = new List<string> { $"Ya existe otra habitación con el número: {dto.Numero_Habitacion}" };
+                        errors["numero_Habitacion"] = new List<string> { $"Ya existe otra habitación con el número de habitación: {dto.Numero_Habitacion}" };
                     }
                 }
             }
@@ -216,7 +216,7 @@ namespace HotelManagement.Aplicacion.Validators
             // Validar Estado de Habitación (si se proporciona)
             if (!string.IsNullOrEmpty(dto.Estado_Habitacion))
             {
-                var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio" };
+                var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
                 if (!estadosValidos.Contains(dto.Estado_Habitacion))
                 {
                     errors["estado_Habitacion"] = new List<string> { $"El Estado de Habitación debe ser uno de: {string.Join(", ", estadosValidos)}" };
@@ -236,7 +236,7 @@ namespace HotelManagement.Aplicacion.Validators
                     var tipoExists = await _context.TipoHabitaciones.AnyAsync(t => t.ID.SequenceEqual(tipoBytes));
                     if (!tipoExists)
                     {
-                        errors["tipo_Habitacion_ID"] = new List<string> { "El Tipo de Habitación especificado no existe" };
+                        errors["tipo_Habitacion_ID"] = new List<string> { "El tipo de habitación especificado no existe" };
                     }
                 }
             }

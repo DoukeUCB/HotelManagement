@@ -32,9 +32,26 @@ namespace HotelManagement.Aplicacion.Exceptions
             };
         }
 
-        public ValidationException(Dictionary<string, List<string>> errors) : base("Errores de validación")
+        public ValidationException(Dictionary<string, List<string>> errors) : base(BuildMessage(errors))
         {
             Errors = errors;
+        }
+
+        private static string BuildMessage(Dictionary<string, List<string>> errors)
+        {
+            if (!errors.Any())
+                return "Errores de validación";
+
+            // Construir mensaje con los errores específicos
+            var errorMessages = new List<string> { "Errores de validación:" };
+            foreach (var kvp in errors)
+            {
+                foreach (var msg in kvp.Value)
+                {
+                    errorMessages.Add($" - {msg}");
+                }
+            }
+            return string.Join(" ", errorMessages);
         }
     }
 
