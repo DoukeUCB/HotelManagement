@@ -60,6 +60,7 @@ builder.Services.AddScoped<IClienteValidator, ClienteValidator>();
 //Huesped
 builder.Services.AddScoped<IHuespedRepository, HuespedRepository>();
 builder.Services.AddScoped<HotelManagement.Aplicacion.Validators.IHuespedValidator, HotelManagement.Aplicacion.Validators.HuespedValidator>();
+builder.Services.AddScoped<IHuespedService, HuespedService>();
 
 //Habitacion
 builder.Services.AddScoped<IHabitacionRepository, HabitacionRepository>();
