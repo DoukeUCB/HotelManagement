@@ -1,6 +1,7 @@
 using HotelManagement.Datos.Config;
 using HotelManagement.DTOs;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 namespace Reqnroll.Support
 {
@@ -58,15 +59,46 @@ namespace Reqnroll.Support
 
             var connectionString = $"Server={server};Port={port};Database={database};User={user};Password={password};";
 
-            var options = new DbContextOptionsBuilder<HotelDbContext>()
-                .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-                .Options;
+            var useInMemory = string.Equals(Environment.GetEnvironmentVariable("USE_INMEMORY_DB"), "true", StringComparison.OrdinalIgnoreCase);
 
-            return new HotelDbContext(options);
+            if (useInMemory)
+            {
+                return CreateInMemoryContext();
+            }
+
+            try
+            {
+                EnsureDatabaseExists(server, port, database, user, password);
+
+                var options = new DbContextOptionsBuilder<HotelDbContext>()
+                    .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                    .Options;
+
+                var context = new HotelDbContext(options);
+                context.Database.EnsureCreated();
+                return context;
+            }
+            catch (Exception ex) when (ex is MySqlException or InvalidOperationException or TimeoutException)
+            {
+                Console.WriteLine($"[WARN] No se pudo usar MySQL para las pruebas BDD ({ex.Message}). Se utilizará una base InMemory temporal.");
+                return CreateInMemoryContext();
+            }
         }
 
         public static async Task LimpiarDatos(HotelDbContext context)
         {
+            if (context.Database.IsInMemory())
+            {
+                context.DetalleReservas.RemoveRange(context.DetalleReservas);
+                context.Reservas.RemoveRange(context.Reservas);
+                context.Huespedes.RemoveRange(context.Huespedes);
+                context.Habitaciones.RemoveRange(context.Habitaciones);
+                context.TipoHabitaciones.RemoveRange(context.TipoHabitaciones);
+                context.Clientes.RemoveRange(context.Clientes);
+                await context.SaveChangesAsync();
+                return;
+            }
+
             // Limpieza con SQL directo para evitar problemas de mapeo
             // El orden es importante por las FK
             await context.Database.ExecuteSqlRawAsync("DELETE FROM Detalle_Reserva WHERE 1=1");
@@ -75,6 +107,29 @@ namespace Reqnroll.Support
             await context.Database.ExecuteSqlRawAsync("DELETE FROM Habitacion WHERE Numero_Habitacion IN ('101', '102', '999')");
             await context.Database.ExecuteSqlRawAsync("DELETE FROM Tipo_Habitacion WHERE Nombre = 'Suite Test'");
             await context.Database.ExecuteSqlRawAsync("DELETE FROM Cliente WHERE Email LIKE '%test%'");
+        }
+
+        private static void EnsureDatabaseExists(string server, string port, string database, string user, string password)
+        {
+            var masterConnectionString = $"Server={server};Port={port};User={user};Password={password};";
+
+            using var connection = new MySqlConnection(masterConnectionString);
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = $"CREATE DATABASE IF NOT EXISTS `{database}`;";
+            command.ExecuteNonQuery();
+        }
+
+        private static HotelDbContext CreateInMemoryContext()
+        {
+            var options = new DbContextOptionsBuilder<HotelDbContext>()
+                .UseInMemoryDatabase($"HotelManagementTests_{Guid.NewGuid():N}")
+                .Options;
+
+            var context = new HotelDbContext(options);
+            context.Database.EnsureCreated();
+            return context;
         }
     }
 }
