@@ -27,7 +27,7 @@ public class GestionClientesStepDefinitions
 
 {
 
-private readonly ReservaTestContext _context;
+private readonly HotelTestContext _context;
 
 private IClienteService? _clienteService;
 
@@ -43,7 +43,7 @@ private bool _esExitoso;
 private string? _mensajeError;
 
 
-public GestionClientesStepDefinitions(ReservaTestContext context)
+public GestionClientesStepDefinitions(HotelTestContext context)
 
 {
 

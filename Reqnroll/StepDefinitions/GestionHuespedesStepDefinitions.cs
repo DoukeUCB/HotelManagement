@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Reqnroll;
-using Reqnroll.Support; // ReservaTestContext
+using Reqnroll.Support; // HotelTestContext
 using HotelManagement.DTOs;
 using HotelManagement.Repositories;
 using HotelManagement.Aplicacion.Validators;
@@ -15,7 +15,7 @@ namespace Reqnroll.StepDefinitions
     [Binding]
     public class GestionHuespedesStepDefinitions
     {
-        private readonly ReservaTestContext _context;
+        private readonly HotelTestContext _context;
 
         // Servicio concreto (tu proyecto no tiene IHuespedService en este momento)
         private HuespedService? _huespedService;
@@ -25,7 +25,7 @@ namespace Reqnroll.StepDefinitions
         private bool _operacionExitosa;
         private string? _mensajeError;
 
-        public GestionHuespedesStepDefinitions(ReservaTestContext context)
+        public GestionHuespedesStepDefinitions(HotelTestContext context)
         {
             _context = context;
         }
