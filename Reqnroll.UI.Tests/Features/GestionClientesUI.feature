@@ -4,7 +4,7 @@ Característica: Gestión de Clientes UI
     Quiero registrar nuevos clientes
     Para poder realizar reservas a su nombre
 
-@UI @Cliente
+@UI @Insert
 Esquema del escenario: Insertar nuevo cliente con datos variados (Pairwise)
     Dado que estoy en la página de creación de clientes
     Cuando ingreso la Razón Social "<RazonSocial>"
@@ -32,3 +32,18 @@ Ejemplos:
       
       # 6. Prueba de Límite de Email (30 chars exactos)
       | Email Maximo Exacto       | Cliente Normal       | 88776655             | un.cliente.largo@dominio.co.bo |
+
+
+@UI @Update
+Esquema del escenario: Actualizar un cliente existente mediante el modal de edición
+	Dado que navego a la página de lista de clientes
+	Cuando hago click en el botón editar del cliente con documento "<DocumentoOriginal>"
+	Y actualizo el formulario del modal con Razón Social "<NuevaRazon>" y Email "<NuevoEmail>"
+	Y guardo los cambios en el modal
+	Entonces el cliente con documento "<DocumentoOriginal>" debería mostrar la Razón Social "<NuevaRazon>" en la lista
+
+Examples:
+	| DocumentoOriginal | NuevaRazon           | NuevoEmail              |
+	| 444555666         | EMPRESA UPDATE A     | contacto.a@test.com     |
+	| 777888999         | COMERCIAL UPDATE B   | ventas.b@test.com       |
+	| 123123123         | SERVICIOS UPDATE C   | info.c@test.com
