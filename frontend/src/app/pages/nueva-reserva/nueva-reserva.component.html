@@ -193,7 +193,7 @@
                     type="search"
                     class="cliente-search"
                     placeholder="Buscar por número de habitación"
-                    [value]="habitacionSearchTerm[i] || ''"
+                    [value]="getHabitacionSeleccionada(i) || habitacionSearchTerm[i] || ''"
                     (focus)="openHabitacion(i)"
                     (input)="onHabitacionInput(i, habitacionInput.value)"
                     (blur)="onHabitacionBlur(i)"

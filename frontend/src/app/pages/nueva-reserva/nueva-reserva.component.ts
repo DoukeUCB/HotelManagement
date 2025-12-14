@@ -97,8 +97,15 @@ onHabitacionInput(i: number, value: string) {
 
 seleccionarHabitacion(i: number, h: HabitacionOption) {
   this.habitacionesFormArray.at(i).patchValue({ habitacionId: h.id });
-  this.habitacionSearchTerm[i] = '';
+  this.habitacionSearchTerm[i] = h.numero.toString();
   this.showHabitacionSug[i] = false;
+}
+
+getHabitacionSeleccionada(i: number): string {
+  const habitacionId = this.habitacionesFormArray.at(i).get('habitacionId')?.value;
+  if (!habitacionId) return '';
+  const habitacion = this.habitaciones().find(h => h.id === habitacionId);
+  return habitacion ? habitacion.numero.toString() : '';
 }
 
 habitacionesLibres = computed<HabitacionOption[]>(() => {
