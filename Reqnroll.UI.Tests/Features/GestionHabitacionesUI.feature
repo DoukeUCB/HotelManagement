@@ -3,18 +3,33 @@
 Característica: Gestión de Habitaciones UI
   Como administrador del hotel
   Quiero gestionar las habitaciones a través de la interfaz web
-  Para mantener el inventario de habitaciones actualizado
+  Para mantener el inventario actualizado
 
   Antecedentes:
     Dado que la aplicación web está en ejecución
     Y que navego a la página de listado de habitaciones
 
-  @happy-path @creacion
-  Escenario: Crear una nueva habitación exitosamente
+  @happy-path @insert
+  Esquema del escenario: HP01 - Insertar nuevas habitaciones exitosamente
     Cuando hago click en el botón "Nueva Habitación"
-    Y ingreso el número de habitación "401"
-    Y ingreso el piso "4"
-    Y selecciono el tipo de habitación "Simple"
-    Y selecciono el estado "Disponible"
+    Y ingreso el número de habitación "<Numero>"
+    Y ingreso el piso "<Piso>"
+    Y selecciono el tipo de habitación "<Tipo>"
+    Y selecciono el estado "Libre"
     Y guardo la habitación
-    Entonces debería ver la habitación "401" en la lista
+    Entonces debería ver la habitación "<Numero>" en la lista
+    Y el mensaje de éxito debería ser visible
+
+    Ejemplos:
+      | Numero | Piso | Tipo              |
+      | 601A   | 6    | Habitación Simple |
+      | 701B   | 7    | Suite Familiar    |
+
+  @happy-path @update
+  Escenario: HP02 - Actualizar el estado de una habitación existente
+    Dado que busco la habitación "102A" en la lista
+    Cuando hago click en el botón "Editar" de la habitación "102A"
+    Y cambio el estado a "Fuera de Servicio"
+    Y guardo los cambios
+    Entonces el estado de la habitación "102A" debería ser "Fuera de Servicio"
+    Y el mensaje de éxito debería ser visible

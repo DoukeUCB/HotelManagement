@@ -30,7 +30,7 @@ namespace Reqnroll.UI.Tests.Features
                 "habitaciones"};
         
         private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new global::System.Globalization.CultureInfo("es"), "Features", "Gestión de Habitaciones UI", "  Como administrador del hotel\r\n  Quiero gestionar las habitaciones a través de l" +
-                "a interfaz web\r\n  Para mantener el inventario de habitaciones actualizado", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags, InitializeCucumberMessages());
+                "a interfaz web\r\n  Para mantener el inventario actualizado", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags, InitializeCucumberMessages());
         
 #line 1 "GestionHabitacionesUI.feature"
 #line hidden
@@ -132,24 +132,34 @@ namespace Reqnroll.UI.Tests.Features
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionHabitacionesUI.feature.ndjson", 3);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionHabitacionesUI.feature.ndjson", 5);
         }
         
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("Crear una nueva habitación exitosamente")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Crear una nueva habitación exitosamente")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("HP01 - Insertar nuevas habitaciones exitosamente")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("HP01 - Insertar nuevas habitaciones exitosamente")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Habitaciones UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("ui")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("habitaciones")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("happy-path")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("creacion")]
-        public async global::System.Threading.Tasks.Task CrearUnaNuevaHabitacionExitosamente()
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("insert")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("601A", "6", "Habitación Simple", "0", null, DisplayName="HP01 - Insertar nuevas habitaciones exitosamente(601A,6,Habitación Simple,0)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("701B", "7", "Suite Familiar", "1", null, DisplayName="HP01 - Insertar nuevas habitaciones exitosamente(701B,7,Suite Familiar,1)")]
+        public async global::System.Threading.Tasks.Task HP01_InsertarNuevasHabitacionesExitosamente(string numero, string piso, string tipo, string @__pickleIndex, string[] exampleTags)
         {
-            string[] tagsOfScenario = new string[] {
+            string[] @__tags = new string[] {
                     "happy-path",
-                    "creacion"};
+                    "insert"};
+            if ((exampleTags != null))
+            {
+                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
+            }
+            string[] tagsOfScenario = @__tags;
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "0";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Crear una nueva habitación exitosamente", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            argumentsOfScenario.Add("Numero", numero);
+            argumentsOfScenario.Add("Piso", piso);
+            argumentsOfScenario.Add("Tipo", tipo);
+            string pickleIndex = @__pickleIndex;
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("HP01 - Insertar nuevas habitaciones exitosamente", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
 #line 13
@@ -169,22 +179,77 @@ namespace Reqnroll.UI.Tests.Features
     await testRunner.WhenAsync("hago click en el botón \"Nueva Habitación\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Cuando ");
 #line hidden
 #line 15
-    await testRunner.AndAsync("ingreso el número de habitación \"401\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+    await testRunner.AndAsync(string.Format("ingreso el número de habitación \"{0}\"", numero), ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
 #line 16
-    await testRunner.AndAsync("ingreso el piso \"4\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+    await testRunner.AndAsync(string.Format("ingreso el piso \"{0}\"", piso), ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
 #line 17
-    await testRunner.AndAsync("selecciono el tipo de habitación \"Simple\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+    await testRunner.AndAsync(string.Format("selecciono el tipo de habitación \"{0}\"", tipo), ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
 #line 18
-    await testRunner.AndAsync("selecciono el estado \"Disponible\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+    await testRunner.AndAsync("selecciono el estado \"Libre\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
 #line 19
     await testRunner.AndAsync("guardo la habitación", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
 #line 20
-    await testRunner.ThenAsync("debería ver la habitación \"401\" en la lista", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
+    await testRunner.ThenAsync(string.Format("debería ver la habitación \"{0}\" en la lista", numero), ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
+#line hidden
+#line 21
+    await testRunner.AndAsync("el mensaje de éxito debería ser visible", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("HP02 - Actualizar el estado de una habitación existente")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("HP02 - Actualizar el estado de una habitación existente")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Habitaciones UI")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("ui")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("habitaciones")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("happy-path")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("update")]
+        public async global::System.Threading.Tasks.Task HP02_ActualizarElEstadoDeUnaHabitacionExistente()
+        {
+            string[] tagsOfScenario = new string[] {
+                    "happy-path",
+                    "update"};
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "2";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("HP02 - Actualizar el estado de una habitación existente", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 29
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 8
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 30
+    await testRunner.GivenAsync("que busco la habitación \"102A\" en la lista", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
+#line hidden
+#line 31
+    await testRunner.WhenAsync("hago click en el botón \"Editar\" de la habitación \"102A\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Cuando ");
+#line hidden
+#line 32
+    await testRunner.AndAsync("cambio el estado a \"Fuera de Servicio\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 33
+    await testRunner.AndAsync("guardo los cambios", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 34
+    await testRunner.ThenAsync("el estado de la habitación \"102A\" debería ser \"Fuera de Servicio\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
+#line hidden
+#line 35
+    await testRunner.AndAsync("el mensaje de éxito debería ser visible", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

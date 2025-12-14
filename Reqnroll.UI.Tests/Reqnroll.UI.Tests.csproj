@@ -22,6 +22,9 @@
     
     <!-- Configuration -->
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    
+    <!-- Database -->
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
   </ItemGroup>
 
   <ItemGroup>

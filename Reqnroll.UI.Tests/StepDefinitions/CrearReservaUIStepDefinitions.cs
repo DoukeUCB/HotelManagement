@@ -38,6 +38,29 @@ namespace Reqnroll.UI.Tests.StepDefinitions
             // Si fuera necesario, aquí podríamos hacer setup adicional via API
         }
 
+        // Helper: obtener propiedad de JsonElement sin importar mayúsculas
+        private static bool TryGetPropertyIgnoreCase(JsonElement element, string propertyName, out string? value)
+        {
+            value = null;
+            foreach (var prop in element.EnumerateObject())
+            {
+                if (string.Equals(prop.Name, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.String)
+                    {
+                        value = prop.Value.GetString();
+                        return true;
+                    }
+                    else
+                    {
+                        value = prop.Value.ToString();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         #endregion
 
         #region Paso 1: Cliente
@@ -45,6 +68,147 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         [Given(@"que navego a la página de nueva reserva")]
         public void DadoQueNavegoALaPaginaDeNuevaReserva()
         {
+            _httpClient.BaseAddress = new Uri(_context.ApiUrl);
+            var requiredClientes = new[] {
+                new { Razon_Social = "Empresa ABC", NIT = "800100100", Email = "empresaabc@test.local" },
+                new { Razon_Social = "Hotel Viajeros", NIT = "800100101", Email = "hotelviajeros@test.local" },
+                new { Razon_Social = "Agencia Andes", NIT = "800200300", Email = "agenciaandes@test.local" }
+            };
+
+            var requiredHuespedes = new[] {
+                new { Nombre = "Jorge", Apellido = "Quispe", Documento_Identidad = "999999" },
+                new { Nombre = "Andrea", Apellido = "Mamani", Documento_Identidad = "888888" },
+                new { Nombre = "Diego", Apellido = "Rojas", Documento_Identidad = "777777" }
+            };
+
+            try
+            {
+                // Clientes
+                var clientesResp = await _httpClient.GetAsync($"{_context.ApiUrl}/api/Cliente");
+                var clientesList = new List<JsonElement>();
+                if (clientesResp.IsSuccessStatusCode)
+                {
+                    var content = await clientesResp.Content.ReadAsStringAsync();
+                    clientesList = JsonSerializer.Deserialize<List<JsonElement>>(content) ?? new List<JsonElement>();
+                }
+
+                foreach (var c in requiredClientes)
+                {
+                    bool exists = clientesList.Any(x =>
+                    {
+                        if (TryGetPropertyIgnoreCase(x, "razon_social", out var v)) return string.Equals(v, c.Razon_Social, StringComparison.OrdinalIgnoreCase);
+                        if (TryGetPropertyIgnoreCase(x, "razon_Social", out var v2)) return string.Equals(v2, c.Razon_Social, StringComparison.OrdinalIgnoreCase);
+                        return false;
+                    });
+
+                    if (!exists)
+                    {
+                        var payload = new Dictionary<string,string>
+                        {
+                            ["Razon_Social"] = c.Razon_Social,
+                            ["NIT"] = c.NIT,
+                            ["Email"] = c.Email
+                        };
+
+                        var json = JsonSerializer.Serialize(payload);
+                        var resp = await _httpClient.PostAsync($"{_context.ApiUrl}/api/Cliente", new StringContent(json, Encoding.UTF8, "application/json"));
+                        Console.WriteLine(resp.IsSuccessStatusCode ? $"✓ Cliente creado: {c.Razon_Social}" : $"⚠ Error creando cliente {c.Razon_Social}: {resp.StatusCode}");
+                    }
+                }
+
+                // Huespedes
+                var huespedResp = await _httpClient.GetAsync($"{_context.ApiUrl}/api/Huesped");
+                var huespedList = new List<JsonElement>();
+                if (huespedResp.IsSuccessStatusCode)
+                {
+                    var content = await huespedResp.Content.ReadAsStringAsync();
+                    huespedList = JsonSerializer.Deserialize<List<JsonElement>>(content) ?? new List<JsonElement>();
+                }
+
+                foreach (var h in requiredHuespedes)
+                {
+                    bool exists = huespedList.Any(x =>
+                    {
+                        if (TryGetPropertyIgnoreCase(x, "nombre", out var n) && TryGetPropertyIgnoreCase(x, "apellido", out var a))
+                        {
+                            return string.Equals(n, h.Nombre, StringComparison.OrdinalIgnoreCase) && string.Equals(a, h.Apellido, StringComparison.OrdinalIgnoreCase);
+                        }
+                        return false;
+                    });
+
+                    if (!exists)
+                    {
+                        var documento = new string(h.Documento_Identidad.Where(char.IsDigit).ToArray());
+
+                        var payload = new Dictionary<string,string>
+                        {
+                            ["Nombre"] = h.Nombre,
+                            ["Apellido"] = h.Apellido,
+                            ["Documento_Identidad"] = documento
+                        };
+                        var json = JsonSerializer.Serialize(payload);
+                        var resp = await _httpClient.PostAsync($"{_context.ApiUrl}/api/Huesped", new StringContent(json, Encoding.UTF8, "application/json"));
+                        Console.WriteLine(resp.IsSuccessStatusCode ? $"✓ Huésped creado: {h.Nombre} {h.Apellido}" : $"⚠ Error creando huésped {h.Nombre} {h.Apellido}: {resp.StatusCode}");
+                    }
+                }
+
+                // Habitaciones
+                var tiposResp = await _httpClient.GetAsync($"{_context.ApiUrl}/api/TipoHabitacion");
+                string? tipoId = null;
+                if (tiposResp.IsSuccessStatusCode)
+                {
+                    var content = await tiposResp.Content.ReadAsStringAsync();
+                    var tipos = JsonSerializer.Deserialize<List<JsonElement>>(content) ?? new List<JsonElement>();
+                    if (tipos.Any())
+                    {
+                        var first = tipos.First();
+                        if (first.TryGetProperty("id", out var idProp)) tipoId = idProp.GetString();
+                        else if (first.TryGetProperty("ID", out var idProp2)) tipoId = idProp2.GetString();
+                    }
+                }
+
+                if (tipoId != null)
+                {
+                    var requiredRooms = new[] { "101A", "102A", "103A", "104A" };
+                    var habitacionesResp = await _httpClient.GetAsync($"{_context.ApiUrl}/api/Habitacion");
+                    var habitacionesList = new List<JsonElement>();
+                    if (habitacionesResp.IsSuccessStatusCode)
+                    {
+                        var content = await habitacionesResp.Content.ReadAsStringAsync();
+                        habitacionesList = JsonSerializer.Deserialize<List<JsonElement>>(content) ?? new List<JsonElement>();
+                    }
+
+                    foreach (var num in requiredRooms)
+                    {
+                        bool exists = habitacionesList.Any(x =>
+                        {
+                            if (TryGetPropertyIgnoreCase(x, "numero_habitacion", out var numProp)) return string.Equals(numProp, num, StringComparison.OrdinalIgnoreCase);
+                            if (TryGetPropertyIgnoreCase(x, "numero", out var numProp2)) return string.Equals(numProp2, num, StringComparison.OrdinalIgnoreCase);
+                            return false;
+                        });
+                        if (!exists)
+                        {
+                            var payload = new Dictionary<string, object>
+                            {
+                                ["Numero_Habitacion"] = num,
+                                ["Piso"] = 1,
+                                ["Tipo_Habitacion_ID"] = tipoId,
+                                ["Estado_Habitacion"] = "Disponible"
+                            };
+                            var json = JsonSerializer.Serialize(payload);
+                            var resp = await _httpClient.PostAsync($"{_context.ApiUrl}/api/Habitacion", new StringContent(json, Encoding.UTF8, "application/json"));
+                            Console.WriteLine(resp.IsSuccessStatusCode ? $"✓ Habitacion creada: {num}" : $"⚠ Error creando habitacion {num}: {resp.StatusCode}");
+                        }
+                    }
+                }
+
+                Console.WriteLine("✅ Datos de prueba asegurados");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠ Error asegurando datos de prueba: {ex.Message}");
+            }
+        }
             _clientePage = new ReservaClientePage(_context.Driver!);
             _clientePage.NavigateToNuevaReserva(_context.BaseUrl);
             _clientePage.IsPageLoaded().Should().BeTrue("La página de nueva reserva debe cargar correctamente");
