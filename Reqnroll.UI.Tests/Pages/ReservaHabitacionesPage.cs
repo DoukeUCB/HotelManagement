@@ -26,10 +26,27 @@ namespace Reqnroll.UI.Tests.Pages
         public void SeleccionarHabitacion(string numeroHabitacion)
         {
             var buscadorInput = WaitForElement(_habitacionBuscadorInput);
+            // Asegurar foco y escribir parte del número para disparar el autocompletar
+            buscadorInput.Clear();
             buscadorInput.Click();
-            Thread.Sleep(1500);
-            
-            var suggestions = Driver.FindElements(_habitacionSuggestions);
+            // Escribir los primeros 3 caracteres para activar sugerencias
+            var prefix = numeroHabitacion.Length > 3 ? numeroHabitacion.Substring(0, 3) : numeroHabitacion;
+            foreach (var ch in prefix)
+            {
+                buscadorInput.SendKeys(ch.ToString());
+                Thread.Sleep(100);
+            }
+
+            // Esperar hasta que aparezcan sugerencias (hasta 6s)
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            IReadOnlyCollection<IWebElement> suggestions = Array.Empty<IWebElement>();
+            while (sw.Elapsed.TotalSeconds < 6)
+            {
+                suggestions = Driver.FindElements(_habitacionSuggestions);
+                if (suggestions != null && suggestions.Count > 0) break;
+                Thread.Sleep(200);
+            }
+
             var habitacionOption = suggestions.FirstOrDefault(s => s.Text.Contains(numeroHabitacion, StringComparison.OrdinalIgnoreCase));
             
             if (habitacionOption != null)

@@ -138,10 +138,10 @@ namespace Reqnroll.UI.Tests.Features
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Crear Reserva UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("ui")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("happy-path")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Empresa ABC", "Pendiente", "101A", "2025-12-15", "2025-12-18", "Jorge Quispe", "0", null, DisplayName="Crear reserva exitosa con una habitación(Empresa ABC,Pendiente,101A,2025-12-15,20" +
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Empresa Sol", "Pendiente", "102A", "2025-12-15", "2025-12-18", "Jorge Quispe", "0", null, DisplayName="Crear reserva exitosa con una habitación(Empresa Sol,Pendiente,102A,2025-12-15,20" +
             "25-12-18,Jorge Quispe,0)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Hotel Viajeros", "Pendiente", "102A", "2025-12-20", "2025-12-23", "Andrea Mamani", "1", null, DisplayName="Crear reserva exitosa con una habitación(Hotel Viajeros,Pendiente,102A,2025-12-20" +
-            ",2025-12-23,Andrea Mamani,1)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Agencia Andes", "Pendiente", "103A", "2025-12-20", "2025-12-23", "Andrea Mamani", "1", null, DisplayName="Crear reserva exitosa con una habitación(Agencia Andes,Pendiente,103A,2025-12-20," +
+            "2025-12-23,Andrea Mamani,1)")]
         public async global::System.Threading.Tasks.Task CrearReservaExitosaConUnaHabitacion(string cliente, string estado, string habitacion, string fechaEntrada, string fechaSalida, string huesped, string @__pickleIndex, string[] exampleTags)
         {
             string[] @__tags = new string[] {

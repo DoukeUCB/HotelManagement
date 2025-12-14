@@ -30,24 +30,45 @@ namespace Reqnroll.UI.Tests.Pages
         /// <summary>
         /// Seleccionar cliente por razón social - hacer click y seleccionar de lista desplegada
         /// </summary>
-        public void SeleccionarCliente(string razonSocial)
-        {
-            var buscadorInput = WaitForElement(_clienteBuscadorInput);
-            buscadorInput.Click();
-            Thread.Sleep(800);
-            
-            var suggestions = Driver.FindElements(_clienteSuggestions);
-            var clienteOption = suggestions.FirstOrDefault(s => s.Text.Contains(razonSocial, StringComparison.OrdinalIgnoreCase));
-            
-            if (clienteOption != null)
-            {
-                clienteOption.Click();
-            }
-            else
-            {
-                throw new Exception($"No se encontró el cliente '{razonSocial}'");
-            }
-        }
+       public void SeleccionarCliente(string razonSocial)
+{
+    var buscadorInput = WaitForElement(_clienteBuscadorInput);
+    
+    // 1. Asegurar estado limpio
+    buscadorInput.Clear();
+    buscadorInput.Click();
+    Thread.Sleep(500);
+
+    // 2. Escribir letra por letra para disparar el evento 'input' del frontend
+    foreach (char c in razonSocial)
+    {
+        buscadorInput.SendKeys(c.ToString());
+        Thread.Sleep(100); // Pequeña pausa entre letras
+    }
+
+    // 3. ESPERA CRÍTICA: Darle tiempo al Backend/Frontend para mostrar la lista
+    Thread.Sleep(2500); 
+
+    // 4. Buscar las sugerencias que aparecieron
+    var suggestions = Driver.FindElements(_clienteSuggestions);
+    
+    // 5. Intentar encontrar la opción que contenga el texto (ignorando mayúsculas)
+    var clienteOption = suggestions.FirstOrDefault(s => 
+        s.Text.Trim().Contains(razonSocial, StringComparison.OrdinalIgnoreCase));
+    
+    if (clienteOption != null)
+    {
+        // Usar JavaScript para el click por si la lista es flotante/transparente
+        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].click();", clienteOption);
+        Thread.Sleep(500);
+    }
+    else
+    {
+        // Debug: Si falla, dime qué es lo que Selenium llegó a ver en la lista
+        var visibles = string.Join(" | ", suggestions.Select(s => s.Text));
+        throw new Exception($"No se encontró '{razonSocial}' en el dropdown. Opciones vistas: [{visibles}]");
+    }
+}
 
         /// <summary>
         /// Seleccionar estado de reserva
@@ -64,7 +85,37 @@ namespace Reqnroll.UI.Tests.Pages
         /// </summary>
         public void ClickSiguiente()
         {
-            WaitForClickable(_continuarBtn).Click();
+            // Esperar hasta que el botón esté habilitado y clickeable (Angular puede tardar en validar)
+            var wait = new OpenQA.Selenium.Support.UI.WebDriverWait(Driver, TimeSpan.FromSeconds(15));
+            
+            int attemptCount = 0;
+            wait.Until(driver => {
+                attemptCount++;
+                try
+                {
+                    var btn = driver.FindElement(_continuarBtn);
+                    var disabled = btn.GetAttribute("disabled");
+                    var classList = btn.GetAttribute("class");
+                    var displayed = btn.Displayed;
+                    var enabled = btn.Enabled;
+                    
+                    if (attemptCount % 5 == 0)
+                    {
+                        Console.WriteLine($"[{attemptCount}] Button state: displayed={displayed}, enabled={enabled}, disabled={disabled}, class={classList}");
+                    }
+                    
+                    return btn.Displayed && btn.Enabled && string.IsNullOrEmpty(disabled);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[{attemptCount}] Error checking button: {ex.GetType().Name} - {ex.Message}");
+                    return false;
+                }
+            });
+
+            Console.WriteLine("✓ Botón Continuar habilitado, haciendo click...");
+            var clickable = WaitForClickable(_continuarBtn);
+            clickable.Click();
             Thread.Sleep(500);
         }
 
