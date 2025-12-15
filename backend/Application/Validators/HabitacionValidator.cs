@@ -60,7 +60,7 @@ namespace HotelManagement.Aplicacion.Validators
             }
 
             // Validar Estado de Habitación
-            var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
+            var estadosValidos = new[] { "Libre", "Disponible", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
             if (string.IsNullOrWhiteSpace(dto.Estado_Habitacion))
             {
                 errors["estado_Habitacion"] = new List<string> { "El Estado de Habitación es obligatorio" };
@@ -140,7 +140,7 @@ namespace HotelManagement.Aplicacion.Validators
             }
 
             // Validar Estado de Habitación
-            var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
+            var estadosValidos = new[] { "Libre", "Disponible", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
             if (!estadosValidos.Contains(dto.Estado_Habitacion))
             {
                 errors["estado_Habitacion"] = new List<string> { $"El Estado de Habitación debe ser uno de: {string.Join(", ", estadosValidos)}" };
@@ -216,7 +216,7 @@ namespace HotelManagement.Aplicacion.Validators
             // Validar Estado de Habitación (si se proporciona)
             if (!string.IsNullOrEmpty(dto.Estado_Habitacion))
             {
-                var estadosValidos = new[] { "Libre", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
+                var estadosValidos = new[] { "Libre", "Disponible", "Reservada", "Ocupada", "Fuera de Servicio", "Mantenimiento" };
                 if (!estadosValidos.Contains(dto.Estado_Habitacion))
                 {
                     errors["estado_Habitacion"] = new List<string> { $"El Estado de Habitación debe ser uno de: {string.Join(", ", estadosValidos)}" };

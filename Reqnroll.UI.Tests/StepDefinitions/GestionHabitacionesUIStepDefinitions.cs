@@ -17,8 +17,9 @@ namespace Reqnroll.UI.Tests.StepDefinitions
             _habitacionesPage = new HabitacionesPage(_context.Driver!);
         }
 
+        // Pasos de Insert/Select/Background...
         [Given(@"que navego a la página de listado de habitaciones")]
-        public void DadoQueNavegoALaPaginaDeListadoDeHabitaciones() => _habitacionesPage.NavegarAListado(_context.BaseUrl);
+        public void DadoQueNavegoALaPagina() => _habitacionesPage.NavegarAListado(_context.BaseUrl);
 
         [When(@"hago click en el botón ""Nueva Habitación""")]
         public void CuandoClickNuevo() => _habitacionesPage.ClickNuevaHabitacion();
@@ -43,9 +44,23 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         public void EntoncesDeberiaVerla(string num) => _habitacionesPage.ExisteEnLista(num).Should().BeTrue();
 
         [Then(@"el mensaje de éxito debería ser visible")]
-        public void EntoncesMensajeExito() => _habitacionesPage.IsMensajeExitoVisible().Should().BeTrue();
+public void EntoncesMensajeExito()
+{
+    // Intentamos 3 veces antes de fallar (por si el mensaje tarda en renderizar)
+    bool visible = false;
+    for(int i=0; i<3; i++) {
+        visible = _habitacionesPage.IsMensajeExitoVisible();
+        if (visible) break;
+        Thread.Sleep(500);
+    }
+    
+    visible.Should().BeTrue("debería aparecer un mensaje de confirmación tras la operación");
+}
 
+        // --- PASOS PARA CONSULTA (SELECT) Y ACTUALIZACIÓN (UPDATE) ---
+        
         [Given(@"que busco la habitación ""(.*)"" en la lista")]
+        [When(@"busco la habitación ""(.*)"" en la lista")]
         public void DadoQueBuscoLaHabitacion(string numero) => _habitacionesPage.BuscarHabitacion(numero);
 
         [When(@"hago click en el botón ""Editar"" de la habitación ""(.*)""")]
@@ -55,6 +70,16 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         public void CuandoCambioElEstado(string estado) => _habitacionesPage.CambiarEstadoEnModal(estado);
 
         [Then(@"el estado de la habitación ""(.*)"" debería ser ""(.*)""")]
-        public void EntoncesElEstadoDeberiaSerb(string numero, string estado) => _habitacionesPage.VerificarEstadoHabitacion(numero, estado).Should().BeTrue();
+        public void EntoncesElEstadoDeberiaSer(string numero, string estado) => 
+            _habitacionesPage.VerificarEstadoHabitacion(numero, estado).Should().BeTrue();
+
+        // --- PASO PARA ELIMINACIÓN (DELETE) ---
+
+        [When(@"elimino la habitación ""(.*)"" y confirmo")]
+        public void CuandoEliminoLaHabitacion(string numero) => _habitacionesPage.EliminarHabitacion(numero);
+
+        [Then(@"la habitación ""(.*)"" ya no debería aparecer en la lista")]
+        public void EntoncesNoDeberiaAparecer(string numero) => 
+            _habitacionesPage.ExisteEnLista(numero).Should().BeFalse();
     }
 }

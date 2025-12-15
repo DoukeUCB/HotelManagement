@@ -15,6 +15,7 @@ import { OrderByNumeroPipe } from './order-by-numero.pipe';
   styleUrls: ['./habitaciones-list.component.scss']
 })
 export class HabitacionesListComponent implements OnInit, OnDestroy {
+    mensajeExito: string | null = null;
   private api = inject(NuevaReservaService);
 
   habitaciones: any[] = [];
@@ -43,6 +44,16 @@ export class HabitacionesListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Leer mensaje de éxito desde query param si viene de creación
+    const url = new URL(window.location.href);
+    const exito = url.searchParams.get('exito');
+    if (exito) {
+      this.mensajeExito = exito;
+      setTimeout(() => this.mensajeExito = null, 3000);
+      // Limpiar el query param de la URL sin recargar
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     this.cargarHabitaciones();
 
     // Cargar tipos de habitación para el select
@@ -157,9 +168,29 @@ export class HabitacionesListComponent implements OnInit, OnDestroy {
         next: (response) => {
           console.log('=== RESPUESTA EXITOSA ===');
           console.log('response:', response);
-          alert('Habitación actualizada correctamente');
-          this.cerrarModalEditar();
-          this.cargarHabitaciones();
+          // Polling: recargar y verificar que el estado cambió antes de cerrar modal y mostrar éxito
+          const numero = this.habitacionAEditar.numero;
+          const estadoEsperado = this.habitacionAEditar.estado;
+          let intentos = 0;
+          const maxIntentos = 30; // hasta 15s (30*500ms)
+          const verificarCambio = () => {
+            this.cargarHabitaciones();
+            setTimeout(() => {
+              const hab = this.habitaciones.find(h => h.numero === numero);
+              if (hab && hab.estado === estadoEsperado) {
+                this.mensajeExito = 'Habitación actualizada correctamente';
+                setTimeout(() => this.mensajeExito = null, 3000);
+                this.cerrarModalEditar();
+              } else if (++intentos < maxIntentos) {
+                verificarCambio();
+              } else {
+                // Si no se refleja el cambio, cerrar igual pero avisar
+                this.cerrarModalEditar();
+                alert('El estado no se reflejó en la tabla tras actualizar.');
+              }
+            }, 500);
+          };
+          verificarCambio();
         },
         error: (err: any) => {
           console.error('=== ERROR AL ACTUALIZAR ===');
@@ -281,6 +312,8 @@ export class HabitacionesListComponent implements OnInit, OnDestroy {
       next: () => {
         this.habitaciones = this.habitaciones.filter(h => h.id !== this.habitacionAEliminar.id);
         this.cerrarModalEliminar();
+        this.mensajeExito = 'Habitación eliminada correctamente';
+        setTimeout(() => this.mensajeExito = null, 3000);
       },
       error: (err: any) => {
         console.error('Error eliminando habitación:', err);
