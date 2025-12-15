@@ -6,6 +6,7 @@ using Reqnroll.UI.Tests.Support;
 namespace Reqnroll.UI.Tests.StepDefinitions
 {
     [Binding]
+    [Scope(Feature = "Crear reserva")]
     public class CrearReservaUIStepDefinitions
     {
         private readonly WebDriverContext _context;
