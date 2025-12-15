@@ -113,5 +113,17 @@ namespace Reqnroll.UI.Tests.Pages
             }
             catch (WebDriverTimeoutException) { }
         }
+
+        public void ClickEliminarEnFila(string razonSocial)
+        {
+            var fila = ObtenerFilaPorRazonSocial(razonSocial);
+            
+            if (fila == null)
+                throw new NotFoundException($"No se encontró el cliente '{razonSocial}' para eliminar.");
+
+            // Buscamos el botón con la clase .btn-eliminar (basado en tu HTML)
+            var btnEliminar = fila.FindElement(By.CssSelector(".btn-eliminar"));
+            btnEliminar.Click();
+        }
     }
 }

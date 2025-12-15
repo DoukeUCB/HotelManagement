@@ -73,9 +73,23 @@ Esquema del escenario: Editar un cliente existente desde la ventana modal (Pairw
     
     Entonces debería ver los datos actualizados: Razón Social "<RazonSocial>", NIT "<NIT>" y Email "<Email>"
 Ejemplos:
-      | Descripcion Casos            | RazonSocial          | NIT                  | Email                          |
-      # Pairwise para Update (Combinaciones ortogonales)
-      | Update Limites Minimos       | AERFSF                    | 13333333                    | correo.corto@upd.com                        |
-     | Update Limites Maximos       | Editado Veinte | 99999999 | editadoh@testm.bo |
-   #   | Update Mezcla 1 (RS Max)     | Industrias Editadas  | 5553333                  | correo.corto@upd.com           |
-   #   | Update Mezcla 2 (Nit Max)    | EDIT                 | 8888888 | medio@hotel.com                |
+ | Descripcion Casos            | RazonSocial          | NIT                  | Email                          |
+      # 1. RS Max (20) / NIT Min (7) / Email Max (30)
+      # Prueba si el Update soporta llenar campos de texto y vaciar numéricos al límite
+      | Update Frontera Cruzada 1    | Empresa Modificada X | 1112223              | actualizacion.limite@correo.bo |
+      
+      # 2. RS Min (3) / NIT Max (20) / Email Corto
+      # Prueba lo inverso: Nombre muy corto con documento muy largo
+      | Update Frontera Cruzada 2    | UPD                  | 99999999999999999999 | nuevo@min.com                  |
+      
+@UI @Delete
+Escenario: Eliminar un cliente existente desde el listado
+    # Precondición: Creamos un cliente específico para borrar y no afectar otros tests
+    Dado que existe un cliente registrado para eliminar con Razón Social "Cliente A Borrar"
+    Y navego a la página de listado de clientes
+    
+    Cuando busco el cliente "Cliente A Borrar"
+    Y hago click en el boton eliminar del cliente encontrado
+    Y confirmo la eliminación en la ventana modal
+    
+    Entonces el cliente "Cliente A Borrar" ya no debería aparecer en el listado

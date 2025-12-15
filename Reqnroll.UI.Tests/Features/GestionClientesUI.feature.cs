@@ -118,7 +118,7 @@ namespace Reqnroll.UI.Tests.Features
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionClientesUI.feature.ndjson", 11);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionClientesUI.feature.ndjson", 12);
         }
         
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("Insertar nuevo cliente con datos variados (Pairwise)")]
@@ -248,10 +248,10 @@ this.ScenarioInitialize(scenarioInfo, ruleInfo);
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Clientes UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Update")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Limites Minimos", "AERFSF", "13333333", "correo.corto@upd.com", "7", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Limites Mini" +
-            "mos,AERFSF,13333333,correo.corto@upd.com,7)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Limites Maximos", "Editado Veinte", "99999999", "editadoh@testm.bo", "8", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Limites Maxi" +
-            "mos,Editado Veinte,99999999,editadoh@testm.bo,8)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Frontera Cruzada 1", "Empresa Modificada X", "1112223", "actualizacion.limite@correo.bo", "7", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Frontera Cru" +
+            "zada 1,Empresa Modificada X,1112223,actualizacion.limite@correo.bo,7)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Frontera Cruzada 2", "UPD", "99999999999999999999", "nuevo@min.com", "8", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Frontera Cru" +
+            "zada 2,UPD,99999999999999999999,nuevo@min.com,8)")]
         public async global::System.Threading.Tasks.Task EditarUnClienteExistenteDesdeLaVentanaModalPairwise(string descripcionCasos, string razonSocial, string nIT, string email, string @__pickleIndex, string[] exampleTags)
         {
             string[] @__tags = new string[] {
@@ -304,6 +304,54 @@ this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
 #line 74
     await testRunner.ThenAsync(string.Format("debería ver los datos actualizados: Razón Social \"{0}\", NIT \"{1}\" y Email \"{2}\"", razonSocial, nIT, email), ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("Eliminar un cliente existente desde el listado")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Eliminar un cliente existente desde el listado")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Clientes UI")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("UI")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Delete")]
+        public async global::System.Threading.Tasks.Task EliminarUnClienteExistenteDesdeElListado()
+        {
+            string[] tagsOfScenario = new string[] {
+                    "UI",
+                    "Delete"};
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "9";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Eliminar un cliente existente desde el listado", "", tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 86
+this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 88
+    await testRunner.GivenAsync("que existe un cliente registrado para eliminar con Razón Social \"Cliente A Borrar" +
+                        "\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
+#line hidden
+#line 89
+    await testRunner.AndAsync("navego a la página de listado de clientes", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 91
+    await testRunner.WhenAsync("busco el cliente \"Cliente A Borrar\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Cuando ");
+#line hidden
+#line 92
+    await testRunner.AndAsync("hago click en el boton eliminar del cliente encontrado", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 93
+    await testRunner.AndAsync("confirmo la eliminación en la ventana modal", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 95
+    await testRunner.ThenAsync("el cliente \"Cliente A Borrar\" ya no debería aparecer en el listado", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
