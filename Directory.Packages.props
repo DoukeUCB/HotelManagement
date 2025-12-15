@@ -1,0 +1,11 @@
+<Project>
+  <ItemGroup>
+    <!-- Forzar versión que requiere Reqnroll (resuelve conflicto NU1107) -->
+    <PackageVersion Include="Cucumber.Messages" Version="29.0.1" />
+
+    <!-- Normalizar SpecFlow a la versión resuelta por NuGet (evita NU1603 warnings) -->
+    <PackageVersion Include="SpecFlow" Version="3.6.23" />
+    <PackageVersion Include="SpecFlow.MsTest" Version="3.6.23" />
+    <PackageVersion Include="SpecFlow.Tools.MsBuild.Generation" Version="3.6.23" />
+  </ItemGroup>
+</Project>

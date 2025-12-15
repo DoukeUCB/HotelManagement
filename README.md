@@ -1,14 +1,8 @@
 # Hotel Management API
 
-[![CI/CD Pipeline](https://github.com/DoukeUCB/HotelManagement/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/DoukeUCB/HotelManagement/actions/workflows/ci-cd.yml)
-[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-39%20passing-brightgreen)](./backend/Tests/RESUMEN_PRUEBAS_INTEGRACION.md)
-[![E2E Tests](https://img.shields.io/badge/E2E%20Tests-Cypress-17202C?logo=cypress)](./frontend/cypress/e2e)
-[![.NET Version](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
 Sistema de gestión de reservas de hotel desarrollado en C# con .NET 9.0, implementando una arquitectura de 3 capas y operaciones CRUD para detalles de reservas.
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 El proyecto sigue una arquitectura de 3 capas:
 
@@ -27,13 +21,13 @@ El proyecto sigue una arquitectura de 3 capas:
 - **Models**: Entidades del dominio
 - **Config**: Configuración de DbContext
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 - .NET 9.0 SDK o superior (compatible con .NET 8.0)
 - MySQL 8.0 o superior
 - Git (opcional)
 
-## 📦 Dependencias del Proyecto
+## Dependencias del Proyecto
 
 ### Dependencias Principales
 
@@ -86,7 +80,7 @@ dotnet add package DotNetEnv --version 3.1.1
 
 > **Nota sobre versiones**: Aunque el proyecto utiliza .NET 9.0, se emplean las versiones estables de EF Core 8.0.11 y Pomelo 8.0.2 para garantizar máxima compatibilidad y estabilidad en producción.
 
-## 🚀 Instalación
+## Instalación
 
 ### 1. Clonar el repositorio o descargar el código
 
@@ -277,30 +271,3 @@ HotelManagement/
 - La API implementa CORS para permitir llamadas desde cualquier origen (configurar según necesidades de producción)
 - Swagger está configurado para mostrarse en la ruta raíz durante el desarrollo
 - **Versión de .NET**: El proyecto usa .NET 9.0 como target framework, pero EF Core 8.0.11 LTS para máxima estabilidad
-
-## Inicio Rápido
-
-```bash
-# 1. Clonar o descargar el proyecto
-git clone <url-del-repositorio>
-cd HotelManagement
-
-# 2. Configurar .env con tus credenciales de MySQL
-# Editar el archivo .env y cambiar:
-# DB_PASSWORD=tu_contraseña_real
-
-# 3. Crear la base de datos y tablas
-mysql -u root -p < Database/schema.sql
-
-# 5. Restaurar dependencias
-dotnet restore
-
-# 6. Compilar
-dotnet build
-
-# 7. Ejecutar
-dotnet run
-
-# 8. Abrir Swagger en el navegador
-# http://localhost:5000
-```
