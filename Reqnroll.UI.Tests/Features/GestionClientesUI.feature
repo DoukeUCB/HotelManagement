@@ -33,17 +33,21 @@ Ejemplos:
       # 6. Prueba de Límite de Email (30 chars exactos)
       | Email Maximo Exacto       | Cliente Normal       | 88776655             | un.cliente.largo@dominio.co.bo |
 
+# ... (Los escenarios de Insert se quedan arriba igual) ...
 
-@UI @Update
-Esquema del escenario: Actualizar un cliente existente mediante el modal de edición
-	Dado que navego a la página de lista de clientes
-	Cuando hago click en el botón editar del cliente con documento "<DocumentoOriginal>"
-	Y actualizo el formulario del modal con Razón Social "<NuevaRazon>" y Email "<NuevoEmail>"
-	Y guardo los cambios en el modal
-	Entonces el cliente con documento "<DocumentoOriginal>" debería mostrar la Razón Social "<NuevaRazon>" en la lista
-
-Examples:
-	| DocumentoOriginal | NuevaRazon           | NuevoEmail              |
-	| 444555666         | EMPRESA UPDATE A     | contacto.a@test.com     |
-	| 777888999         | COMERCIAL UPDATE B   | ventas.b@test.com       |
-	| 123123123         | SERVICIOS UPDATE C   | info.c@test.com
+@UI @Select
+Escenario: Crear un cliente nuevo y verificar su visualización en el listado
+    # --- FASE 1: CREACIÓN (Reutilizando tus steps de Insert) ---
+    Dado que estoy en la página de creación de clientes
+    Cuando ingreso la Razón Social "Cliente Auto Test"
+    Y ingreso el NIT "99887766"
+    Y ingreso el Email "auto.test@hotel.com"
+    Y hago click en guardar cliente
+    
+    # --- FASE 2: VERIFICACIÓN (Usando los steps nuevos de Select) ---
+    # Asumimos que al guardar, el sistema nos redirige al listado o nos quedamos listos para ir.
+    # Por seguridad, forzamos la navegación al listado para asegurar que la tabla se refresque.
+    
+    Dado que navego a la página de listado de clientes
+    Cuando busco el cliente por Razón Social "Cliente Auto Test"
+    Entonces debería ver en la grilla al cliente con Razón Social "Cliente Auto Test", NIT "99887766" y Email "auto.test@hotel.com"

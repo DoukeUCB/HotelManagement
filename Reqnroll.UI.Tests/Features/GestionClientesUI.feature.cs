@@ -118,14 +118,14 @@ namespace Reqnroll.UI.Tests.Features
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionClientesUI.feature.ndjson", 8);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionClientesUI.feature.ndjson", 9);
         }
         
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("Insertar nuevo cliente con datos variados (Pairwise)")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Insertar nuevo cliente con datos variados (Pairwise)")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Clientes UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("UI")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Cliente")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Insert")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Limites Minimos", "ABC", "1234567", "a@b.co", "0", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Limites Minimos,ABC,1234567," +
             "a@b.co,0)")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Limites Maximos", "Empresa Veinte Letra", "12345678901234567890", "1234567890123456789@correo.com", "1", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Limites Maximos,Empresa Vein" +
@@ -142,7 +142,7 @@ namespace Reqnroll.UI.Tests.Features
         {
             string[] @__tags = new string[] {
                     "UI",
-                    "Cliente"};
+                    "Insert"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
@@ -184,6 +184,60 @@ this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
 #line 14
     await testRunner.ThenAsync("debería ver un mensaje de éxito indicando que se guardó correctamente", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("Crear un cliente nuevo y verificar su visualización en el listado")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Crear un cliente nuevo y verificar su visualización en el listado")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Clientes UI")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("UI")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Select")]
+        public async global::System.Threading.Tasks.Task CrearUnClienteNuevoYVerificarSuVisualizacionEnElListado()
+        {
+            string[] tagsOfScenario = new string[] {
+                    "UI",
+                    "Select"};
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "6";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Crear un cliente nuevo y verificar su visualización en el listado", "", tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 39
+this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 41
+    await testRunner.GivenAsync("que estoy en la página de creación de clientes", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
+#line hidden
+#line 42
+    await testRunner.WhenAsync("ingreso la Razón Social \"Cliente Auto Test\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Cuando ");
+#line hidden
+#line 43
+    await testRunner.AndAsync("ingreso el NIT \"99887766\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 44
+    await testRunner.AndAsync("ingreso el Email \"auto.test@hotel.com\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 45
+    await testRunner.AndAsync("hago click en guardar cliente", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
+#line hidden
+#line 51
+    await testRunner.GivenAsync("que navego a la página de listado de clientes", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
+#line hidden
+#line 52
+    await testRunner.WhenAsync("busco el cliente por Razón Social \"Cliente Auto Test\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Cuando ");
+#line hidden
+#line 53
+    await testRunner.ThenAsync("debería ver en la grilla al cliente con Razón Social \"Cliente Auto Test\", NIT \"99" +
+                        "887766\" y Email \"auto.test@hotel.com\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
