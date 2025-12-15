@@ -82,6 +82,22 @@ Ejemplos:
       # Prueba lo inverso: Nombre muy corto con documento muy largo
       | Update Frontera Cruzada 2    | UPD                  | 99999999999999999999 | nuevo@min.com                  |
       
+      # 3. Todo al Mínimo (Frontera Inferior)
+      # Verifica que la edición no rompa reglas al reducir datos a su mínima expresión
+      | Update Limites Minimos       | Eco                  | 1000001              | a@b.eu                         |
+      
+      # 4. Todo al Máximo (Frontera Superior)
+      # Verifica persistencia correcta cuando todos los campos usan su capacidad total
+      | Update Limites Maximos       | Inversiones Globales | 88888888888888888888 | gerencia.general@inversiones.c |
+
+      # 5. Valores Medios (Happy Path)
+      # Datos estándar sin bordes, lo más común en producción
+      | Update Valores Tipicos       | Comercial Norte      | 44556677             | ventas@norte.com               |
+
+      # 6. RS Medio / NIT Mínimo / Email Máximo (Mix Frontera)
+      # Combinación para detectar fallos cuando un campo es muy largo y otro muy corto
+      | Update Mix Frontera          | Farmacia Vida        | 1002003              | atencion.cliente.vip@correo.bo |
+
 @UI @Delete
 Escenario: Eliminar un cliente existente desde el listado
     # Precondición: Creamos un cliente específico para borrar y no afectar otros tests
