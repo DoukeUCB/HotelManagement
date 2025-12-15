@@ -16,9 +16,9 @@
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     
     <!-- Selenium WebDriver -->
-    <PackageReference Include="Selenium.WebDriver" Version="4.30.0" />
-    <PackageReference Include="Selenium.Support" Version="4.30.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="143.0.7499.4000" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.27.0" />
+    <PackageReference Include="Selenium.Support" Version="4.27.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="143.0.7499.109" />
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     
     <!-- Configuration -->

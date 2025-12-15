@@ -91,7 +91,7 @@ CREATE TABLE `Habitacion` (
   `Tipo_Habitacion_ID` BINARY(16) NOT NULL,
   `Numero_Habitacion` VARCHAR(10) NOT NULL UNIQUE,
   `Piso` SMALLINT NOT NULL,
-  `Estado_Habitacion` ENUM('Libre', 'Reservada', 'Ocupada', 'Fuera de Servicio') NOT NULL DEFAULT 'Libre',
+  `Estado_Habitacion` ENUM('Libre', 'Disponible', 'Reservada', 'Ocupada', 'Fuera de Servicio', 'Mantenimiento') NOT NULL DEFAULT 'Libre',
   -- Campos de auditoría
   `Fecha_Creacion` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `Fecha_Actualizacion` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

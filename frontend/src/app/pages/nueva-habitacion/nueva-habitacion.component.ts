@@ -189,8 +189,8 @@ export class NuevaHabitacionComponent implements OnInit {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: () => {
-          this.mensaje.set('Habitación creada exitosamente');
-          setTimeout(() => this.router.navigate(['/habitaciones']), 1500);
+          // Redirigir pasando mensaje de éxito por query param
+          this.router.navigate(['/habitaciones'], { queryParams: { exito: 'Habitación creada correctamente' } });
         },
         error: (err) => {
           console.error('Error al crear habitación:', err);
