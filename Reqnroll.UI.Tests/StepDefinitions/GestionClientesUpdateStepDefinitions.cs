@@ -75,6 +75,7 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         [When(@"busco el cliente ""(.*)""")]
         public void CuandoBuscoElCliente(string nombreCliente)
         {
+            _scenarioContext["UltimoClienteBuscado"] = nombreCliente;
             _listadoPage.BuscarCliente(nombreCliente);
         }
 

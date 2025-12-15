@@ -12,10 +12,16 @@ namespace Reqnroll.UI.Tests.StepDefinitions
     {
         private readonly WebDriverContext _context;
         private NuevoClientePage? _nuevoClientePage;
+        private readonly ScenarioContext _scenarioContext;
 
-        public GestionClientesStepDefinitions(WebDriverContext context)
+        private string? _razonSocialIngresada;
+        private string? _nitIngresado;
+        private string? _emailIngresado;
+
+        public GestionClientesStepDefinitions(WebDriverContext context, ScenarioContext scenarioContext)
         {
             _context = context;
+            _scenarioContext = scenarioContext;
         }
 
         [Given(@"que estoy en la página de creación de clientes")]
@@ -29,6 +35,7 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         public void CuandoIngresoLaRazonSocial(string razonSocial)
         {
             Console.WriteLine($"[Step] Ingresando Razón Social: {razonSocial}");
+            _razonSocialIngresada = razonSocial;
             _nuevoClientePage!.IngresarRazonSocial(razonSocial);
         }
 
@@ -37,6 +44,7 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         {
             // Se eliminó la lógica de Random. Se usa el valor exacto del Feature.
             Console.WriteLine($"[Step] Ingresando NIT: {nit}");
+            _nitIngresado = nit;
             _nuevoClientePage!.IngresarNit(nit);
         }
 
@@ -46,12 +54,33 @@ namespace Reqnroll.UI.Tests.StepDefinitions
             // Se eliminó la lógica de Random y split. Se usa el valor exacto del Feature.
             // Esto garantiza que si el Feature dice 30 caracteres, se envíen exactamente 30.
             Console.WriteLine($"[Step] Ingresando Email: {email}");
+            _emailIngresado = email;
             _nuevoClientePage!.IngresarEmail(email);
         }
 
         [When(@"hago click en guardar cliente")]
         public void CuandoHagoClickEnGuardarCliente()
         {
+            // Idempotencia: si ya existe un cliente exactamente igual (RS+NIT+Email), lo eliminamos por API.
+            // Esto evita fallos por unicidad en re-ejecuciones sin tocar datos ajenos.
+            try
+            {
+                var api = new ClienteApi(_context.ApiUrl);
+
+                // La unicidad real en DB es por Email; limpiamos por email primero.
+                api.DeleteByEmailExactAsync(_emailIngresado ?? string.Empty).GetAwaiter().GetResult();
+
+                api.DeleteIfExactMatchAsync(
+                        _razonSocialIngresada ?? string.Empty,
+                        _nitIngresado ?? string.Empty,
+                        _emailIngresado ?? string.Empty)
+                    .GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WARN] Cleanup API omitido: {ex.Message}");
+            }
+
             _nuevoClientePage!.ClickGuardar();
         }
 
@@ -62,7 +91,8 @@ namespace Reqnroll.UI.Tests.StepDefinitions
             
             if (!exito)
             {
-                Console.WriteLine("DEBUG: No se encontró mensaje de éxito.");
+                var error = _nuevoClientePage.TryObtenerMensajeError();
+                Console.WriteLine("DEBUG: No se encontró mensaje de éxito." + (error != null ? $" Error UI: {error}" : string.Empty));
             }
 
             exito.Should().BeTrue("El sistema debería mostrar un mensaje de éxito tras guardar un cliente válido.");

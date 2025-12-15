@@ -14,13 +14,15 @@ namespace Reqnroll.UI.Tests.StepDefinitions
         private readonly ListadoClientesPage _listadoPage;
         private readonly EliminarClienteModal _eliminarModal;
         private readonly NuevoClientePage _nuevoClientePage;
+        private readonly ScenarioContext _scenarioContext;
 
-        public GestionClientesDeleteStepDefinitions(WebDriverContext context)
+        public GestionClientesDeleteStepDefinitions(WebDriverContext context, ScenarioContext scenarioContext)
         {
             _context = context;
             _listadoPage = new ListadoClientesPage(_context.Driver!);
             _eliminarModal = new EliminarClienteModal(_context.Driver!);
             _nuevoClientePage = new NuevoClientePage(_context.Driver!);
+            _scenarioContext = scenarioContext;
         }
 
         [Given(@"que existe un cliente registrado para eliminar con Razón Social ""(.*)""")]
@@ -61,7 +63,11 @@ namespace Reqnroll.UI.Tests.StepDefinitions
             // ya que la búsqueda debió dejar solo 1 resultado.
             
             // O, más explícito (recomendado):
-            _listadoPage.ClickEliminarEnFila("Cliente A Borrar");
+            var nombreCliente = _scenarioContext.ContainsKey("UltimoClienteBuscado")
+                ? _scenarioContext.Get<string>("UltimoClienteBuscado")
+                : "Cliente A Borrar";
+
+            _listadoPage.ClickEliminarEnFila(nombreCliente);
         }
 
         [When(@"confirmo la eliminación en la ventana modal")]

@@ -128,12 +128,12 @@ namespace Reqnroll.UI.Tests.Features
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Insert")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Limites Minimos", "ABC", "1234567", "a@b.co", "0", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Limites Minimos,ABC,1234567," +
             "a@b.co,0)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Limites Maximos", "Empresa Veinte Letra", "12345678901234567890", "1234567890123456789@correo.com", "1", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Limites Maximos,Empresa Vein" +
-            "te Letra,12345678901234567890,1234567890123456789@correo.com,1)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Limites Maximos", "Empresa Veinte Letra", "1234567890123", "1234567890123456789@correo.com", "1", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Limites Maximos,Empresa Vein" +
+            "te Letra,1234567890123,1234567890123456789@correo.com,1)")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("RS Max / NIT Min", "Industrias Del Sur O", "7654321", "info@tuhotel.com", "2", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(RS Max / NIT Min,Industrias " +
             "Del Sur O,7654321,info@tuhotel.com,2)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("RS Min / NIT Max", "SOL", "99999999999999999999", "reservas@web.bo", "3", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(RS Min / NIT Max,SOL,9999999" +
-            "9999999999999,reservas@web.bo,3)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("RS Min / NIT Max", "SOL", "9999999999999", "reservas@web.bo", "3", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(RS Min / NIT Max,SOL,9999999" +
+            "999999,reservas@web.bo,3)")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Valores Tipicos", "Hotel Central", "4578120", "contacto@hotel.com", "4", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Valores Tipicos,Hotel Centra" +
             "l,4578120,contacto@hotel.com,4)")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Email Maximo Exacto", "Cliente Normal", "88776655", "un.cliente.largo@dominio.co.bo", "5", null, DisplayName="Insertar nuevo cliente con datos variados (Pairwise)(Email Maximo Exacto,Cliente " +

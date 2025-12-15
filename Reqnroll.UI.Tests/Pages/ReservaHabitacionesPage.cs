@@ -27,15 +27,17 @@ namespace Reqnroll.UI.Tests.Pages
         {
             var buscadorInput = WaitForElement(_habitacionBuscadorInput);
             buscadorInput.Click();
-            Thread.Sleep(1500);
-            
+
+            // Esperar a que aparezcan sugerencias (carga async)
+            Wait.Until(d => d.FindElements(_habitacionSuggestions).Any(e => e.Displayed));
+
             var suggestions = Driver.FindElements(_habitacionSuggestions);
             var habitacionOption = suggestions.FirstOrDefault(s => s.Text.Contains(numeroHabitacion, StringComparison.OrdinalIgnoreCase));
             
             if (habitacionOption != null)
             {
                 ((OpenQA.Selenium.IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));", habitacionOption);
-                Thread.Sleep(500);
+                Thread.Sleep(200);
             }
             else
             {
@@ -70,15 +72,17 @@ namespace Reqnroll.UI.Tests.Pages
         {
             var buscadorInput = WaitForElement(_huespedBuscadorInput);
             buscadorInput.Click();
-            Thread.Sleep(1200);
-            
+
+            // Esperar a que aparezcan sugerencias
+            Wait.Until(d => d.FindElements(_huespedSuggestions).Any(e => e.Displayed));
+
             var suggestions = Driver.FindElements(_huespedSuggestions);
             var huespedOption = suggestions.FirstOrDefault(s => s.Text.Contains(nombreCompleto.Split(' ')[0], StringComparison.OrdinalIgnoreCase));
             
             if (huespedOption != null)
             {
                 ((OpenQA.Selenium.IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));", huespedOption);
-                Thread.Sleep(500);
+                Thread.Sleep(200);
             }
             else
             {
@@ -173,15 +177,16 @@ namespace Reqnroll.UI.Tests.Pages
             if (buscadores.Count >= 2)
             {
                 buscadores[1].Click();
-                Thread.Sleep(1500);
-                
+
+                Wait.Until(d => d.FindElements(_habitacionSuggestions).Any(e => e.Displayed));
+
                 var suggestions = Driver.FindElements(_habitacionSuggestions);
                 var habitacionOption = suggestions.FirstOrDefault(s => s.Text.Contains(numeroHabitacion, StringComparison.OrdinalIgnoreCase));
                 
                 if (habitacionOption != null)
                 {
                     ((OpenQA.Selenium.IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));", habitacionOption);
-                    Thread.Sleep(500);
+                    Thread.Sleep(200);
                 }
                 else
                 {
@@ -225,15 +230,16 @@ namespace Reqnroll.UI.Tests.Pages
             if (buscadores.Count >= 2)
             {
                 buscadores[1].Click();
-                Thread.Sleep(1200);
-                
+
+                Wait.Until(d => d.FindElements(_huespedSuggestions).Any(e => e.Displayed));
+
                 var suggestions = Driver.FindElements(_huespedSuggestions);
                 var huespedOption = suggestions.FirstOrDefault(s => s.Text.Contains(nombreCompleto.Split(' ')[0], StringComparison.OrdinalIgnoreCase));
                 
                 if (huespedOption != null)
                 {
                     ((OpenQA.Selenium.IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));", huespedOption);
-                    Thread.Sleep(500);
+                    Thread.Sleep(200);
                 }
                 else
                 {
