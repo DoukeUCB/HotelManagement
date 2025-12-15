@@ -51,3 +51,31 @@ Escenario: Crear un cliente nuevo y verificar su visualización en el listado
     Dado que navego a la página de listado de clientes
     Cuando busco el cliente por Razón Social "Cliente Auto Test"
     Entonces debería ver en la grilla al cliente con Razón Social "Cliente Auto Test", NIT "99887766" y Email "auto.test@hotel.com"
+
+# ... (Mantén todo lo anterior igual) ...
+
+@UI @Update
+Esquema del escenario: Editar un cliente existente desde la ventana modal (Pairwise)
+    # Precondición: Necesitamos un cliente específico para editar.
+    # En un entorno real, esto se crea por API o SQL antes del test.
+    # Aquí asumimos que el sistema tiene un cliente "Cliente Base Edicion" o lo creamos al vuelo.
+    Dado que existe un cliente registrado con Razón Social "Cliente Base Edicion"
+    Y navego a la página de listado de clientes
+    
+    Cuando busco el cliente "Cliente Base Edicion"
+    Y hago click en el boton editar del cliente encontrado
+    
+    # Aquí interactuamos con la "ventana pequeña"
+    Y actualizo la Razón Social a "<RazonSocial>"
+    Y actualizo el NIT a "<NIT>"
+    Y actualizo el Email a "<Email>"
+    Y guardo los cambios de la edicion
+    
+    Entonces debería ver los datos actualizados: Razón Social "<RazonSocial>", NIT "<NIT>" y Email "<Email>"
+Ejemplos:
+      | Descripcion Casos            | RazonSocial          | NIT                  | Email                          |
+      # Pairwise para Update (Combinaciones ortogonales)
+      | Update Limites Minimos       | AERFSF                    | 13333333                    | correo.corto@upd.com                        |
+   #   | Update Limites Maximos       | Editado Veinte Carac | 9999999 | editado.largo.30ch@test.com.bo |
+   #   | Update Mezcla 1 (RS Max)     | Industrias Editadas  | 5553333                  | correo.corto@upd.com           |
+   #   | Update Mezcla 2 (Nit Max)    | EDIT                 | 8888888 | medio@hotel.com                |
