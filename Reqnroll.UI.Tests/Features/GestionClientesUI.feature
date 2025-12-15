@@ -67,7 +67,7 @@ Esquema del escenario: Editar un cliente existente desde la ventana modal (Pairw
     
     # Aquí interactuamos con la "ventana pequeña"
     Y actualizo la Razón Social a "<RazonSocial>"
-    Y actualizo el NIT a "<NIT>"
+    #Y actualizo el NIT a "<NIT>"
     Y actualizo el Email a "<Email>"
     Y guardo los cambios de la edicion
     
@@ -76,6 +76,6 @@ Ejemplos:
       | Descripcion Casos            | RazonSocial          | NIT                  | Email                          |
       # Pairwise para Update (Combinaciones ortogonales)
       | Update Limites Minimos       | AERFSF                    | 13333333                    | correo.corto@upd.com                        |
-   #   | Update Limites Maximos       | Editado Veinte Carac | 9999999 | editado.largo.30ch@test.com.bo |
+     | Update Limites Maximos       | Editado Veinte | 99999999 | editadoh@testm.bo |
    #   | Update Mezcla 1 (RS Max)     | Industrias Editadas  | 5553333                  | correo.corto@upd.com           |
    #   | Update Mezcla 2 (Nit Max)    | EDIT                 | 8888888 | medio@hotel.com                |

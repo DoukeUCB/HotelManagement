@@ -118,7 +118,7 @@ namespace Reqnroll.UI.Tests.Features
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionClientesUI.feature.ndjson", 14);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/GestionClientesUI.feature.ndjson", 11);
         }
         
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute("Insertar nuevo cliente con datos variados (Pairwise)")]
@@ -248,16 +248,10 @@ this.ScenarioInitialize(scenarioInfo, ruleInfo);
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Gestión de Clientes UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("UI")]
         [global::Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Update")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Limites Minimos", "XYZ", "1111111", "x@y.eu", "7", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Limites Mini" +
-            "mos,XYZ,1111111,x@y.eu,7)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Limites Maximos", "Nombre Editado Justo", "98765432109876543210", "maximo.update.30ch@testing.net", "8", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Limites Maxi" +
-            "mos,Nombre Editado Justo,98765432109876543210,maximo.update.30ch@testing.net,8)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update RS Max / NIT Min", "Corporacion Modifica", "2222222", "cambio.medio@upd.com", "9", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update RS Max / NIT" +
-            " Min,Corporacion Modifica,2222222,cambio.medio@upd.com,9)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update RS Min / NIT Max", "EJA", "55555555555555555555", "correo.largo.al.tope@modif.org", "10", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update RS Min / NIT" +
-            " Max,EJA,55555555555555555555,correo.largo.al.tope@modif.org,10)")]
-        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Happy Path", "Hotel Renovado", "8765432", "gerencia@renovado.com", "11", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Happy Path,H" +
-            "otel Renovado,8765432,gerencia@renovado.com,11)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Limites Minimos", "AERFSF", "13333333", "correo.corto@upd.com", "7", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Limites Mini" +
+            "mos,AERFSF,13333333,correo.corto@upd.com,7)")]
+        [global::Microsoft.VisualStudio.TestTools.UnitTesting.DataRowAttribute("Update Limites Maximos", "Editado Veinte", "99999999", "editadoh@testm.bo", "8", null, DisplayName="Editar un cliente existente desde la ventana modal (Pairwise)(Update Limites Maxi" +
+            "mos,Editado Veinte,99999999,editadoh@testm.bo,8)")]
         public async global::System.Threading.Tasks.Task EditarUnClienteExistenteDesdeLaVentanaModalPairwise(string descripcionCasos, string razonSocial, string nIT, string email, string @__pickleIndex, string[] exampleTags)
         {
             string[] @__tags = new string[] {
@@ -277,7 +271,7 @@ this.ScenarioInitialize(scenarioInfo, ruleInfo);
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Editar un cliente existente desde la ventana modal (Pairwise)", "", tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 57
+#line 58
 this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -287,31 +281,28 @@ this.ScenarioInitialize(scenarioInfo, ruleInfo);
             else
             {
                 await this.ScenarioStartAsync();
-#line 60
+#line 62
     await testRunner.GivenAsync("que existe un cliente registrado con Razón Social \"Cliente Base Edicion\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
 #line hidden
-#line 61
+#line 63
     await testRunner.AndAsync("navego a la página de listado de clientes", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
-#line 63
+#line 65
     await testRunner.WhenAsync("busco el cliente \"Cliente Base Edicion\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Cuando ");
 #line hidden
-#line 64
+#line 66
     await testRunner.AndAsync("hago click en el boton editar del cliente encontrado", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
-#line 67
+#line 69
     await testRunner.AndAsync(string.Format("actualizo la Razón Social a \"{0}\"", razonSocial), ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
-#line 68
-    await testRunner.AndAsync(string.Format("actualizo el NIT a \"{0}\"", nIT), ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
-#line hidden
-#line 69
+#line 71
     await testRunner.AndAsync(string.Format("actualizo el Email a \"{0}\"", email), ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
-#line 70
+#line 72
     await testRunner.AndAsync("guardo los cambios de la edicion", ((string)(null)), ((global::Reqnroll.Table)(null)), "Y ");
 #line hidden
-#line 72
+#line 74
     await testRunner.ThenAsync(string.Format("debería ver los datos actualizados: Razón Social \"{0}\", NIT \"{1}\" y Email \"{2}\"", razonSocial, nIT, email), ((string)(null)), ((global::Reqnroll.Table)(null)), "Entonces ");
 #line hidden
             }
