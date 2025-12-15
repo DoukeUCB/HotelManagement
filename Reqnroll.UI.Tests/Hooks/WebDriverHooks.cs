@@ -18,8 +18,14 @@ namespace Reqnroll.UI.Tests.Hooks
         [BeforeScenario]
         public void BeforeScenario()
         {
-            // Crear WebDriver (cambiar a true para headless)
-            _context.Driver = _context.CreateChromeDriver(headless: false);
+            var headlessEnv = Environment.GetEnvironmentVariable("HEADLESS");
+            var ciEnv = Environment.GetEnvironmentVariable("CI");
+
+            var headless =
+                string.Equals(headlessEnv, "true", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(ciEnv, "true", StringComparison.OrdinalIgnoreCase);
+
+            _context.Driver = _context.CreateChromeDriver(headless: headless);
             _context.Reset();
         }
 
@@ -31,15 +37,20 @@ namespace Reqnroll.UI.Tests.Hooks
             {
                 try
                 {
-                    var screenshot = ((OpenQA.Selenium.ITakesScreenshot)_context.Driver!)
-                        .GetScreenshot();
-                    var fileName = $"screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.png";
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Screenshots", fileName);
-                    
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-                    screenshot.SaveAsFile(filePath);
-                    
-                    Console.WriteLine($"Screenshot guardado: {filePath}");
+                    if (_context.Driver is OpenQA.Selenium.ITakesScreenshot takesScreenshot)
+                    {
+                        var screenshot = takesScreenshot.GetScreenshot();
+                        var fileName = $"screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Screenshots", fileName);
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+                        screenshot.SaveAsFile(filePath);
+
+                        Console.WriteLine($"Screenshot guardado: {filePath}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Screenshot omitido: WebDriver no inicializado o no soporta screenshots.");
+                    }
                 }
                 catch (Exception ex)
                 {

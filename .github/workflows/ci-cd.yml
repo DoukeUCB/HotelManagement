@@ -43,6 +43,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
       - name: Build frontend
         run: |
           cd frontend
@@ -68,21 +71,36 @@ jobs:
           echo "backend did not start:"; tail -n +1 /tmp/backend.log || true
           exit 1
 
-      - name: Run Cypress E2E
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: ./frontend
-          start: npm start
-          wait-on: 'http://localhost:4200'
-          wait-on-timeout: 120
-          browser: chrome
-          headed: false
+      - name: Start frontend (background)
+        run: |
+          cd frontend
+          npm start -- --host 127.0.0.1 --port 4200 &>/tmp/frontend.log &
+          echo $! > /tmp/frontend.pid || true
+
+      - name: Wait for frontend
+        run: |
+          for i in {1..24}; do
+            if curl -sSf http://localhost:4200 >/dev/null; then
+              echo "frontend ready"
+              exit 0
+            fi
+            echo "waiting for frontend... $i/24"
+            sleep 5
+          done
+          echo "frontend did not start:"; tail -n +1 /tmp/frontend.log || true
+          exit 1
+
+      - name: Run UI tests (Clientes)
         env:
-          CYPRESS_baseUrl: http://localhost:4200
+          HEADLESS: 'true'
+          CI: 'true'
+        run: |
+          cd Reqnroll.UI.Tests
+          dotnet test --verbosity minimal --filter "Name~cliente"
 
       - name: Stop background services
         if: always()
         run: |
           if [ -f /tmp/backend.pid ]; then kill "$(cat /tmp/backend.pid)" || true; fi
-          pkill -f http-server || true
+          if [ -f /tmp/frontend.pid ]; then kill "$(cat /tmp/frontend.pid)" || true; fi
 
